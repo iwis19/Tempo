@@ -101,13 +101,14 @@ struct SplashPage: View {
                         .frame(width:141, height:141)
                         .shadow(radius: 5)
                 }
-                .offset(y: fullSplash ? 0 : 120)
+                .offset(y: fullSplash ? -35 : 120)
                 
                 Text("Tempo")
                     .foregroundStyle(.white.opacity(fullSplash ? 1 : 0))
                     .font(.custom("Syne-Regular", size: mainFontSize))
                     .padding(.top, 60)
                     .padding(.bottom, 25)
+                    .offset(y:-37)
                 
                 //Rotating text
                 HStack(spacing: 0) {
@@ -122,6 +123,7 @@ struct SplashPage: View {
                         .transition(subtitleTransition)
                 }
                 .frame(maxWidth: 260)
+                .offset(y:-40)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .padding(.top, 190)
