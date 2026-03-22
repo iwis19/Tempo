@@ -1,6 +1,6 @@
 //
 //  FeatureCard.swift
-//  Timint
+//  Tempo
 //
 //  Created by Glen gu on 2026-03-21.
 //

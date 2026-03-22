@@ -1,0 +1,30 @@
+Lightest -> Darkest
+
+Light Mode:
+Color(red: 0.702, green: 0.780, blue: 0.714) // #b3c7b6
+Color(red: 0.502, green: 0.729, blue: 0.541) // #80ba8a
+Color(red: 0.361, green: 0.678, blue: 0.424) // #5cad6c
+Color(red: 0.231, green: 0.631, blue: 0.325) // #3ba153
+Color(red: 0.122, green: 0.580, blue: 0.243) // #1f943e
+Color(red: 0.027, green: 0.533, blue: 0.180) // #07882e - original color
+Color(red: 0.000, green: 0.380, blue: 0.125) // #006120
+Color(red: 0.000, green: 0.231, blue: 0.086) // #003b16
+Color(red: 0.000, green: 0.078, blue: 0.031) // #001408
+Color(red: 0.000, green: 0.000, blue: 0.000) // #000000
+
+
+
+Dark Mode:
+Color(red: 0.067, green: 0.102, blue: 0.078) // #111a14
+Color(red: 0.059, green: 0.153, blue: 0.090) // #0f2717
+Color(red: 0.063, green: 0.216, blue: 0.110) // #10371c
+Color(red: 0.055, green: 0.282, blue: 0.125) // #0e4820
+Color(red: 0.047, green: 0.373, blue: 0.145) // #0c5f25
+Color(red: 0.035, green: 0.467, blue: 0.165) // #09772a
+Color(red: 0.118, green: 0.529, blue: 0.227) // #1e873a
+Color(red: 0.224, green: 0.604, blue: 0.314) // #399a50
+Color(red: 0.353, green: 0.659, blue: 0.412) // #5aa869
+Color(red: 0.494, green: 0.718, blue: 0.533) // #7eb788
+
+
+
