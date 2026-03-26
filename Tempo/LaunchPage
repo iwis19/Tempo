@@ -38,7 +38,7 @@ struct SplashPage: View {
     var body: some View {
         ZStack {
             //background gradient color
-            LinearGradient(colors: [Color(red: 0.572, green: 0.779, blue: 0.571), Color(red: 0.10, green: 0.42, blue: 0.34)], startPoint: .topLeading, endPoint: .bottomTrailing)
+            LinearGradient(colors: [Color("tempoLeaf"), Color("tempoDeepGreen")], startPoint: .topLeading, endPoint: .bottomTrailing)
                 .ignoresSafeArea()
 
             //miscellaneous shapes
