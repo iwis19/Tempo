@@ -10,7 +10,7 @@ import SwiftUI
 struct DashboardPage: View {
     var body: some View {
         PageContainer {
-            // TODO: ronnie is just a placeholder for now, after i collect username from the actual user, it will be changed
+            // TODO: ronnie is just a placeholder for now, after i collect first name from the actual user, it will be changed
             Header(eyebrow: "Time Account", title: "\(greetingText), Ronnie", subtitle: nil)
             statementCard
         }

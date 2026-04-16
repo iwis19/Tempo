@@ -8,6 +8,8 @@
 import Foundation
 
 struct UserProfile {
+    var firstName: String
+    var lastName: String
     var username: String
     var reminderEnabled: Bool
     var reminderTime: DateComponents

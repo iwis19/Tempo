@@ -44,6 +44,8 @@ struct PageContainer <Content: View>: View {
     }
 }
 
+
+// PROMINENT GREEN CARD IN MOST PAGES
 struct MainCard <Content: View>: View{
     let content: Content
     init(@ViewBuilder content: () -> Content) {
@@ -68,6 +70,46 @@ struct MainCard <Content: View>: View{
                 .stroke(.white.opacity(0.12), lineWidth: 1)
         } // creates a subtle outline for this roundedrectangle
         .shadow(color: Color("tempoShadow").opacity(0.18), radius: 22, y: 12) // adds a shadow around the shape
+    }
+}
+
+
+// TRANSLUCENT BOX UNDER MAIN CARD
+struct MainCardBox: View {
+    let title: String
+    let description: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.62))
+            
+            Text(description)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .background(.white.opacity(0.10))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+}
+
+
+//
+struct MainCardStatusBadge : View {
+    let text: String
+    
+    var body: some View {
+        Text(text)
+            .font(.system(size: 12, weight: .bold))
+            .foregroundStyle(Color("tempoDeepGreen"))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color("tempoGlow"))
+            .clipShape(Capsule())
     }
 }
 
