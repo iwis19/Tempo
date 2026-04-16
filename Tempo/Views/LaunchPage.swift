@@ -2,7 +2,7 @@
 //  LaunchPage.swift
 //  Tempo
 //
-//  Created by Glen gu on 2026-03-21.
+//  Created by Ronnie Gu on 2026-03-21.
 //
 
 import Combine

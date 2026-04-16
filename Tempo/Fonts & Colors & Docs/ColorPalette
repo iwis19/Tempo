@@ -1,30 +1,31 @@
-Lightest -> Darkest
+Inputted Colors:
 
-Light Mode:
-Color(red: 0.702, green: 0.780, blue: 0.714) // #b3c7b6
-Color(red: 0.502, green: 0.729, blue: 0.541) // #80ba8a
-Color(red: 0.361, green: 0.678, blue: 0.424) // #5cad6c
-Color(red: 0.231, green: 0.631, blue: 0.325) // #3ba153
-Color(red: 0.122, green: 0.580, blue: 0.243) // #1f943e
-Color(red: 0.027, green: 0.533, blue: 0.180) // #07882e - original color
-Color(red: 0.000, green: 0.380, blue: 0.125) // #006120
-Color(red: 0.000, green: 0.231, blue: 0.086) // #003b16
-Color(red: 0.000, green: 0.078, blue: 0.031) // #001408
-Color(red: 0.000, green: 0.000, blue: 0.000) // #000000
+tempoShell: Color(red: 0.94, green: 0.98, blue: 0.95)
+tempoSoftMint: Color(red: 0.78, green: 0.91, blue: 0.81)
+tempoLeaf: Color(red: 0.14, green: 0.58, blue: 0.28)
+tempoDeepGreen: Color(red: 0.05, green: 0.26, blue: 0.13)
+tempoCard: Color(red: 0.19, green: 0.44, blue: 0.24)
+tempoGlow: Color(red: 0.83, green: 0.97, blue: 0.86)
+tempoInk: Color(red: 0.09, green: 0.18, blue: 0.12)
+tempoShadow: Color(red: 0.04, green: 0.18, blue: 0.09)
+tempoMintCard: Color(red: 0.90, green: 0.97, blue: 0.91)
+tempoLossWash: Color(red: 0.97, green: 0.91, blue: 0.90)
+tempoNeutralCard: Color(red: 0.94, green: 0.95, blue: 0.93)
+tempoLossRed: Color(red: 0.76, green: 0.26, blue: 0.23)
 
+tempoShell        → 135°,  4%, 98%
+tempoSoftMint     → 132°, 14%, 91%
+tempoLeaf         → 137°, 76%, 58%
+tempoDeepGreen    → 142°, 81%, 26%
+tempoCard         → 132°, 57%, 44%
+tempoGlow         → 137°, 14%, 97%
+tempoInk          → 144°, 50%, 18%
+tempoShadow       → 141°, 78%, 18%
+tempoMintCard     → 128°,  7%, 97%
+tempoLossWash     →  10°,  7%, 97%
+tempoNeutralCard  → 100°,  2%, 95%
+tempoLossRed      →   3°, 70%, 76%
 
-
-Dark Mode:
-Color(red: 0.067, green: 0.102, blue: 0.078) // #111a14
-Color(red: 0.059, green: 0.153, blue: 0.090) // #0f2717
-Color(red: 0.063, green: 0.216, blue: 0.110) // #10371c
-Color(red: 0.055, green: 0.282, blue: 0.125) // #0e4820
-Color(red: 0.047, green: 0.373, blue: 0.145) // #0c5f25
-Color(red: 0.035, green: 0.467, blue: 0.165) // #09772a
-Color(red: 0.118, green: 0.529, blue: 0.227) // #1e873a
-Color(red: 0.224, green: 0.604, blue: 0.314) // #399a50
-Color(red: 0.353, green: 0.659, blue: 0.412) // #5aa869
-Color(red: 0.494, green: 0.718, blue: 0.533) // #7eb788
 
 
 

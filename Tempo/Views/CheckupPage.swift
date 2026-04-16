@@ -2,7 +2,7 @@
 //  CheckupPage.swift
 //  Tempo
 //
-//  Created by Glen gu on 2026-03-25.
+//  Created by Ronnie Gu on 2026-03-25.
 //
 
 import SwiftUI

@@ -2,7 +2,7 @@
 //  TempoApp.swift
 //  Tempo
 //
-//  Created by Glen gu on 2026-03-20.
+//  Created by Ronnie Gu on 2026-03-20.
 //
 
 import SwiftUI
