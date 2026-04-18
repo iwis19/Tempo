@@ -21,6 +21,7 @@ struct PageContainer <Content: View>: View {
     let content: Content // page-specific UI i pass in
     
     // @ViewBuilder lets me write multiple UI views naturally inside this container call, content() stores the resulting view
+    // "content: () -> Content means that this doesnt take arguments, and that it returns Content type
     init(bottomInset: CGFloat = 170, @ViewBuilder content: () -> Content) {
         self.bottomInset = bottomInset
         self.content = content()
@@ -98,7 +99,7 @@ struct MainCardBox: View {
 }
 
 
-//
+// ACCOUNT STATUS TEXT
 struct MainCardStatusBadge : View {
     let text: String
     
@@ -114,12 +115,111 @@ struct MainCardStatusBadge : View {
 }
 
 
+// SETTINGS BACK BOARD
+struct SettingsCategoryContainer <Content: View>: View {
+    let content: Content
+    
+    init(@ViewBuilder content:() -> Content) {
+        self.content = content()
+    }
+    
+    var body: some View{
+        VStack (alignment: .leading, spacing: 14){
+            content
+        }
+        .padding(16) 
+        .background(Color.white.opacity(0.88))
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color("tempoLeaf").opacity(0.10), lineWidth: 1)
+        }
+    }
+}
+
+
+// SECTION TITLES
+struct SettingsSectionTitle : View {
+    let title: String
+    
+    var body : some View {
+        Text(title)
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundStyle(Color("tempoInk"))
+    }
+}
+
+
+// SPECIFIC SETTING LAYOUT
+struct SettingRow : View {
+    let title: String
+    let icon: String
+    let description: String
+    let details: String
+    
+    var body : some View {
+        HStack {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color("tempoSoftMint").opacity(0.30))
+                .frame(width: 48, height: 48)
+                .overlay {
+                    Image(systemName: icon)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Color("tempoDeepGreen"))
+                }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color("tempoInk"))
+
+                Text(description)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color("tempoInk").opacity(0.58))
+            }
+            
+            Spacer()
+            
+            Text(details)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color("tempoDeepGreen"))
+        }
+    }
+}
+
+
+// COLOR AND DISPLAY PREVIEW FOR GAIN/LOSS
+struct PreviewRow : View {
+    
+    let title: String
+    let value: String
+    let tint: Color
+    
+    var body : some View{
+        HStack {
+            Text(title)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(Color("tempoInk"))
+
+            Spacer()
+
+            Text(value)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(tint)
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .background(Color("tempoShell").opacity(0.70))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
 // PAGE BACKGROUNDS
 struct PageBackground: View {
     var body: some View{
         
         ZStack {
-            LinearGradient(colors: [Color("tempoShell"), Color("tempoShell"), Color.white], startPoint: .topTrailing, endPoint: .bottomLeading)
+            LinearGradient(colors: [Color("tempoShell"), Color("tempoShell"), Color.white ,Color("tempoShell"), Color("tempoShell")], startPoint: .topTrailing, endPoint: .bottomLeading)
                 .ignoresSafeArea()
             
             Circle()
@@ -147,7 +247,7 @@ struct PageBackground: View {
 
 
 // PAGE HEADERS
-struct Header: View {
+struct PageHeader: View {
     let eyebrow: String
     let title: String
     let subtitle: String?
@@ -171,6 +271,30 @@ struct Header: View {
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color("tempoInk").opacity(0.68))
             }
+        }
+    }
+}
+
+
+// ACTION BUTTON
+struct ActionButton: View{
+    let title: String
+    
+    // basically represents a func (piece of code to run later), but takes no parameters and returns nothing
+    let action: () -> Void
+
+    var body: some View {
+        
+        // with action: action, it essentially means that the button stores code that takes no parameters and has no return values, but a piece of code that runs when the button goes off
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(Color("tempoInk"))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.white.opacity(0.84))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                
         }
     }
 }
