@@ -8,17 +8,21 @@
 import SwiftUI
 
 struct ProfilePage: View {
-    @State private var firstName = ""
-    @State private var lastName = ""
-    @State private var hourlyRate = ""   // here, hourlyRate is a string, but we will later convert into a Double, just like reminderHour and reminderMinute
-    @State private var reminderEnabled = false
-    @State private var reminderHour = ""
-    @State private var reminderMinute = ""
+    
+    // @AppStorage makes it so that these variables are stored on local storage, rather than resetting after each app launch since otherwise it would be stored in memory
+    @AppStorage("firstName") private var firstName = ""
+    @AppStorage("lastName") private var lastName = ""
+    @AppStorage("hourlyRate") private var hourlyRate = 17.95
+    @AppStorage("reminderEnabled") private var reminderEnabled = false
+    @AppStorage("reminderHour") private var reminderHour = ""
+    @AppStorage("reminderMinute") private var reminderMinute = ""
+    
+    @State private var showHourlyRatePage = false
     
     var body: some View {
         
         PageContainer {
-            Header(eyebrow: "Profile", title: "Statement Settings", subtitle: "Set the rate, reminder, and rules Tempo uses for your daily statement.")
+            PageHeader(eyebrow: "Profile", title: "Statement Settings", subtitle: "Set the rate, reminder, and rules Tempo uses for your daily statement.")
             
             MainCard {
                 HStack(alignment: .center, spacing: 12) {
@@ -32,11 +36,13 @@ struct ProfilePage: View {
                             .foregroundStyle(.white)
                     }
                     
+                    // TODO: make text auto fit, or crop, etc
                     VStack (alignment: .leading, spacing: 6) {
                         HStack(alignment: .top) {
                             Text(displayName)
-                                .font(.system(size: 20, weight: .semibold))
+                                .font(.system(size: 24, weight: .semibold))
                                 .foregroundStyle(.white)
+                                .offset(y: -4)
                             
                             Spacer()
                             
@@ -56,7 +62,19 @@ struct ProfilePage: View {
                 }
             }
 
-            
+            SettingsCategoryContainer {
+                VStack (alignment: .leading) {
+                    SettingsSectionTitle(title: "Personal")
+                        .padding(.leading, 5) // padding to line up text
+                    
+                    Button(action: {showHourlyRatePage = true}) {
+                        SettingRow(title: "Hourly Rate", icon: "dollarsign.circle.fill", description: "Base value Tempo uses for statement math", details: hourlyRateDisplay)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    
+                }
+            }
             
             /*
              TODO: sections be added are:
@@ -75,6 +93,12 @@ struct ProfilePage: View {
              - How daily statements work
              */
         }
+        .sheet(isPresented: $showHourlyRatePage) {
+            ProfileHourlyRatePage(initialHourlyRate: hourlyRate) { newHourlyRate in
+                    hourlyRate = newHourlyRate
+                }
+                .presentationDetents([.large])
+           }
     }
     
     private var displayInitial: String {

@@ -17,7 +17,7 @@ struct ContentView: View {
          Dashboard
          
          */
-        LaunchPage()
+        ProfilePage()
     }
 }
 
