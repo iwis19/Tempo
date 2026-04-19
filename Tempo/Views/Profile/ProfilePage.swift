@@ -14,10 +14,12 @@ struct ProfilePage: View {
     @AppStorage("lastName") private var lastName = ""
     @AppStorage("hourlyRate") private var hourlyRate = 17.95
     @AppStorage("reminderEnabled") private var reminderEnabled = false
-    @AppStorage("reminderHour") private var reminderHour = ""
-    @AppStorage("reminderMinute") private var reminderMinute = ""
+    @AppStorage("reminderHour") private var reminderHour = 20
+    @AppStorage("reminderMinute") private var reminderMinute = 0
     
     @State private var showHourlyRatePage = false
+    @State private var showDailyReminderPage = false
+    @State private var showNamePage = false
     
     var body: some View {
         
@@ -62,17 +64,54 @@ struct ProfilePage: View {
                 }
             }
 
-            SettingsCategoryContainer {
+            SettingsContainer {
                 VStack (alignment: .leading) {
                     SettingsSectionTitle(title: "Personal")
                         .padding(.leading, 5) // padding to line up text
                     
-                    Button(action: {showHourlyRatePage = true}) {
-                        SettingRow(title: "Hourly Rate", icon: "dollarsign.circle.fill", description: "Base value Tempo uses for statement math", details: hourlyRateDisplay)
+                    Button (action: {showNamePage = true}) {
+                        SettingRow(
+                            title: "Name",
+                            icon: "person.crop.circle.fill",
+                            description: "How your account appears across Tempo",
+                            details: "Open"
+                        )
                     }
                     .buttonStyle(.plain)
                     
+                    Button(action: {showHourlyRatePage = true}) {
+                        SettingRow(
+                            title: "Hourly Rate",
+                            icon: "dollarsign.circle.fill",
+                            description: "Base value Tempo uses for statement math",
+                            details: "Open"
+                        )
+                    }
+                    .buttonStyle(.plain)
                     
+                    Button(action: {showDailyReminderPage = true}){
+                        SettingRow(
+                            title: "Daily Reminder",
+                            icon: "bell.badge.fill",
+                            description: "Checkup prompts and close-of-day nudges", 
+                            details: "Open"
+                        )
+                    }
+                    .buttonStyle(.plain)
+                
+                }
+            }
+            
+            SettingsContainer {
+                VStack (alignment: .leading){
+                    SettingsSectionTitle(title: "App")
+                    
+                }
+            }
+            
+            SettingsContainer {
+                VStack (alignment: .leading){
+                    SettingsSectionTitle(title: "Learn Tempo")
                 }
             }
             
@@ -99,6 +138,27 @@ struct ProfilePage: View {
                 }
                 .presentationDetents([.large])
            }
+        .sheet(isPresented: $showDailyReminderPage) {
+            ProfileDailyReminderPage (
+                initialReminderEnabled: reminderEnabled,
+                initialReminderHour: reminderHour,
+                initialReminderMinute: reminderMinute
+            ) { newReminderEnabled, newHour, newMinute in
+                reminderEnabled = newReminderEnabled
+                reminderHour = newHour
+                reminderMinute = newMinute
+            }
+            .presentationDetents([.large])
+        }
+//        .sheet(isPresented: $showUsernamePage) {
+//            ProfileUsernamePage(
+//                initialFirstname: firstname,
+//                initialLastname: lastname) { firstname, lastname in
+//                firstname = newFirstname,
+//                lastname = newLastname
+//            }
+//            .presentationDetents([.large])
+//        }
     }
     
     private var displayInitial: String {
@@ -107,14 +167,14 @@ struct ProfilePage: View {
         let firstInitial = firstName.first.map(String.init) ?? ""
         let lastInitial = lastName.first.map(String.init) ?? ""
         let initial = firstInitial + lastInitial
-        return initial.isEmpty ? "U" : initial
+        return initial.isEmpty ? "JD" : initial
     }
     
     private var displayName: String {
         
         // trimmingCharacters removes useless leading or trailing whitespaces
         let fullName = "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
-        return fullName.isEmpty ? "User" : fullName
+        return fullName.isEmpty ? "Jane Doe" : fullName
     }
 
     private var profileStatusText: String {
@@ -144,11 +204,30 @@ struct ProfilePage: View {
     }
 
     private var reminderDisplay: String {
-        reminderEnabled ? "On" : "Off"
+        if !reminderEnabled {
+            return "Off"
+        }
+        return Self.formatted(hour: reminderHour, minute: reminderMinute)
     }
 
     private var hourlyRateValue: Double? {
         Double(hourlyRate)
+    }
+    
+    private static func formatted (hour: Int, minute: Int) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        components.hour = hour
+        components.minute = minute
+        let timestamp = Calendar.current.date(from: components)
+        
+        guard let date = timestamp else {
+            return "8:00 PM"
+        }
+        
+        return formatter.string(from: date)
     }
     
 }

@@ -116,7 +116,7 @@ struct MainCardStatusBadge : View {
 
 
 // SETTINGS BACK BOARD
-struct SettingsCategoryContainer <Content: View>: View {
+struct SettingsContainer <Content: View>: View {
     let content: Content
     
     init(@ViewBuilder content:() -> Content) {
@@ -172,6 +172,7 @@ struct SettingRow : View {
                 Text(title)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Color("tempoInk"))
+                    .offset(y:2)
 
                 Text(description)
                     .font(.system(size: 13, weight: .medium))
@@ -276,11 +277,21 @@ struct PageHeader: View {
 }
 
 
+// VISUAL DRAG INDICATOR
+struct DragIndicator: View {
+    var body: some View {
+        Capsule()
+            .fill(Color("tempoInk").opacity(0.12))
+            .frame(width:52, height:5)
+    }
+}
+
+
 // ACTION BUTTON
 struct ActionButton: View{
     let title: String
     
-    // basically represents a func (piece of code to run later), but takes no parameters and returns nothing
+    // basically a piece of passable code stored into this action variable that does something, and it takes no params since (), and returns nothing since Void
     let action: () -> Void
 
     var body: some View {

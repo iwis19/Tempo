@@ -56,9 +56,7 @@ struct ProfileHourlyRatePage : View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 22) {
                     VStack(spacing: 14) {
-                        Capsule()
-                            .fill(Color("tempoInk").opacity(0.12))
-                            .frame(width: 52, height: 5)
+                        DragIndicator()
 
                         PageHeader(
                             eyebrow: "Hourly Rate",
@@ -69,10 +67,9 @@ struct ProfileHourlyRatePage : View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 12)
 
-                    TempoSurfaceCard {
+                    SettingsContainer {
                         Text("Rate Input")
                             .font(.system(size: 12, weight: .bold))
-                            .tracking(1.0)
                             .foregroundStyle(Color("tempoInk").opacity(0.52))
 
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -95,7 +92,7 @@ struct ProfileHourlyRatePage : View {
                             .foregroundStyle(Color("tempoInk").opacity(0.60))
                     }
 
-                    SettingsCategoryContainer {
+                    SettingsContainer {
                         SettingsSectionTitle(title: "Live Preview")
 
                         VStack(spacing: 12) {
@@ -106,8 +103,14 @@ struct ProfileHourlyRatePage : View {
                     }
 
                     HStack(spacing: 12) {
+                        
+                        // since we already have environment var dismiss set up, this is the same as passing dismiss()
                         ActionButton(title: "Cancel", action: dismiss.callAsFunction)
+                        
+                        // passes the function saveRate in
                         ActionButton(title: "Save Rate", action: saveRate)
+                            
+                            // modifies if the button can be tapped or not
                             .disabled(!canSave)
                             .opacity(canSave ? 1 : 0.55)
                     }
