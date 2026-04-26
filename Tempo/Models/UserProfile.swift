@@ -14,5 +14,4 @@ struct UserProfile {
     var reminderEnabled: Bool
     var reminderTime: DateComponents
     var hourlyRate: Double
-    
 }

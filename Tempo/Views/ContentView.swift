@@ -8,21 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedTab: Tab = .dashboard
+    
     var body: some View {
         
-        
-        /*
-         Splash Page
-         maybe -> Login Page (could be merged to splash)
-         Dashboard
-         
-         */
-        ProfilePage()
+        ZStack (alignment: .bottom) {
+            Group {
+                switch selectedTab {
+                case .dashboard:
+                    NavigationStack{
+                        DashboardPage()
+                    }
+                    .toolbar(.hidden, for: .navigationBar)
+                    
+                case .profile:
+                    NavigationStack{
+                        ProfilePage()
+                    }
+                    .toolbar(.hidden, for: .navigationBar)
+                }
+                
+                BetterNavigationBar(selectedTab: $selectedTab)
+                    .padding(.horizontal, 22)
+            }
+        }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+#Preview {
+    ContentView()
 }
+

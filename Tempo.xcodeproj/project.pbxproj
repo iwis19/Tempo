@@ -21,11 +21,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B92329F42F9086C20039EB6A /* ViewModels */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
 		B96FFF2E2F6E491E00640D1E /* Tempo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -52,7 +47,6 @@
 			children = (
 				B96FFF2E2F6E491E00640D1E /* Tempo */,
 				B96FFF2D2F6E491E00640D1E /* Products */,
-				B92329F42F9086C20039EB6A /* ViewModels */,
 			);
 			sourceTree = "<group>";
 		};
@@ -80,7 +74,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B92329F42F9086C20039EB6A /* ViewModels */,
 				B96FFF2E2F6E491E00640D1E /* Tempo */,
 			);
 			name = Tempo;
