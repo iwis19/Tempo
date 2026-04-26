@@ -23,12 +23,6 @@ struct DashboardPage: View {
             )
             statementCard
             transactionsSection
-            
-            
-            
-            
-            
-            
         }
     }
     
@@ -39,7 +33,7 @@ struct DashboardPage: View {
                     Text("TODAY'S NET")
                         .font(.system(size:12, weight: .bold))
                         .foregroundStyle(Color.white.opacity(0.72))
-                        .offset(y: 5)
+                        .offset(y: 8)
                     
                     Spacer()
                     
@@ -74,16 +68,29 @@ struct DashboardPage: View {
         }
     }
     
-    
-    //TODO: not done
     private var transactionsSection: some View {
-        
         VStack (alignment: .leading, spacing: 14) {
             SectionTitle(title: "Today's Transactions")
             
-            //if
+            if todayTransactionItems.isEmpty {
+                SurfaceCard {
+                    Text("Log your first activity to start building today's statement.")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(Color("tempoInk").opacity(0.68))
+                }
+            }
+            else {
+                VStack (spacing: 12) {
+                    ForEach(todayTransactionItems) { item in
+                        LedgerRow(item: item)
+                    }
+                }
+            }
         }
-        
+    }
+    
+    private var todayTransactionItems: [TransactionItem] {
+        statement.activities.map(item(for:))
     }
     
     private var greetingText: String {
@@ -120,7 +127,7 @@ struct DashboardPage: View {
             return "Set your hourly rate in profile to turn time into statement value."
         }
         if statement.activities.isEmpty {
-            return "Log your first activity to start today's statement."
+            return "Log your first activity to start building today's statement."
         }
         if netTotal > 0 {
             return "Your daily statement is currently in profit."
@@ -141,17 +148,6 @@ struct DashboardPage: View {
         return "Close Statement"
     }
     
-    //TODO: not done
-//    private var summaryBreakdown: some View {
-//        
-//        
-//        
-//    }
-    
-//    private var todayTransactionItems: [TempoTransactionItem] {
-//        statement.activities.map(transactionItem(for:))
-//    }
-    
     private var earnedTotal: Double {
         sum(for: .earned)
     }
@@ -168,16 +164,49 @@ struct DashboardPage: View {
         earnedTotal + spentTotal + requiredTotal
     }
     
+    private func durationDisplay(for minutes: Int) -> String{
+        let hours = minutes / 60
+        let remainder = minutes % 60
+        
+        if hours > 0 && remainder > 0{
+            return "\(hours)h \(remainder)m"
+        }
+        if hours > 0{
+            return "\(hours)h"
+        }
+        return "\(remainder)m"
+    }
+    
     private func sum(for category: ActivityCategories) -> Double {
         statement.activities.filter{ $0.category == category} .reduce(0) { partialResult, activity in partialResult + amount(for:activity)}
     }
     
     private func amount(for activity: Activity) -> Double {
-        guard let category = activity.category, hourlyRate > 0 else {
+        guard hourlyRate > 0 else {
             return 0
         }
         let hours = Double(activity.durationMinutes) / 60
-        return hours * hourlyRate * category.statementMultiplier
+        return hours * hourlyRate * activity.category.statementMultiplier
+    }
+    
+    private func item(for activity: Activity) -> TransactionItem {
+        let categoryText = activity.category.title
+        
+        let tone: Flowtone = {
+            switch activity.category {
+            case .earned: return .positive
+            case .required, .spent: return .negative
+            }
+        }()
+        
+        return TransactionItem(
+            id: activity.id,
+            title: activity.name,
+            duration: durationDisplay(for: activity.durationMinutes),
+            category: categoryText,
+            amount: CurrencyFormatter.string(amount(for: activity), alwaysShowSign: true),
+            tone: tone
+        )
     }
 }
 

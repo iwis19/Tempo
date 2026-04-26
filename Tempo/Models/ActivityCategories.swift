@@ -16,9 +16,9 @@ import Foundation
 // Codable: helps later for storing data
 // CaseIterable: lets me iterate through all cases, lets me do things such as ActivityCategories.allCases
 enum ActivityCategories: String, Codable, CaseIterable {
-    case earned = "earned"
-    case `required` = "required" // escape char from an assigned keyword "required" in swift
-    case spent = "spent"
+    case earned
+    case `required` // escape char from an assigned keyword "required" in swift
+    case spent
 
     var title: String {
         switch self { // self here means look at which enum option the value currently is, and then chooses cases based on that current value

@@ -14,11 +14,11 @@ struct Activity: Identifiable, Codable {
     let id: UUID
     var name: String
     var durationMinutes: Int   // in minutes
-    var category: ActivityCategories? // ? makes it mean that this value is optional, it could either be a real ActivityCategories value or a null (nil in Swift)
+    var category: ActivityCategories // ? makes it mean that this value is optional, it could either be a real ActivityCategories value or a null (nil in Swift)
     var createdAt: Date
     
     // for UUID and ActivityCategories and Date, they are set to a value in the constructor parameters because these are set as default values, in case nothing is passed in
-    init(id: UUID = UUID(), name: String, length: Int, category: ActivityCategories? = nil, createdAt: Date = Date()) {
+    init(id: UUID = UUID(), name: String, length: Int, category: ActivityCategories, createdAt: Date = Date()) {
         self.id = id
         self.name = name
         self.durationMinutes = length
