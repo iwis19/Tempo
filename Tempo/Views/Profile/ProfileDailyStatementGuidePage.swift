@@ -28,7 +28,7 @@ struct ProfileDailyStatementGuidePage: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 12)
 
-                    SettingsContainer {
+                    SurfaceCard {
                         SectionTitle(title: "How It Works")
 
                         StatementFlowStepRow(
@@ -53,7 +53,7 @@ struct ProfileDailyStatementGuidePage: View {
                         )
                     }
 
-                    SettingsContainer {
+                    SurfaceCard {
                         SectionTitle(title: "What Each One Means")
 
                         PreviewRow(
@@ -73,7 +73,7 @@ struct ProfileDailyStatementGuidePage: View {
                         )
                     }
 
-                    SettingsContainer {
+                    SurfaceCard {
                         SectionTitle(title: "Simple Goal")
 
                         Text("Aim for more Earned time, less Spent time, and a clear view of your Required time.")

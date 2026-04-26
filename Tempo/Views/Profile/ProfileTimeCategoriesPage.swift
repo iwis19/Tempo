@@ -64,7 +64,7 @@ struct ProfileTimeCategoriesPage: View {
                         ]
                     )
 
-                    SettingsContainer {
+                    SurfaceCard {
                         SectionTitle(title: "Simple Rule")
 
                         Text("Earned helps you. Required has to get done. Spent drains time or attention.")

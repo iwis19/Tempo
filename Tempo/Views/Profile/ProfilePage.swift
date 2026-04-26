@@ -73,7 +73,7 @@ struct ProfilePage: View {
                 }
             }
 
-            SettingsContainer {
+            SurfaceCard {
                 VStack (alignment: .leading) {
                     SectionTitle(title: "Personal")
                         .padding(.leading, 5) // padding to line up text
@@ -111,7 +111,7 @@ struct ProfilePage: View {
                 }
             }
             
-            SettingsContainer {
+            SurfaceCard {
                 VStack (alignment: .leading){
                     SectionTitle(title: "Learn Tempo")
                     
@@ -241,43 +241,16 @@ struct ProfilePage: View {
         if hourlyRate <= 0 {
             return "Not set"
         }
-        return Self.formattedRate(hourlyRate)
+        return CurrencyFormatter.string(hourlyRate)
     }
 
     private var reminderDisplay: String {
         if !reminderEnabled {
             return "Off"
         }
-        return Self.formattedDate(hour: reminderHour, minute: reminderMinute)
+        return TimeFormatter.string(hour: reminderHour, minute: reminderMinute)
     }
-    
-    private static func formattedDate(hour: Int, minute: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        
-        var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-        components.hour = hour
-        components.minute = minute
-        let timestamp = Calendar.current.date(from: components)
-        
-        guard let date = timestamp else {
-            return "8:00 PM"
-        }
-        
-        return formatter.string(from: date)
-    }
-    
-    private static func formattedRate(_ rate: Double) -> String {
-        var text = String(format: "%2f", rate)
-        while text.contains(".") && text.last == "0" {
-            text.removeLast()
-        }
-        if text.last == "." {
-            text.removeLast()
-        }
-        return text
-    }
-    
+
 }
 
 #Preview {

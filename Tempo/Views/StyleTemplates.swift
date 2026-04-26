@@ -116,8 +116,8 @@ struct MainCardStatusBadge : View {
 }
 
 
-// SETTINGS BACK BOARD
-struct SettingsContainer <Content: View>: View {
+// WHITE SURFACE CARDS FOR DASHBOARD, SETTINGS ETC
+struct SurfaceCard <Content: View>: View {
     let content: Content
     
     init(@ViewBuilder content:() -> Content) {
@@ -128,13 +128,15 @@ struct SettingsContainer <Content: View>: View {
         VStack (alignment: .leading, spacing: 14){
             content
         }
-        .padding(16) 
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
         .background(Color.white.opacity(0.88))
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .stroke(Color("tempoLeaf").opacity(0.10), lineWidth: 1)
         }
+        
     }
 }
 
@@ -225,7 +227,7 @@ struct TimeCategoryCard: View {
     let examples: [String]
 
     var body: some View {
-        SettingsContainer {
+        SurfaceCard {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text(title)
@@ -439,7 +441,7 @@ struct BetterNavigationBar: View {
 
     var body: some View {
         HStack {
-            // TODO: add mor epages here when completed
+            // TODO: add more pages here when completed
             tabButton(for: .dashboard)
             tabButton(for: .profile)
         }
@@ -453,12 +455,12 @@ struct BetterNavigationBar: View {
         }
         .shadow(color: Color("tempoShadow").opacity(0.08), radius: 18, y: 10)
     }
-
-    @ViewBuilder
+    
+    // for is NOT a loop here, it's just a label to make function call look nice: tabButton(for: .dashboard)
     private func tabButton(for tab: Tab) -> some View {
         let isSelected = selectedTab == tab
 
-        Button {
+        return Button {
             selectedTab = tab
         } label: {
             VStack(spacing: 6) {
@@ -473,3 +475,53 @@ struct BetterNavigationBar: View {
     }
 }
 
+
+struct LedgerRow: View {
+    let item: TransactionItem
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 14) {
+            Circle()
+                .fill(item.tone.badgeBackground)
+                .frame(width: 46, height: 46)
+                .overlay {
+                    Image(systemName: item.tone.iconName)
+                        .font(.system(size:16, weight: .bold))
+                        .foregroundStyle(item.tone.amountColor)
+                }
+            VStack (alignment: .leading, spacing: 4) {
+                Text(item.title)
+                    .font(.system(size:16, weight: .semibold))
+                    .foregroundStyle(Color("tempoInk"))
+                
+                HStack(spacing: 6){
+                    Text(item.duration)
+                        .font(.system(size:13, weight: .medium))
+                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                    
+                    Circle()
+                        .fill(Color("tempoInk").opacity(0.24))
+                        .frame(width:4, height: 4)
+                    
+                    Text(item.category)
+                        .font(.system(size:13, weight: .medium))
+                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                }
+            }
+            Spacer()
+            
+            Text(item.amount)
+                .font(.system(size:15, weight: .bold))
+                .foregroundStyle(item.tone.amountColor)
+        }
+        .padding(16)
+        .background(Color.white.opacity(0.88))
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay{
+            RoundedRectangle(cornerRadius: 24, style:.continuous)
+                .stroke(Color("tempoLeaf").opacity(0.1), lineWidth: 1)
+        }
+        
+    }
+    
+}

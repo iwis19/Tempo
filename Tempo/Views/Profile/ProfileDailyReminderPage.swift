@@ -45,7 +45,7 @@ struct ProfileDailyReminderPage: View {
                     .padding(.top, 12)
                     
                     
-                    SettingsContainer {
+                    SurfaceCard {
                         Text("Reminder Settings")
                             .font(.system(size:12, weight: .bold))
                             .foregroundStyle(Color("tempoInk").opacity(0.52))
@@ -85,7 +85,7 @@ struct ProfileDailyReminderPage: View {
                         }
                     }
                     
-                    SettingsContainer{
+                    SurfaceCard{
                         SectionTitle(title:"Live Preview")
                         
                         VStack(spacing: 12){

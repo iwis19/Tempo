@@ -27,7 +27,7 @@ struct ProfileHourlyRatePage : View {
         self.onSave = onSave
         
         // because hourlyRate is @State, I cant initialize it with normal assignment, so i have to initialize the wrapper itself, which is _hourlyRate
-        _hourlyRate = State(initialValue: Self.formattedRate(initialHourlyRate))
+        _hourlyRate = State(initialValue: RateFormatter.string(initialHourlyRate))
     }
     
     // converts the String hourlyRate into a Double, which spaces and newlines trimmed, "Double?" means it could return a Double OR nil
@@ -69,7 +69,7 @@ struct ProfileHourlyRatePage : View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 12)
 
-                    SettingsContainer {
+                    SurfaceCard {
                         Text("Rate Input")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(Color("tempoInk").opacity(0.52))
@@ -94,23 +94,23 @@ struct ProfileHourlyRatePage : View {
                             .foregroundStyle(Color("tempoInk").opacity(0.60))
                     }
 
-                    SettingsContainer {
-                        SectionTitle(title: "Live Preview")
+                    SurfaceCard {
+                        SectionTitle(title: "Preview")
 
                         VStack(spacing: 12) {
                             PreviewRow(
                                 title: "1h Earned",
-                                value: "+$\(Self.formattedRate(rateValue))",
+                                value: "+\(CurrencyFormatter.string(rateValue))",
                                 tint: Color("tempoLeaf")
                             )
                             PreviewRow(
                                 title: "1h Required",
-                                value: "-$\(Self.formattedRate(rateValue * 0.4))",
+                                value: "-\(CurrencyFormatter.string(rateValue * 0.4))",
                                 tint: Color("tempoLossRed")
                             )
                             PreviewRow(
                                 title: "1h Spent",
-                                value: "-$\(Self.formattedRate(rateValue))",
+                                value: "-\(CurrencyFormatter.string(rateValue))",
                                 tint: Color("tempoLossRed")
                             )
                         }
@@ -148,18 +148,6 @@ struct ProfileHourlyRatePage : View {
         
         onSave(parsedHourlyRate)
         dismiss()
-    }
-    
-    private static func formattedRate(_ rate: Double) -> String {
-        var text = String(format: "%.2f", rate)
-        while text.contains(".") && text.last == "0" {
-            text.removeLast()
-        }
-        if text.last == "." {
-            text.removeLast()
-        }
-        
-        return text
     }
 }
 

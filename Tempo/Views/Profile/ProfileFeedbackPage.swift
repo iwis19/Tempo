@@ -42,7 +42,7 @@ struct ProfileFeedbackPage: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 12)
 
-                    SettingsContainer {
+                    SurfaceCard {
                         Text("Feedback Draft")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(Color("tempoInk").opacity(0.52))

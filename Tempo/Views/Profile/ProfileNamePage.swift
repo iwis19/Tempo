@@ -67,7 +67,7 @@ struct ProfileNamePage: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 12)
                     
-                    SettingsContainer {
+                    SurfaceCard {
                         Text("Name Input")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(Color("tempoInk").opacity(0.52))
@@ -111,7 +111,7 @@ struct ProfileNamePage: View {
                             .foregroundStyle(Color("tempoInk").opacity(0.60))
                     }
                     
-                    SettingsContainer {
+                    SurfaceCard {
                         SectionTitle(title: "Preview")
                         
                         PreviewRow(
