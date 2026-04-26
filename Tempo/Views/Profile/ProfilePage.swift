@@ -10,16 +10,19 @@ import SwiftUI
 struct ProfilePage: View {
     
     // @AppStorage makes it so that these variables are stored on local storage, rather than resetting after each app launch since otherwise it would be stored in memory
-    @AppStorage("firstName") private var firstName = ""
-    @AppStorage("lastName") private var lastName = ""
+    @AppStorage("firstname") private var firstname = "Jane"
+    @AppStorage("lastname") private var lastname = "Doe"
     @AppStorage("hourlyRate") private var hourlyRate = 17.95
     @AppStorage("reminderEnabled") private var reminderEnabled = false
     @AppStorage("reminderHour") private var reminderHour = 20
     @AppStorage("reminderMinute") private var reminderMinute = 0
     
+    @State private var showFeedbackPage = false
     @State private var showHourlyRatePage = false
     @State private var showDailyReminderPage = false
     @State private var showNamePage = false
+    @State private var showTimeCategoryPage = false
+    @State private var showStatementGuidePage = false
     
     var body: some View {
         
@@ -59,14 +62,20 @@ struct ProfilePage: View {
                 }
 
                 HStack(spacing: 12) {
-                    MainCardBox(title: "Hourly Rate", description: hourlyRateDisplay)
-                    MainCardBox(title: "Reminder", description: reminderDisplay)
+                    MainCardBox(
+                        title: "Hourly Rate",
+                        description: hourlyRateDisplay
+                    )
+                    MainCardBox(
+                        title: "Reminder",
+                        description: reminderDisplay
+                    )
                 }
             }
 
             SettingsContainer {
                 VStack (alignment: .leading) {
-                    SettingsSectionTitle(title: "Personal")
+                    SectionTitle(title: "Personal")
                         .padding(.leading, 5) // padding to line up text
                     
                     Button (action: {showNamePage = true}) {
@@ -74,7 +83,7 @@ struct ProfilePage: View {
                             title: "Name",
                             icon: "person.crop.circle.fill",
                             description: "How your account appears across Tempo",
-                            details: "Open"
+                            details: displayName
                         )
                     }
                     .buttonStyle(.plain)
@@ -84,7 +93,7 @@ struct ProfilePage: View {
                             title: "Hourly Rate",
                             icon: "dollarsign.circle.fill",
                             description: "Base value Tempo uses for statement math",
-                            details: "Open"
+                            details: hourlyRateDisplay
                         )
                     }
                     .buttonStyle(.plain)
@@ -94,7 +103,7 @@ struct ProfilePage: View {
                             title: "Daily Reminder",
                             icon: "bell.badge.fill",
                             description: "Checkup prompts and close-of-day nudges", 
-                            details: "Open"
+                            details: reminderDisplay
                         )
                     }
                     .buttonStyle(.plain)
@@ -104,14 +113,37 @@ struct ProfilePage: View {
             
             SettingsContainer {
                 VStack (alignment: .leading){
-                    SettingsSectionTitle(title: "App")
+                    SectionTitle(title: "Learn Tempo")
                     
-                }
-            }
-            
-            SettingsContainer {
-                VStack (alignment: .leading){
-                    SettingsSectionTitle(title: "Learn Tempo")
+                    Button (action: {showTimeCategoryPage = true}) {
+                        SettingRow(
+                            title: "Time Categories",
+                            icon: "square.grid.2x2.fill",
+                            description: "Learn what belongs in Earned, Required, and Spent",
+                            details: "Open Guide"
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button(action: { showStatementGuidePage = true }) {
+                        SettingRow(
+                            title: "How Statements Work",
+                            icon: "doc.text.magnifyingglass",
+                            description: "See how Tempo turns your day into a statement",
+                            details: "Open Guide"
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button(action: { showFeedbackPage = true }) {
+                        SettingRow(
+                            title: "Feedback",
+                            icon: "heart.text.square.fill",
+                            description: "Share friction points, bugs, or future ideas",
+                            details: "Share"
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             
@@ -123,13 +155,10 @@ struct ProfilePage: View {
              - Daily reminder
              - maybe more
              
-             App
-             - Appearance
-             - Feedback
-             
              Learn Tempo
              - Time categories, what belongs in what
              - How daily statements work
+             - Feedback
              */
         }
         .sheet(isPresented: $showHourlyRatePage) {
@@ -138,6 +167,16 @@ struct ProfilePage: View {
                 }
                 .presentationDetents([.large])
            }
+        .sheet(isPresented: $showNamePage) {
+            ProfileNamePage(
+                initialFirstname: firstname,
+                initialLastname: lastname
+            ) { newFirstname, newLastname in
+                firstname = newFirstname
+                lastname = newLastname
+            }
+            .presentationDetents([.large])
+        }
         .sheet(isPresented: $showDailyReminderPage) {
             ProfileDailyReminderPage (
                 initialReminderEnabled: reminderEnabled,
@@ -150,22 +189,25 @@ struct ProfilePage: View {
             }
             .presentationDetents([.large])
         }
-//        .sheet(isPresented: $showUsernamePage) {
-//            ProfileUsernamePage(
-//                initialFirstname: firstname,
-//                initialLastname: lastname) { firstname, lastname in
-//                firstname = newFirstname,
-//                lastname = newLastname
-//            }
-//            .presentationDetents([.large])
-//        }
+        .sheet(isPresented: $showFeedbackPage) {
+            ProfileFeedbackPage()
+                .presentationDetents([.large])
+        }
+        .sheet(isPresented: $showTimeCategoryPage) {
+            ProfileTimeCategoriesPage()
+                .presentationDetents([.large])
+        }
+        .sheet(isPresented: $showStatementGuidePage) {
+            ProfileDailyStatementGuidePage()
+                .presentationDetents([.large])
+        }
     }
     
     private var displayInitial: String {
         
         // string.first safely retrieves the first character as an OPTIONAL, if it does exist, we map it into a string, if it doesnt, we return an empty string
-        let firstInitial = firstName.first.map(String.init) ?? ""
-        let lastInitial = lastName.first.map(String.init) ?? ""
+        let firstInitial = firstname.first.map(String.init) ?? ""
+        let lastInitial = lastname.first.map(String.init) ?? ""
         let initial = firstInitial + lastInitial
         return initial.isEmpty ? "JD" : initial
     }
@@ -173,12 +215,12 @@ struct ProfilePage: View {
     private var displayName: String {
         
         // trimmingCharacters removes useless leading or trailing whitespaces
-        let fullName = "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
+        let fullName = "\(firstname) \(lastname)".trimmingCharacters(in: .whitespaces)
         return fullName.isEmpty ? "Jane Doe" : fullName
     }
 
     private var profileStatusText: String {
-        if hourlyRateValue == nil || hourlyRateValue == 0 {
+        if hourlyRate <= 0 {
             return "Add your hourly rate to start valuing time."
         }
         if reminderEnabled {
@@ -188,7 +230,7 @@ struct ProfilePage: View {
     }
 
     private var statusBadgeText: String {
-        if hourlyRateValue == nil || hourlyRateValue == 0 {
+        if hourlyRate <= 0 {
             return "Needs Setup"
         }
         return reminderEnabled ? "Ready" : "Reminder Off"
@@ -196,25 +238,20 @@ struct ProfilePage: View {
 
     private var hourlyRateDisplay: String {
         
-        // guard is also an if condition, besides it forces an early exit if the condition is not true
-        guard let hourlyRateValue, hourlyRateValue > 0 else {
+        if hourlyRate <= 0 {
             return "Not set"
         }
-        return hourlyRateValue.formatted(.currency(code: "USD").precision(.fractionLength(0...2)))
+        return Self.formattedRate(hourlyRate)
     }
 
     private var reminderDisplay: String {
         if !reminderEnabled {
             return "Off"
         }
-        return Self.formatted(hour: reminderHour, minute: reminderMinute)
-    }
-
-    private var hourlyRateValue: Double? {
-        Double(hourlyRate)
+        return Self.formattedDate(hour: reminderHour, minute: reminderMinute)
     }
     
-    private static func formatted (hour: Int, minute: Int) -> String {
+    private static func formattedDate(hour: Int, minute: Int) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         
@@ -228,6 +265,17 @@ struct ProfilePage: View {
         }
         
         return formatter.string(from: date)
+    }
+    
+    private static func formattedRate(_ rate: Double) -> String {
+        var text = String(format: "%2f", rate)
+        while text.contains(".") && text.last == "0" {
+            text.removeLast()
+        }
+        if text.last == "." {
+            text.removeLast()
+        }
+        return text
     }
     
 }

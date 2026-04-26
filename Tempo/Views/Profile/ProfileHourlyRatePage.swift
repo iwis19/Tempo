@@ -2,7 +2,7 @@
 //  ProfileHourlyRatePage.swift
 //  Tempo
 //
-//  Created by Glen gu on 2026-04-17.
+//  Created by Ronnie Gu on 2026-04-17.
 //
 
 import SwiftUI
@@ -18,14 +18,16 @@ struct ProfileHourlyRatePage : View {
     @State private var hourlyRate: String
     
     // sets up view when it is created, gives it a starting default hourly rate, stores what to do when save is pressed
-    init(initialHourlyRate: Double = 17.95, onSave: @escaping (Double) -> Void = { _ in}){
-        
+    init(
+        initialHourlyRate: Double = 17.95,
+        onSave: @escaping (Double) -> Void = { _ in}
+    ){
         // "self" means this object, which e.g. self.hourlyRate,
         // "Self" means this type, which e.g. Self.formatted(...)
         self.onSave = onSave
         
         // because hourlyRate is @State, I cant initialize it with normal assignment, so i have to initialize the wrapper itself, which is _hourlyRate
-        _hourlyRate = State(initialValue: Self.formatted(initialHourlyRate))
+        _hourlyRate = State(initialValue: Self.formattedRate(initialHourlyRate))
     }
     
     // converts the String hourlyRate into a Double, which spaces and newlines trimmed, "Double?" means it could return a Double OR nil
@@ -42,7 +44,7 @@ struct ProfileHourlyRatePage : View {
     private var canSave: Bool {
         
         //guard checks if a condition is false, if it is, immediately run else and exit
-        // in "guard let", it means created a safe, unwrapped version of this optional, if it cant, then its probably invalid
+        // in "guard let", let tries to create a safe, unwrapped version of this optional, if it cant, then its probably invalid
         guard let parsedHourlyRate else {
             return false
         }
@@ -54,7 +56,7 @@ struct ProfileHourlyRatePage : View {
             PageBackground()
 
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 22) {
+                VStack(alignment: .leading, spacing: 15) {
                     VStack(spacing: 14) {
                         DragIndicator()
 
@@ -93,23 +95,40 @@ struct ProfileHourlyRatePage : View {
                     }
 
                     SettingsContainer {
-                        SettingsSectionTitle(title: "Live Preview")
+                        SectionTitle(title: "Live Preview")
 
                         VStack(spacing: 12) {
-                            PreviewRow(title: "1h Earned", value: "+$\(Self.formatted(rateValue))", tint: Color("tempoLeaf"))
-                            PreviewRow(title: "1h Required", value: "-$\(Self.formatted(rateValue * 0.4))", tint: Color("tempoLossRed"))
-                            PreviewRow(title: "1h Spent", value: "-$\(Self.formatted(rateValue))", tint: Color("tempoLossRed"))
+                            PreviewRow(
+                                title: "1h Earned",
+                                value: "+$\(Self.formattedRate(rateValue))",
+                                tint: Color("tempoLeaf")
+                            )
+                            PreviewRow(
+                                title: "1h Required",
+                                value: "-$\(Self.formattedRate(rateValue * 0.4))",
+                                tint: Color("tempoLossRed")
+                            )
+                            PreviewRow(
+                                title: "1h Spent",
+                                value: "-$\(Self.formattedRate(rateValue))",
+                                tint: Color("tempoLossRed")
+                            )
                         }
                     }
 
                     HStack(spacing: 12) {
                         
                         // since we already have environment var dismiss set up, this is the same as passing dismiss()
-                        ActionButton(title: "Cancel", action: dismiss.callAsFunction)
+                        ActionButton(
+                            title: "Cancel",
+                            action: dismiss.callAsFunction
+                        )
                         
                         // passes the function saveRate in
-                        ActionButton(title: "Save Rate", action: saveRate)
-                            
+                        ActionButton(
+                            title: "Save Rate",
+                            action: saveRate
+                        )
                             // modifies if the button can be tapped or not
                             .disabled(!canSave)
                             .opacity(canSave ? 1 : 0.55)
@@ -131,8 +150,8 @@ struct ProfileHourlyRatePage : View {
         dismiss()
     }
     
-    private static func formatted(_ number: Double) -> String {
-        var text = String(format: "%.2f", number)
+    private static func formattedRate(_ rate: Double) -> String {
+        var text = String(format: "%.2f", rate)
         while text.contains(".") && text.last == "0" {
             text.removeLast()
         }

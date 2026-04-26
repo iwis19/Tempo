@@ -15,7 +15,12 @@ struct ProfileDailyReminderPage: View {
     @State private var reminderEnabled: Bool
     @State private var reminderTime: Date
     
-    init(initialReminderEnabled: Bool = true, initialReminderHour: Int = 20, initialReminderMinute: Int = 0, onSave: @escaping (Bool, Int, Int) -> Void = {_, _, _ in}) {
+    init(
+        initialReminderEnabled: Bool = true,
+        initialReminderHour: Int = 20,
+        initialReminderMinute: Int = 0,
+        onSave: @escaping (Bool, Int, Int) -> Void = {_, _, _ in}
+    ) {
         self.onSave = onSave
         _reminderEnabled = State(initialValue: initialReminderEnabled)
         _reminderTime = State(initialValue: Self.date(hour: initialReminderHour, minute: initialReminderMinute))
@@ -26,7 +31,7 @@ struct ProfileDailyReminderPage: View {
             PageBackground()
             
             ScrollView (showsIndicators: false) {
-                VStack (alignment: .leading, spacing: 22) {
+                VStack (alignment: .leading, spacing: 15) {
                     VStack (spacing: 14){
                         
                         DragIndicator()
@@ -79,8 +84,9 @@ struct ProfileDailyReminderPage: View {
                             }
                         }
                     }
+                    
                     SettingsContainer{
-                        SettingsSectionTitle(title:"Live Preview")
+                        SectionTitle(title:"Live Preview")
                         
                         VStack(spacing: 12){
                             PreviewRow(
@@ -102,8 +108,14 @@ struct ProfileDailyReminderPage: View {
                     }
                     
                     HStack (spacing: 12){
-                        ActionButton(title: "Cancel", action: dismiss.callAsFunction)
-                        ActionButton(title: "Save Reminder", action: saveReminder)
+                        ActionButton(
+                            title: "Cancel",
+                            action: dismiss.callAsFunction
+                        )
+                        ActionButton(
+                            title: "Save Reminder",
+                            action: saveReminder
+                        )
                     }
                 }
                 .padding(.horizontal, 22)

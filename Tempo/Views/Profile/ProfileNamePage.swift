@@ -2,7 +2,7 @@
 //  UsernamePage.swift
 //  Tempo
 //
-//  Created by Glen gu on 2026-04-18.
+//  Created by Ronnie Gu on 2026-04-18.
 //
 
 import SwiftUI
@@ -16,7 +16,10 @@ struct ProfileNamePage: View {
     @State private var lastname: String
     
     init(
-        initialFirstname: String = "Jane", initialLastname: String = "Doe", onSave: @escaping (String, String) -> Void = {_, _ in}) {
+        initialFirstname: String = "Test",
+        initialLastname: String = "Preview",
+        onSave: @escaping (String, String) -> Void = {_, _ in}
+    ) {
             self.onSave = onSave
             _firstname = State(initialValue: initialFirstname)
             _lastname = State(initialValue: initialLastname)
@@ -32,14 +35,14 @@ struct ProfileNamePage: View {
     
     private var displayName: String {
         let fullname = "\(normalizedFirstname) \(normalizedLastname)".trimmingCharacters(in: .whitespaces)
-        return fullname.isEmpty ? "Jane Doe" : fullname
+        return fullname
     }
 
     private var displayInitials: String {
         let firstInitial = normalizedFirstname.first.map(String.init) ?? ""
         let lastInitial = normalizedLastname.first.map(String.init) ?? ""
         let initials = firstInitial + lastInitial
-        return initials.isEmpty ? "JD" : initials
+        return initials
     }
 
     private var canSave: Bool {
@@ -51,7 +54,7 @@ struct ProfileNamePage: View {
             PageBackground()
             
             ScrollView (showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 22) {
+                VStack(alignment: .leading, spacing: 15) {
                     VStack (spacing: 14){
                         DragIndicator()
                         
@@ -75,7 +78,7 @@ struct ProfileNamePage: View {
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundStyle(Color("tempoInk"))
 
-                                TextField("Jane", text: $firstname)
+                                TextField("First Name", text: $firstname)
                                     .textInputAutocapitalization(.words)
                                     .autocorrectionDisabled()
                                     .font(.system(size: 18, weight: .medium))
@@ -91,7 +94,7 @@ struct ProfileNamePage: View {
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundStyle(Color("tempoInk"))
 
-                                TextField("Doe", text: $lastname)
+                                TextField("Last Name", text: $lastname)
                                     .textInputAutocapitalization(.words)
                                     .autocorrectionDisabled()
                                     .font(.system(size: 18, weight: .medium))
@@ -109,7 +112,7 @@ struct ProfileNamePage: View {
                     }
                     
                     SettingsContainer {
-                        SettingsSectionTitle(title: "Live Preview")
+                        SectionTitle(title: "Preview")
                         
                         PreviewRow(
                             title: "Display Name",
@@ -118,15 +121,21 @@ struct ProfileNamePage: View {
                         )
                         
                         PreviewRow(
-                            title: "Initials",
+                            title: "Profile Initials",
                             value: displayInitials,
                             tint: Color("tempoInk")
                         )
                     }
                     
                     HStack {
-                        ActionButton(title: "Cancel", action: dismiss.callAsFunction)
-                        ActionButton(title: "Save Name", action: saveName)
+                        ActionButton(
+                            title: "Cancel",
+                            action: dismiss.callAsFunction
+                        )
+                        ActionButton(
+                            title: "Save Name",
+                            action: saveName
+                        )
                     }
                 }
                 .padding(.horizontal, 22)
@@ -150,4 +159,5 @@ struct ProfileNamePage: View {
 
 #Preview {
     ProfileNamePage()
+
 }

@@ -66,6 +66,7 @@ struct MainCard <Content: View>: View{
             )
         )
         .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous)) // cuts the entire View into a roundedrectangle
+        .frame(maxWidth: .infinity, alignment: .leading)
         .overlay {
             RoundedRectangle(cornerRadius: 30, style: .continuous)
                 .stroke(.white.opacity(0.12), lineWidth: 1)
@@ -99,7 +100,7 @@ struct MainCardBox: View {
 }
 
 
-// ACCOUNT STATUS TEXT
+// STATUS BADGE
 struct MainCardStatusBadge : View {
     let text: String
     
@@ -139,7 +140,7 @@ struct SettingsContainer <Content: View>: View {
 
 
 // SECTION TITLES
-struct SettingsSectionTitle : View {
+struct SectionTitle : View {
     let title: String
     
     var body : some View {
@@ -215,6 +216,82 @@ struct PreviewRow : View {
     }
 }
 
+
+// CARD FOR EACH TIME CATEGORY EXPLANATION
+struct TimeCategoryCard: View {
+    let title: String
+    let summary: String
+    let tint: Color
+    let examples: [String]
+
+    var body: some View {
+        SettingsContainer {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text(title)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(tint)
+
+                    Spacer()
+
+                    Circle()
+                        .fill(tint.opacity(0.18))
+                        .frame(width: 14, height: 14)
+                }
+
+                Text(summary)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(Color("tempoInk").opacity(0.68))
+
+                ForEach(examples, id: \.self) { example in
+                    HStack(alignment: .top, spacing: 10) {
+                        Circle()
+                            .fill(tint.opacity(0.85))
+                            .frame(width: 7, height: 7)
+                            .padding(.top, 6)
+
+                        Text(example)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(Color("tempoInk"))
+                    }
+                }
+            }
+            .offset(x:3)
+            .padding(3)
+        }
+    }
+}
+
+
+// ROWS FOR EACH STATEMENT EXPLANATION
+struct StatementFlowStepRow: View {
+    let number: String
+    let title: String
+    let bodyText: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text(number)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(Color("tempoDeepGreen"))
+                .frame(width: 28, height: 28)
+                .background(Color("tempoSoftMint").opacity(0.50))
+                .clipShape(Circle())
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color("tempoInk"))
+
+                Text(bodyText)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(Color("tempoInk").opacity(0.65))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
 // PAGE BACKGROUNDS
 struct PageBackground: View {
     var body: some View{
@@ -273,6 +350,7 @@ struct PageHeader: View {
                     .foregroundStyle(Color("tempoInk").opacity(0.68))
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -290,9 +368,20 @@ struct DragIndicator: View {
 // ACTION BUTTON
 struct ActionButton: View{
     let title: String
+    let light: Bool
     
     // basically a piece of passable code stored into this action variable that does something, and it takes no params since (), and returns nothing since Void
     let action: () -> Void
+    
+    init(
+        title: String,
+        light: Bool = true,
+        action: @escaping () -> Void
+    ){
+        self.title = title
+        self.light = light
+        self.action = action
+    }
 
     var body: some View {
         
@@ -300,12 +389,87 @@ struct ActionButton: View{
         Button(action: action) {
             Text(title)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(Color("tempoInk"))
+                .foregroundStyle(light ? Color("tempoInk") : Color.white.opacity(0.84))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(Color.white.opacity(0.84))
+                .background(light ? Color.white.opacity(0.84) : Color("tempoInk"))
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 
         }
     }
 }
+
+
+//struct TransactionItem: Identifiable {
+//    let id: UUID
+//    let title: String
+//    let duration: String
+//    let category: String
+//    let amount: String
+//    let t
+//}
+
+//
+//struct SummaryCard: View {
+//    let title: String
+//    let value: String
+//    let subtitle: String
+//    let tint: Color
+//    let background: Color
+//    
+//    
+//    
+//    var body: some view {
+//        VStack (alignment: .leading, spacing: 10){
+//            Text(title)
+//                .font(.system(size:12, weight: .semibold))
+//                .foregroundStyle(Color("tempoInk").opacity(0.58))
+//            
+//            HStack(alignment: .firstTextBaseline, spacing: 1) {
+//                Text(sign)
+//            }
+//        }
+//    }
+//}
+
+
+
+struct BetterNavigationBar: View {
+    @Binding var selectedTab: Tab
+
+    var body: some View {
+        HStack {
+            // TODO: add mor epages here when completed
+            tabButton(for: .dashboard)
+            tabButton(for: .profile)
+        }
+        .padding(.horizontal, 24)
+        .frame(height: 72)
+        .background(.white.opacity(0.96))
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .stroke(Color("tempoLeaf").opacity(0.10), lineWidth: 1)
+        }
+        .shadow(color: Color("tempoShadow").opacity(0.08), radius: 18, y: 10)
+    }
+
+    @ViewBuilder
+    private func tabButton(for tab: Tab) -> some View {
+        let isSelected = selectedTab == tab
+
+        Button {
+            selectedTab = tab
+        } label: {
+            VStack(spacing: 6) {
+                Image(systemName: tab.icon)
+                    .font(.system(size: 18, weight: .semibold))
+
+                Text(tab.title)
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .foregroundStyle(isSelected ? Color("tempoDeepGreen") : Color("tempoInk").opacity(0.45))
+        }
+    }
+}
+
