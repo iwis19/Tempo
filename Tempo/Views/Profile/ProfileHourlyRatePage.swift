@@ -89,7 +89,7 @@ struct ProfileHourlyRatePage : View {
                                 .foregroundStyle(Color("tempoInk").opacity(0.60))
                         }
 
-                        Text("Change this when the value of an hour changes. Tempo will use it across checkups, history, and statement previews.")
+                        Text("Tempo will use it across checkups, history, and statement previews.")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(Color("tempoInk").opacity(0.60))
                     }

@@ -16,8 +16,13 @@ struct ContentView: View {
             Group {
                 switch selectedTab {
                 case .dashboard:
-                    NavigationStack{
+                    NavigationStack {
                         DashboardPage()
+                    }
+                    .toolbar(.hidden, for: .navigationBar)
+                case .today:
+                    NavigationStack{
+                        TodayPage()
                     }
                     .toolbar(.hidden, for: .navigationBar)
                     
@@ -37,5 +42,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(UserStore())
 }
-

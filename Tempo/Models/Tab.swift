@@ -8,11 +8,13 @@
 enum Tab {
     case dashboard
     case profile
+    case today
     
     var title: String {
         switch self {
         case .dashboard: return "Dashboard"
         case .profile: return "Profile"
+        case .today: return "Today"
         }
     }
     
@@ -20,6 +22,7 @@ enum Tab {
         switch self {
         case .dashboard: return "chart.line.uptrend.xyaxis"
         case .profile: return "person.crop.circle"
+        case .today: return "sun.max"
         }
     }
 }

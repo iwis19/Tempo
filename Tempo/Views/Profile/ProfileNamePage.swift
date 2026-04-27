@@ -12,41 +12,41 @@ struct ProfileNamePage: View {
     
     let onSave: (String, String) -> Void
     
-    @State private var firstname: String
-    @State private var lastname: String
+    @State private var firstName: String
+    @State private var lastName: String
     
     init(
-        initialFirstname: String = "Test",
-        initialLastname: String = "Preview",
-        onSave: @escaping (String, String) -> Void = {_, _ in}
+        initialFirstName: String,
+        initialLastName: String,
+        onSave: @escaping (String, String) -> Void
     ) {
             self.onSave = onSave
-            _firstname = State(initialValue: initialFirstname)
-            _lastname = State(initialValue: initialLastname)
+            _firstName = State(initialValue: initialFirstName)
+            _lastName = State(initialValue: initialLastName)
         }
     
-    private var normalizedFirstname: String {
-        firstname.trimmingCharacters(in: .whitespacesAndNewlines)
+    private var normalizedFirstName: String {
+        firstName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private var normalizedLastname: String {
-        lastname.trimmingCharacters(in: .whitespacesAndNewlines)
+    private var normalizedLastName: String {
+        lastName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     private var displayName: String {
-        let fullname = "\(normalizedFirstname) \(normalizedLastname)".trimmingCharacters(in: .whitespaces)
+        let fullname = "\(normalizedFirstName) \(normalizedLastName)".trimmingCharacters(in: .whitespaces)
         return fullname
     }
 
     private var displayInitials: String {
-        let firstInitial = normalizedFirstname.first.map(String.init) ?? ""
-        let lastInitial = normalizedLastname.first.map(String.init) ?? ""
+        let firstInitial = normalizedFirstName.first.map(String.init) ?? ""
+        let lastInitial = normalizedLastName.first.map(String.init) ?? ""
         let initials = firstInitial + lastInitial
         return initials
     }
 
     private var canSave: Bool {
-        !(normalizedFirstname.isEmpty && normalizedLastname.isEmpty)
+        !(normalizedFirstName.isEmpty && normalizedLastName.isEmpty)
     }
     
     var body: some View {
@@ -78,7 +78,7 @@ struct ProfileNamePage: View {
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundStyle(Color("tempoInk"))
 
-                                TextField("First Name", text: $firstname)
+                                TextField("First Name", text: $firstName)
                                     .textInputAutocapitalization(.words)
                                     .autocorrectionDisabled()
                                     .font(.system(size: 18, weight: .medium))
@@ -94,7 +94,7 @@ struct ProfileNamePage: View {
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundStyle(Color("tempoInk"))
 
-                                TextField("Last Name", text: $lastname)
+                                TextField("Last Name", text: $lastName)
                                     .textInputAutocapitalization(.words)
                                     .autocorrectionDisabled()
                                     .font(.system(size: 18, weight: .medium))
@@ -151,13 +151,18 @@ struct ProfileNamePage: View {
             return
         }
         
-        onSave(normalizedFirstname, normalizedLastname)
+        onSave(normalizedFirstName, normalizedLastName)
         dismiss()
     }
     
 }
 
 #Preview {
-    ProfileNamePage()
-
+    ProfileNamePage(
+        initialFirstName: "Ronnie",
+        initialLastName: "Gu",
+        onSave: { firstName, lastName in
+                    print(firstName, lastName)
+                }
+    )
 }

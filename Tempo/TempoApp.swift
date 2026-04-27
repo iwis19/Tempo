@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct TempoApp: App {
+    // tempo app owns the lifetime of this database object, also using state for @observable reference obj
+    @State private var userStore = UserStore()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
+        .environment(userStore) // makes the app own this database
     }
 }
