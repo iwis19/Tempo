@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct DashboardPage: View {
-    @AppStorage("firstname") private var firstname = "Jane"
-    @AppStorage("hourlyRate") private var hourlyRate = 17.95
+struct TodayPage: View {
+    @Environment(UserStore.self) private var userStore
+    private var firstName: String {userStore.profile.firstName}
+    private var hourlyRate: Double {userStore.setting.hourlyRate}
     private var statement: DayStatement = DayStatement(date: Date(), isClosed: false)
     private var activities: [Activity] = []
 
@@ -17,7 +18,7 @@ struct DashboardPage: View {
     var body: some View {
         PageContainer{
             PageHeader(
-                eyebrow: "Time Account",
+                eyebrow: "Today's Statement",
                 title: "\(greetingText), \(displayFirstName)",
                 subtitle: nil
             )
@@ -107,7 +108,7 @@ struct DashboardPage: View {
     }
 
     private var displayFirstName: String {
-        let trimmedName = firstname.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmedName.isEmpty ? "Jane" : trimmedName
     }
     
@@ -211,5 +212,6 @@ struct DashboardPage: View {
 }
 
 #Preview {
-    DashboardPage()
+    TodayPage()
+        .environment(UserStore())
 }
