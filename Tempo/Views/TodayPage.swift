@@ -24,6 +24,8 @@ struct TodayPage: View {
             )
             statementCard
             transactionsSection
+            
+            //TODO: summary cards, quick add transaction, remove transaction, picker for category
         }
     }
     
