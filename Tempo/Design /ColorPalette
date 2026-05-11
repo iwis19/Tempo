@@ -1,0 +1,31 @@
+Inputted Colors:
+
+tempoShell: Color(red: 0.94, green: 0.98, blue: 0.95)
+tempoSoftMint: Color(red: 0.78, green: 0.91, blue: 0.81)
+tempoLeaf: Color(red: 0.14, green: 0.58, blue: 0.28)
+tempoDeepGreen: Color(red: 0.05, green: 0.26, blue: 0.13)
+tempoCard: Color(red: 0.19, green: 0.44, blue: 0.24)
+tempoGlow: Color(red: 0.83, green: 0.97, blue: 0.86)
+tempoInk: Color(red: 0.09, green: 0.18, blue: 0.12)
+tempoShadow: Color(red: 0.04, green: 0.18, blue: 0.09)
+tempoMintCard: Color(red: 0.90, green: 0.97, blue: 0.91)
+tempoLossWash: Color(red: 0.97, green: 0.91, blue: 0.90)
+tempoNeutralCard: Color(red: 0.94, green: 0.95, blue: 0.93)
+tempoLossRed: Color(red: 0.76, green: 0.26, blue: 0.23)
+
+tempoShell        → 135°,  4%, 98%
+tempoSoftMint     → 132°, 14%, 91%
+tempoLeaf         → 137°, 76%, 58%
+tempoDeepGreen    → 142°, 81%, 26%
+tempoCard         → 132°, 57%, 44%
+tempoGlow         → 137°, 14%, 97%
+tempoInk          → 144°, 50%, 18%
+tempoShadow       → 141°, 78%, 18%
+tempoMintCard     → 128°,  7%, 97%
+tempoLossWash     →  10°,  7%, 97%
+tempoNeutralCard  → 100°,  2%, 95%
+tempoLossRed      →   3°, 70%, 76%
+
+
+
+

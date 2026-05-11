@@ -1,0 +1,18 @@
+big to do list:
+
+short term
+- turn my current activityrows in with ledgerrow
+- add notification feature
+- touch up on dashboard
+- actually implement the checknewday paststatement logic
+- move paststatement onto a nosql database
+- work on history page for past statements
+- debug
+
+
+long term
+- add in more incentives for users to use this (e.g. local grocery coupons, cafe discounts, linking with the infra within user's neighborhood)
+
+
+way longer term
+-
