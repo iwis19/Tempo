@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileDailyStatementGuidePage: View {
+struct ProfileDailyStatementGuideSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -95,5 +95,5 @@ struct ProfileDailyStatementGuidePage: View {
 }
 
 #Preview {
-    ProfileDailyStatementGuidePage()
+    ProfileDailyStatementGuideSheet()
 }

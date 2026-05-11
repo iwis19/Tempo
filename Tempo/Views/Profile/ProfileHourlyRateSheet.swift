@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileHourlyRatePage : View {
+struct ProfileHourlyRateSheet : View {
     
     // SwiftUI has a built in dismiss action from the environment, this ensures that if a view is presented somehow, there is a tool to close it
     @Environment(\.dismiss) private var dismiss
@@ -27,7 +27,7 @@ struct ProfileHourlyRatePage : View {
         self.onSave = onSave
         
         // because hourlyRate is @State, I cant initialize it with normal assignment, so i have to initialize the wrapper itself, which is _hourlyRate
-        _hourlyRate = State(initialValue: RateFormatter.string(initialHourlyRate))
+        _hourlyRate = State(initialValue: DecimalFormatter.string(initialHourlyRate))
     }
     
     // converts the String hourlyRate into a Double, which spaces and newlines trimmed, "Double?" means it could return a Double OR nil
@@ -63,7 +63,7 @@ struct ProfileHourlyRatePage : View {
                         PageHeader(
                             eyebrow: "Hourly Rate",
                             title: "Update your time value",
-                            subtitle: "Tempo uses this rate to translate time movement into a daily statement."
+                            subtitle: "Tempo uses this rate to translate time movement into the daily statement and dashboard projection."
                         )
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -89,7 +89,7 @@ struct ProfileHourlyRatePage : View {
                                 .foregroundStyle(Color("tempoInk").opacity(0.60))
                         }
 
-                        Text("Tempo will use it across checkups, history, and statement previews.")
+                        Text("Tempo will use it across checkups, history, statement previews, and the dashboard projection.")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(Color("tempoInk").opacity(0.60))
                     }
@@ -153,5 +153,5 @@ struct ProfileHourlyRatePage : View {
 
 
 #Preview {
-    ProfileHourlyRatePage()
+    ProfileHourlyRateSheet()
 }

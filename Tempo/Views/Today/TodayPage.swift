@@ -1,19 +1,19 @@
 //
-//  DashboardPage.swift
+//  TodayPage.swift
 //  Tempo
 //
 //  Created by Ronnie Gu on 2026-03-25.
 //
 
+//TODO: CHECK UP PAGE TURNS INTO THIS
+
 import SwiftUI
 
 struct TodayPage: View {
     @Environment(UserStore.self) private var userStore
-    private var firstName: String {userStore.profile.firstName}
-    private var hourlyRate: Double {userStore.setting.hourlyRate}
+    private var firstName: String { userStore.profile.firstName }
+    private var hourlyRate: Double { userStore.setting.hourlyRate }
     private var statement: DayStatement = DayStatement(date: Date(), isClosed: false)
-    private var activities: [Activity] = []
-
 
     var body: some View {
         PageContainer{
@@ -23,9 +23,8 @@ struct TodayPage: View {
                 subtitle: nil
             )
             statementCard
+            summaryCardRow
             transactionsSection
-            
-            //TODO: summary cards, quick add transaction, remove transaction, picker for category
         }
     }
     
@@ -55,9 +54,9 @@ struct TodayPage: View {
                 HStack (spacing: 12) {
                     MainCardBox(
                         title: "Entries",
-                    description: "\(statement.activities.count)"
+                        description: "\(statement.activities.count)"
                     )
-                    MainCardBox(title: "Rate", description: "$\(hourlyRate)/hr")
+                    MainCardBox(title: "Rate", description: "\(CurrencyFormatter.string(hourlyRate))/hr")
                 }
                 
                 if let action = actionText {
@@ -92,15 +91,42 @@ struct TodayPage: View {
         }
     }
     
+    private var summaryCardRow: some View {
+        HStack (alignment: .top, spacing: 8) {
+            summaryCard(
+                title: "Earned",
+                value: CurrencyFormatter.string(earnedTotal, shorten: true, alwaysShowSign: true),
+                subtitle: "Focused",
+                tint: Color("tempoLeaf"),
+                background: Color("tempoMintCard"),
+                gain: true
+            )
+            summaryCard(
+                title: "Required",
+                value: CurrencyFormatter.string(requiredTotal, shorten: true, alwaysShowSign: true),
+                subtitle: "Basics",
+                tint: Color("tempoLossRed"),
+                background: .white,
+                gain: false
+            )
+            summaryCard(
+                title: "Spent",
+                value: CurrencyFormatter.string(spentTotal, shorten: true, alwaysShowSign: true),
+                subtitle: "Drift",
+                tint: Color("tempoLossRed"),
+                background: Color("tempoNeutralCard"),
+                gain: false
+            )
+        }
+    }
+    
     private var todayTransactionItems: [TransactionItem] {
         statement.activities.map(item(for:))
     }
     
     private var greetingText: String {
-        // takes the hour from the user's local time
         let hour = Calendar.current.component(.hour, from: Date())
         
-        // this is the switch statement syntax in swift
         switch hour {
             case 0..<12: return "Good morning"
             case 12..<18: return "Good afternoon"
@@ -148,7 +174,7 @@ struct TodayPage: View {
         if statement.activities.isEmpty {
             return "Start Checkup"
         }
-        return "Close Statement"
+        return "Continue Checkup"
     }
     
     private var earnedTotal: Double {

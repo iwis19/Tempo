@@ -21,24 +21,31 @@ struct CurrencyFormatter {
     }()
     
     
-    static func string(_ number: Double, alwaysShowSign: Bool = false) -> String {
+    static func string(_ number: Double, shorten: Bool = false, alwaysShowSign: Bool = false) -> String {
         let absolute = abs(number)
-        let formatted = formatter.string(from: NSNumber(value: absolute)) ?? "0"
+        var formatted: String
+        
+        if shorten && absolute >= 1000 && absolute < 1000000 {
+            formatted = "$\(DecimalFormatter.string(absolute / 1_000.0))K"
+        }
+        else if shorten && absolute >= 1000000 {
+            formatted = "$\(DecimalFormatter.string(absolute / 1_000_000.0))M"
+        }
+        else {
+            formatted = formatter.string(from: NSNumber(value: absolute)) ?? "0"
+        }
         
         if number < 0 {
             return "-\(formatted)"
         }
-            
         else if alwaysShowSign && number > 0 {
             return "+\(formatted)"
         }
-        
         return formatted
-        
     }
 }
 
-struct RateFormatter {
+struct DecimalFormatter {
     static func string(_ rate: Double) -> String {
         var text = String(format: "%.2f", rate)
         while text.contains(".") && text.last == "0" {

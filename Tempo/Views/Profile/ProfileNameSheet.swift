@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileNamePage: View {
+struct ProfileNameSheet: View {
     @Environment(\.dismiss) private var dismiss
     
     let onSave: (String, String) -> Void
@@ -158,7 +158,7 @@ struct ProfileNamePage: View {
 }
 
 #Preview {
-    ProfileNamePage(
+    ProfileNameSheet(
         initialFirstName: "Ronnie",
         initialLastName: "Gu",
         onSave: { firstName, lastName in

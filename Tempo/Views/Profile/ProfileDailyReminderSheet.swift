@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileDailyReminderPage: View {
+struct ProfileDailyReminderSheet: View {
     @Environment(\.dismiss) private var dismiss
     
     let onSave: (Bool, Int, Int) -> Void
@@ -170,5 +170,5 @@ struct ProfileDailyReminderPage: View {
 
 
 #Preview {
-    ProfileDailyReminderPage()
+    ProfileDailyReminderSheet()
 }

@@ -54,7 +54,7 @@ struct MainCard <Content: View>: View{
     }
     
     var body: some View {
-        VStack{
+        VStack (alignment: .leading, spacing: 10){
             content
         }
         .padding(22) // add inner space around the view's content by 22 px, rather than all view elements in the stack
@@ -402,30 +402,6 @@ struct ActionButton: View{
 }
 
 
-//
-//struct SummaryCard: View {
-//    let title: String
-//    let value: String
-//    let subtitle: String
-//    let tint: Color
-//    let background: Color
-//    
-//    
-//    
-//    var body: some view {
-//        VStack (alignment: .leading, spacing: 10){
-//            Text(title)
-//                .font(.system(size:12, weight: .semibold))
-//                .foregroundStyle(Color("tempoInk").opacity(0.58))
-//            
-//            HStack(alignment: .firstTextBaseline, spacing: 1) {
-//                Text(sign)
-//            }
-//        }
-//    }
-//}
-
-
 // REWORKED NAVIGATION BAR
 struct BetterNavigationBar: View {
     @Binding var selectedTab: Tab
@@ -516,4 +492,69 @@ struct LedgerRow: View {
         
     }
     
+}
+
+
+struct summaryCard: View {
+    let title: String
+    let value: String
+    let subtitle: String
+    let tint: Color
+    let background: Color
+    var gain: Bool = true
+    var showsSign: Bool = true
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.system(size:12, weight: .semibold))
+                .foregroundStyle(Color("tempoInk").opacity(0.58))
+            
+            HStack (alignment: .firstTextBaseline, spacing: 1) {
+                Text(valueSign)
+                    .font(.system(size:14, weight: .bold))
+                    .foregroundStyle(tint)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.9)
+                
+                Text(valueAmount)
+                    .font(.custom("Syne-Regular", size: 24))
+                    .foregroundStyle(tint)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+                    .allowsTightening(true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(1)
+            
+            Spacer()
+            
+            Text(subtitle)
+                .font(.system(size:13, weight: .medium))
+                .foregroundStyle(Color("tempoInk").opacity(0.64))
+
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(background.opacity(0.92))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(Color("tempoInk").opacity(0.10), lineWidth: 1)
+        }
+    }
+    
+    private var valueSign: String {
+        guard showsSign else {
+            return ""
+        }
+        return gain ? "+" : "-"
+    }
+    
+    private var valueAmount: String {
+        if value.hasPrefix("-") || value.hasPrefix("+") {
+            return String(value.dropFirst())
+        }
+        return value
+    }
 }

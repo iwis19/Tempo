@@ -8,7 +8,7 @@
 import SwiftUI
 
 // TODO: MAKE DATABASE FOR FEEDBACK (PREFERABLY FIREBASE/MONGODB)
-struct ProfileFeedbackPage: View {
+struct ProfileFeedbackSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var feedbackTopic = "General"
@@ -109,5 +109,5 @@ struct ProfileFeedbackPage: View {
 }
 
 #Preview {
-    ProfileFeedbackPage()
+    ProfileFeedbackSheet()
 }
