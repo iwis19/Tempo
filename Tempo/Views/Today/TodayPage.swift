@@ -13,7 +13,9 @@ struct TodayPage: View {
     @Environment(UserStore.self) private var userStore
     private var firstName: String { userStore.profile.firstName }
     private var hourlyRate: Double { userStore.setting.hourlyRate }
-    private var statement: DayStatement = DayStatement(date: Date(), isClosed: false)
+    private var statement: DayStatement { userStore.todayStatement }
+    
+    @State private var showTodayStatementSheet: Bool = false
 
     var body: some View {
         PageContainer{
@@ -26,47 +28,59 @@ struct TodayPage: View {
             summaryCardRow
             transactionsSection
         }
+        .sheet(isPresented: $showTodayStatementSheet) {
+            TodayStatementSheet(
+                initialStatement: userStore.todayStatement
+            ) { activities in
+                userStore.todayStatement.activities = activities
+                userStore.saveTodayStatement()
+            }
+                .presentationDetents([.large])
+        }
+        
     }
     
     private var statementCard: some View {
         MainCard {
-            VStack (alignment: .leading, spacing: 10){
-                HStack (alignment: .top) {
-                    Text("TODAY'S NET")
-                        .font(.system(size:12, weight: .bold))
-                        .foregroundStyle(Color.white.opacity(0.72))
-                        .offset(y: 8)
-                    
-                    Spacer()
-                    
-                    MainCardStatusBadge(text: statusBadgeText)
+            HStack (alignment: .top) {
+                Text("TODAY'S NET")
+                    .font(.system(size:12, weight: .bold))
+                    .foregroundStyle(Color.white.opacity(0.72))
+                    .offset(y: 8)
                 
-                }
-
-                Text(CurrencyFormatter.string(netTotal, alwaysShowSign: true))
-                    .font(.custom("Syne-Regular", size: 46))
-                    .foregroundStyle(Color.white)
+                Spacer()
                 
-                Text(statementDescription)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(Color.white.opacity(0.84))
-                
-                HStack (spacing: 12) {
-                    MainCardBox(
-                        title: "Entries",
-                        description: "\(statement.activities.count)"
-                    )
-                    MainCardBox(title: "Rate", description: "\(CurrencyFormatter.string(hourlyRate))/hr")
-                }
-                
-                if let action = actionText {
-                    ActionButton(
-                        title: action,
-                        light: false,
-                        action: {}
-                    )
-                }
+                MainCardStatusBadge(text: statusBadgeText)
+            
             }
+
+            Text(CurrencyFormatter.string(netTotal, alwaysShowSign: true))
+                .font(.custom("Syne-Regular", size: 46))
+                .foregroundStyle(Color.white)
+            
+            Text(statementDescription)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(Color.white.opacity(0.84))
+            
+            HStack (spacing: 12) {
+                MainCardBox(
+                    title: "Entries",
+                    description: "\(statement.activities.count)"
+                )
+                MainCardBox(title: "Rate", description: "\(CurrencyFormatter.string(hourlyRate))/hr")
+            }
+            
+            ActionButton(
+                title: actionText,
+                light: false,
+                action: {
+                    // is statement is already closed, sheet cannot be opened
+                    if !statement.isClosed {
+                        showTodayStatementSheet = true
+                    }
+                }
+            )
+            
         }
     }
     
@@ -167,9 +181,9 @@ struct TodayPage: View {
         return "Your daily statement is currently balanced."
     }
     
-    private var actionText: String? {
+    private var actionText: String {
         if statement.isClosed {
-            return nil
+            return "Statement Closed"
         }
         if statement.activities.isEmpty {
             return "Start Checkup"
@@ -206,7 +220,7 @@ struct TodayPage: View {
         return "\(remainder)m"
     }
     
-    private func sum(for category: ActivityCategories) -> Double {
+    private func sum(for category: ActivityCategory) -> Double {
         statement.activities.filter{ $0.category == category} .reduce(0) { partialResult, activity in partialResult + amount(for:activity)}
     }
     
