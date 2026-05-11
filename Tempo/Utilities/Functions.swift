@@ -78,3 +78,12 @@ struct TimeFormatter {
 }
 
 
+struct ActivityCalculator {
+    static func amount(for activity: Activity, hourlyRate: Double) -> Double {
+
+        let hours = Double(activity.durationMinutes) / 60
+        return hours * hourlyRate * activity.category.statementMultiplier
+    }
+}
+
+

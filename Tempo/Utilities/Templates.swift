@@ -13,6 +13,17 @@ struct StyleTemplates: View {
     }
 }
 
+var greetingText: String {
+    let hour = Calendar.current.component(.hour, from: Date())
+    
+    switch hour {
+        case 0..<12: return "Good morning"
+        case 12..<18: return "Good afternoon"
+        case 18...: return "Good evening"
+        default: return "Hello"
+    }
+}
+
 
 // PAGE CONTAINERS
 // <Content: View> indicates that it is generic over some content, but content must also follow View protocol, meaning that this container can hold any child UI inside it
@@ -445,49 +456,46 @@ struct BetterNavigationBar: View {
 
 
 struct LedgerRow: View {
-    let item: TransactionItem
+    let activity: Activity
+    let amount: Double
 
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
             Circle()
-                .fill(item.tone.badgeBackground)
+                .fill(activity.category.background.opacity(0.95))
                 .frame(width: 46, height: 46)
                 .overlay {
-                    Image(systemName: item.tone.iconName)
-                        .font(.system(size:16, weight: .bold))
-                        .foregroundStyle(item.tone.amountColor)
+                    Image(systemName: activity.category.iconName)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(activity.category.tint)
                 }
-            VStack (alignment: .leading, spacing: 4) {
-                Text(item.title)
-                    .font(.system(size:16, weight: .semibold))
+            
+            VStack(alignment: .leading, spacing: 6) {
+                Text(activity.name)
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Color("tempoInk"))
                 
-                HStack(spacing: 6){
-                    Text(item.duration)
-                        .font(.system(size:13, weight: .medium))
+                HStack(spacing: 6) {
+                    Text("\(activity.durationMinutes)m")
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Color("tempoInk").opacity(0.58))
                     
                     Circle()
                         .fill(Color("tempoInk").opacity(0.24))
-                        .frame(width:4, height: 4)
+                        .frame(width: 4, height: 4)
                     
-                    Text(item.category)
-                        .font(.system(size:13, weight: .medium))
+                    Text(activity.category.title)
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Color("tempoInk").opacity(0.58))
                 }
             }
+            
             Spacer()
             
-            Text(item.amount)
-                .font(.system(size:15, weight: .bold))
-                .foregroundStyle(item.tone.amountColor)
-        }
-        .padding(16)
-        .background(Color.white.opacity(0.88))
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay{
-            RoundedRectangle(cornerRadius: 24, style:.continuous)
-                .stroke(Color("tempoLeaf").opacity(0.1), lineWidth: 1)
+            Text(CurrencyFormatter.string(amount, alwaysShowSign: true))
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(activity.category.tint)
+            
         }
         
     }
