@@ -15,7 +15,7 @@ import SwiftUI
 // however, for usersettings, daystatements, its not just a choice, its different variables with different data types, so struct is used
 
 // CaseIterable: lets me iterate through all cases, lets me do things such as ActivityCategories.allCases
-enum ActivityCategory: Identifiable, CaseIterable{
+enum ActivityCategory: Codable, Identifiable, CaseIterable{
     case earned
     case `required` // escape char from an assigned keyword "required" in swift
     case spent
