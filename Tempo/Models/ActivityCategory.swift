@@ -38,7 +38,7 @@ enum ActivityCategory: Codable, Identifiable, CaseIterable{
         case .earned:
             return 1
         case .required:
-            return -0.4
+            return -0.3
         case .spent:
             return -1
         }
@@ -63,6 +63,17 @@ enum ActivityCategory: Codable, Identifiable, CaseIterable{
             return Color.white
         case .spent:
             return Color("tempoNeutralCard")
+        }
+    }
+    
+    var iconName: String {
+        switch self {
+        case .earned:
+            return "arrow.up.right"
+        case .required:
+            return "minus"
+        case .spent:
+            return "arrow.down.right"
         }
     }
 }

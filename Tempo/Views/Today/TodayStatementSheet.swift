@@ -18,6 +18,7 @@ struct TodayStatementSheet: View {
     @State private var draftActivityTitle: String = ""
     @State private var draftActivityTime: String = "" // will do type conv later
     @State private var draftActivityChoice: ActivityCategory = .earned
+    private var hourlyRate: Double { userStore.setting.hourlyRate }
     
     init(
         initialStatement: DayStatement,
@@ -51,10 +52,16 @@ struct TodayStatementSheet: View {
                     activityReview
                     quickAddSection
                     
-                    ActionButton(
-                        title: "Save Activities",
-                        action: saveActivities
-                    )
+                    HStack (spacing: 12) {
+                        ActionButton(
+                            title: "Cancel",
+                            action: dismiss.callAsFunction
+                        )
+                        ActionButton(
+                            title: "Save Activities",
+                            action: saveActivities
+                        )
+                    }
                     
                 }
                 
@@ -80,7 +87,7 @@ struct TodayStatementSheet: View {
                     ForEach($activities) { $activity in
                         ActivityRow(
                             activity: $activity,
-                            amount: amount(for: activity),
+                            amount: ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate),
                             onDelete: {
                                 deleteActivity(id: activity.id)
                             }
@@ -96,75 +103,15 @@ struct TodayStatementSheet: View {
         let amount: Double
         let onDelete: () -> Void
 
-        private var iconName: String {
-            switch activity.category {
-            case .earned:
-                return "arrow.up.right"
-            case .required:
-                return "minus"
-            case .spent:
-                return "arrow.down.right"
-            }
-        }
-
         var body: some View {
             SurfaceCard {
-                HStack(alignment: .top, spacing: 14) {
-                    Circle()
-                        .fill(activity.category.background.opacity(0.95))
-                        .frame(width: 46, height: 46)
-                        .overlay {
-                            Image(systemName: iconName)
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundStyle(activity.category.tint)
-                        }
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(activity.name)
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color("tempoInk"))
-                        
-                        HStack(spacing: 6) {
-                            Text("\(activity.durationMinutes)m")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(Color("tempoInk").opacity(0.58))
-                            
-                            Circle()
-                                .fill(Color("tempoInk").opacity(0.24))
-                                .frame(width: 4, height: 4)
-                            
-                            Text(activity.category.title)
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(Color("tempoInk").opacity(0.58))
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(alignment: .trailing, spacing: 12) {
-                        Button(role: .destructive) {
-                            onDelete()
-                        } label: {
-                            Image(systemName: "trash")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundStyle(Color("tempoLossRed"))
-                                .padding(10)
-                                .background(Color("tempoLossWash").opacity(0.92))
-                                .clipShape(Circle())
-                        }
-                        .buttonStyle(.plain)
-                        
-                        Text(CurrencyFormatter.string(amount, alwaysShowSign: true))
-                            .font(.system(size: 15, weight: .bold))
-                            .foregroundStyle(activity.category.tint)
-                    }
-                }
+                LedgerRow(activity: activity, amount: amount)
                 
                 HStack(spacing: 10) {
                     ForEach(ActivityCategory.allCases) { category in
-                        Button {
+                        Button(action: {
                             activity.category = category
-                        } label: {
+                        }) {
                             Text(category.title)
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundStyle(activity.category == category ? .white : category.tint)
@@ -175,6 +122,18 @@ struct TodayStatementSheet: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    
+                    Spacer()
+                    
+                    Button(action: onDelete) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(Color("tempoLossRed"))
+                            .padding(10)
+                            .background(Color("tempoLossWash").opacity(0.92))
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -182,12 +141,6 @@ struct TodayStatementSheet: View {
     
     private func deleteActivity(id: UUID) {
         activities.removeAll { $0.id == id }
-    }
-    
-    
-    private func amount(for activity: Activity) -> Double {
-        let hours = Double(activity.durationMinutes) / 60
-        return hours * userStore.setting.hourlyRate * activity.category.statementMultiplier
     }
     
     private var quickAddSection: some View {
@@ -281,10 +234,13 @@ struct TodayStatementSheet: View {
 }
 
 
-
 #Preview {
-    TodayStatementSheet(
-        initialStatement: DemoData.todayStatement
+    let userStore = UserStore()
+    userStore.todayStatement = DemoData.todayStatement
+    
+    // swift wanted an explicit return for the view expression since it is no longer the only line in preview section
+    return TodayStatementSheet(
+        initialStatement: userStore.todayStatement
     )
-        .environment(UserStore())
+        .environment(userStore)
 }

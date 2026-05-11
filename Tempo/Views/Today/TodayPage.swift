@@ -10,6 +10,8 @@
 import SwiftUI
 
 struct TodayPage: View {
+    
+    // using environment instead of creating a new UserStore() object because this is environment (app wide), rather than creating a new dataset/base for every single different page there is on this app
     @Environment(UserStore.self) private var userStore
     private var firstName: String { userStore.profile.firstName }
     private var hourlyRate: Double { userStore.setting.hourlyRate }
@@ -70,25 +72,38 @@ struct TodayPage: View {
                 MainCardBox(title: "Rate", description: "\(CurrencyFormatter.string(hourlyRate))/hr")
             }
             
-            ActionButton(
-                title: actionText,
-                light: false,
-                action: {
-                    // is statement is already closed, sheet cannot be opened
-                    if !statement.isClosed {
+            HStack (spacing: 12) {
+                ActionButton(
+                    title: actionText,
+                    light: false,
+                    action: {
+                        // is statement is already closed, sheet cannot be opened
                         showTodayStatementSheet = true
                     }
-                }
-            )
-            
+                )
+                .disabled(statement.isClosed)
+                
+                ActionButton(
+                    title: "Close Statement",
+                    light: false,
+                    action: closeStatement
+                )
+                .disabled(statement.isClosed)
+            }
+ 
         }
+    }
+    
+    private func closeStatement() {
+        userStore.todayStatement.isClosed = true
+        userStore.saveTodayStatement()
     }
     
     private var transactionsSection: some View {
         VStack (alignment: .leading, spacing: 14) {
             SectionTitle(title: "Today's Transactions")
             
-            if todayTransactionItems.isEmpty {
+            if statement.activities.isEmpty {
                 SurfaceCard {
                     Text("Log your first activity to start building today's statement.")
                         .font(.system(size: 15, weight: .medium))
@@ -97,10 +112,13 @@ struct TodayPage: View {
             }
             else {
                 VStack (spacing: 12) {
-                    ForEach(todayTransactionItems) { item in
-                        LedgerRow(item: item)
+                    ForEach(statement.activities) { activity in
+                        SurfaceCard{
+                            LedgerRow(activity: activity, amount: ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate))
+                        }
                     }
                 }
+                
             }
         }
     }
@@ -131,21 +149,6 @@ struct TodayPage: View {
                 background: Color("tempoNeutralCard"),
                 gain: false
             )
-        }
-    }
-    
-    private var todayTransactionItems: [TransactionItem] {
-        statement.activities.map(item(for:))
-    }
-    
-    private var greetingText: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        
-        switch hour {
-            case 0..<12: return "Good morning"
-            case 12..<18: return "Good afternoon"
-            case 18...: return "Good evening"
-            default: return "Hello"
         }
     }
 
@@ -183,12 +186,12 @@ struct TodayPage: View {
     
     private var actionText: String {
         if statement.isClosed {
-            return "Statement Closed"
+            return "Closed"
         }
         if statement.activities.isEmpty {
             return "Start Checkup"
         }
-        return "Continue Checkup"
+        return "Continue"
     }
     
     private var earnedTotal: Double {
@@ -207,53 +210,17 @@ struct TodayPage: View {
         earnedTotal + spentTotal + requiredTotal
     }
     
-    private func durationDisplay(for minutes: Int) -> String{
-        let hours = minutes / 60
-        let remainder = minutes % 60
-        
-        if hours > 0 && remainder > 0{
-            return "\(hours)h \(remainder)m"
-        }
-        if hours > 0{
-            return "\(hours)h"
-        }
-        return "\(remainder)m"
-    }
-    
     private func sum(for category: ActivityCategory) -> Double {
-        statement.activities.filter{ $0.category == category} .reduce(0) { partialResult, activity in partialResult + amount(for:activity)}
+        statement.activities.filter{ $0.category == category} .reduce(0) { partialResult, activity in partialResult + ActivityCalculator.amount(for:activity, hourlyRate: hourlyRate)}
     }
     
-    private func amount(for activity: Activity) -> Double {
-        guard hourlyRate > 0 else {
-            return 0
-        }
-        let hours = Double(activity.durationMinutes) / 60
-        return hours * hourlyRate * activity.category.statementMultiplier
-    }
-    
-    private func item(for activity: Activity) -> TransactionItem {
-        let categoryText = activity.category.title
-        
-        let tone: Flowtone = {
-            switch activity.category {
-            case .earned: return .positive
-            case .required, .spent: return .negative
-            }
-        }()
-        
-        return TransactionItem(
-            id: activity.id,
-            title: activity.name,
-            duration: durationDisplay(for: activity.durationMinutes),
-            category: categoryText,
-            amount: CurrencyFormatter.string(amount(for: activity), alwaysShowSign: true),
-            tone: tone
-        )
-    }
 }
 
 #Preview {
-    TodayPage()
-        .environment(UserStore())
+    let userStore = UserStore()
+    userStore.todayStatement = DemoData.todayStatement
+    userStore.setting.hourlyRate = 40.23
+    
+    return TodayPage()
+        .environment(userStore)
 }
