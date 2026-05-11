@@ -55,10 +55,6 @@ struct ProfileDailyReminderSheet: View {
                                 Text("Daily Reminder")
                                     .font(.system(size:16, weight: .semibold))
                                     .foregroundStyle(Color("tempoInk"))
-                                
-                                Text("Keep a consistent check-in so the statement closes with intention.")
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundStyle(Color("tempoInk").opacity(0.6))
                             }
                         }
                         .tint(Color("tempoLeaf"))
@@ -86,7 +82,7 @@ struct ProfileDailyReminderSheet: View {
                     }
                     
                     SurfaceCard{
-                        SectionTitle(title:"Live Preview")
+                        SectionTitle(title:"Preview")
                         
                         VStack(spacing: 12){
                             PreviewRow(
@@ -95,14 +91,9 @@ struct ProfileDailyReminderSheet: View {
                                 tint: reminderEnabled ? Color("tempoLeaf") : Color("tempoInk").opacity(0.58)
                             )
                             PreviewRow(
-                                title: "Delivery Time",
+                                title: "Notification Time",
                                 value: reminderDisplay,
                                 tint: Color("tempoDeepGreen")
-                            )
-                            PreviewRow(
-                                title: "Statement Cue",
-                                value: reminderEnabled ? "Close your day" : "No reminder scheduled",
-                                tint: Color("tempoInk")
                             )
                         }
                     }

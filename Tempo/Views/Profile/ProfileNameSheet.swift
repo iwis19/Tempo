@@ -105,26 +105,6 @@ struct ProfileNameSheet: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             }
                         }
-                        
-                        Text("Keep the name recognizable so your account card feels personal and clear.")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Color("tempoInk").opacity(0.60))
-                    }
-                    
-                    SurfaceCard {
-                        SectionTitle(title: "Preview")
-                        
-                        PreviewRow(
-                            title: "Display Name",
-                            value: displayName,
-                            tint: Color("tempoInk")
-                        )
-                        
-                        PreviewRow(
-                            title: "Profile Initials",
-                            value: displayInitials,
-                            tint: Color("tempoInk")
-                        )
                     }
                     
                     HStack {

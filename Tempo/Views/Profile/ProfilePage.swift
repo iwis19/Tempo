@@ -17,17 +17,17 @@ struct ProfilePage: View {
     private var reminderHour: Int {userStore.setting.reminderHour}
     private var reminderMinute: Int {userStore.setting.reminderMinute}
     
-    @State private var showFeedbackPage = false
-    @State private var showHourlyRatePage = false
-    @State private var showDailyReminderPage = false
-    @State private var showNamePage = false
-    @State private var showTimeCategoryPage = false
-    @State private var showStatementGuidePage = false
+    @State private var showFeedbackSheet = false
+    @State private var showHourlyRateSheet = false
+    @State private var showDailyReminderSheet = false
+    @State private var showNameSheet = false
+    @State private var showTimeCategorySheet = false
+    @State private var showStatementGuideSheet = false
     
     var body: some View {
         
         PageContainer {
-            PageHeader(eyebrow: "Profile", title: "Statement Settings", subtitle: "Set the rate, reminder, and rules Tempo uses for your daily statement.")
+            PageHeader(eyebrow: "Profile", title: "Statement Settings", subtitle: "Set the rate, reminder, and rules Tempo uses for your daily statement and dashboard cash projection.")
             
             MainCard {
                 HStack(alignment: .center, spacing: 12) {
@@ -58,6 +58,7 @@ struct ProfilePage: View {
                         Text(profileStatusText)
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(.white.opacity(0.78))
+                            .offset(y: -2)
                     }
                 }
 
@@ -78,7 +79,7 @@ struct ProfilePage: View {
                     SectionTitle(title: "Personal")
                         .padding(.leading, 5) // padding to line up text
                     
-                    Button (action: {showNamePage = true}) {
+                    Button (action: {showNameSheet = true}) {
                         SettingRow(
                             title: "Name",
                             icon: "person.crop.circle.fill",
@@ -88,17 +89,17 @@ struct ProfilePage: View {
                     }
                     .buttonStyle(.plain)
                     
-                    Button(action: {showHourlyRatePage = true}) {
+                    Button(action: {showHourlyRateSheet = true}) {
                         SettingRow(
                             title: "Hourly Rate",
                             icon: "dollarsign.circle.fill",
-                            description: "Base value Tempo uses for statement math",
+                            description: "Base value Tempo uses for statement math and dashboard projection",
                             details: hourlyRateDisplay
                         )
                     }
                     .buttonStyle(.plain)
                     
-                    Button(action: {showDailyReminderPage = true}){
+                    Button(action: {showDailyReminderSheet = true}){
                         SettingRow(
                             title: "Daily Reminder",
                             icon: "bell.badge.fill",
@@ -115,7 +116,7 @@ struct ProfilePage: View {
                 VStack (alignment: .leading){
                     SectionTitle(title: "Learn Tempo")
                     
-                    Button (action: {showTimeCategoryPage = true}) {
+                    Button (action: {showTimeCategorySheet = true}) {
                         SettingRow(
                             title: "Time Categories",
                             icon: "square.grid.2x2.fill",
@@ -125,7 +126,7 @@ struct ProfilePage: View {
                     }
                     .buttonStyle(.plain)
 
-                    Button(action: { showStatementGuidePage = true }) {
+                    Button(action: { showStatementGuideSheet = true }) {
                         SettingRow(
                             title: "How Statements Work",
                             icon: "doc.text.magnifyingglass",
@@ -135,7 +136,7 @@ struct ProfilePage: View {
                     }
                     .buttonStyle(.plain)
 
-                    Button(action: { showFeedbackPage = true }) {
+                    Button(action: { showFeedbackSheet = true }) {
                         SettingRow(
                             title: "Feedback",
                             icon: "heart.text.square.fill",
@@ -161,15 +162,15 @@ struct ProfilePage: View {
              - Feedback
              */
         }
-        .sheet(isPresented: $showHourlyRatePage) {
-            ProfileHourlyRatePage(initialHourlyRate: hourlyRate) { newHourlyRate in
+        .sheet(isPresented: $showHourlyRateSheet) {
+            ProfileHourlyRateSheet(initialHourlyRate: hourlyRate) { newHourlyRate in
                 userStore.setting.hourlyRate = newHourlyRate
                 userStore.saveSetting()
-                }
+            }
                 .presentationDetents([.large])
-           }
-        .sheet(isPresented: $showNamePage) {
-            ProfileNamePage(
+        }
+        .sheet(isPresented: $showNameSheet) {
+            ProfileNameSheet(
                 initialFirstName: firstName,
                 initialLastName: lastName
             ) { newFirstName, newLastName in
@@ -179,8 +180,8 @@ struct ProfilePage: View {
             }
             .presentationDetents([.large])
         }
-        .sheet(isPresented: $showDailyReminderPage) {
-            ProfileDailyReminderPage (
+        .sheet(isPresented: $showDailyReminderSheet) {
+            ProfileDailyReminderSheet (
                 initialReminderEnabled: reminderEnabled,
                 initialReminderHour: reminderHour,
                 initialReminderMinute: reminderMinute
@@ -192,16 +193,16 @@ struct ProfilePage: View {
             }
             .presentationDetents([.large])
         }
-        .sheet(isPresented: $showFeedbackPage) {
-            ProfileFeedbackPage()
+        .sheet(isPresented: $showFeedbackSheet) {
+            ProfileFeedbackSheet()
                 .presentationDetents([.large])
         }
-        .sheet(isPresented: $showTimeCategoryPage) {
-            ProfileTimeCategoriesPage()
+        .sheet(isPresented: $showTimeCategorySheet) {
+            ProfileTimeCategoriesSheet()
                 .presentationDetents([.large])
         }
-        .sheet(isPresented: $showStatementGuidePage) {
-            ProfileDailyStatementGuidePage()
+        .sheet(isPresented: $showStatementGuideSheet) {
+            ProfileDailyStatementGuideSheet()
                 .presentationDetents([.large])
         }
     }

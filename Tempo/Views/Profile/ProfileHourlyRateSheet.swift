@@ -88,10 +88,6 @@ struct ProfileHourlyRateSheet : View {
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(Color("tempoInk").opacity(0.60))
                         }
-
-                        Text("Tempo will use it across checkups, history, statement previews, and the dashboard projection.")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Color("tempoInk").opacity(0.60))
                     }
 
                     SurfaceCard {
