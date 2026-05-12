@@ -16,9 +16,9 @@ struct ProfileNameSheet: View {
     @State private var lastName: String
     
     init(
-        initialFirstName: String,
-        initialLastName: String,
-        onSave: @escaping (String, String) -> Void
+        initialFirstName: String = "Jane",
+        initialLastName: String = "Doe",
+        onSave: @escaping (String, String) -> Void = { _, _ in}
     ) {
             self.onSave = onSave
             _firstName = State(initialValue: initialFirstName)
@@ -138,11 +138,5 @@ struct ProfileNameSheet: View {
 }
 
 #Preview {
-    ProfileNameSheet(
-        initialFirstName: "Ronnie",
-        initialLastName: "Gu",
-        onSave: { firstName, lastName in
-                    print(firstName, lastName)
-                }
-    )
+    ProfileNameSheet()
 }
