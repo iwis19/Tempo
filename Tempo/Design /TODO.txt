@@ -1,7 +1,4 @@
-big to do list:
-
 short term
-- turn my current activityrows in with ledgerrow
 - add notification feature
 - touch up on dashboard
 - actually implement the checknewday paststatement logic
@@ -11,6 +8,9 @@ short term
 
 
 long term
+- line up nav bar
+- put contentview together
+- write readme.md
 - add in more incentives for users to use this (e.g. local grocery coupons, cafe discounts, linking with the infra within user's neighborhood)
 
 
