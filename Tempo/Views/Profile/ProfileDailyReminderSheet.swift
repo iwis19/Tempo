@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileDailyReminderSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(NotificationHandler.self) private var notificationHandler
     
     let onSave: (Bool, Int, Int) -> Void
     
@@ -108,6 +109,21 @@ struct ProfileDailyReminderSheet: View {
                             action: saveReminder
                         )
                     }
+                    
+                    Spacer()
+                    
+                    VStack (alignment: .center, spacing: 10){
+                        Text("Not working?")
+                            .foregroundStyle(.gray)
+                            .italic()
+                        
+                        Button("Request permissions") {
+                            notificationHandler.askPermission()
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+    
                 }
                 .padding(.horizontal, 22)
                 .padding(.top, 20)
@@ -162,4 +178,5 @@ struct ProfileDailyReminderSheet: View {
 
 #Preview {
     ProfileDailyReminderSheet()
+        .environment(NotificationHandler())
 }

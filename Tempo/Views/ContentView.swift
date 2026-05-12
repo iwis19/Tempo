@@ -8,7 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(UserStore.self) private var userStore
+    @Environment(NotificationHandler.self) private var notificationHandler
     @State private var selectedTab: Tab = .dashboard
+    
+    private var notifHour: Int { userStore.setting.reminderHour }
+    private var notifMinute: Int { userStore.setting.reminderMinute }
+    private var notifEnabled: Bool { userStore.setting.reminderEnabled }
+
+    let today = Date()
+    private var time: Date? {
+        Calendar.current.date(
+            bySettingHour: notifHour,
+            minute: notifMinute,
+            second: 0,
+            of: today
+        )
+    }
     
     var body: some View {
         
@@ -43,4 +59,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(UserStore())
+        .environment(NotificationHandler())
 }
