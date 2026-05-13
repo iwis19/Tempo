@@ -14,6 +14,7 @@
 		B97095272F6F82CD00D7D230 /* Exceptions for "Tempo" folder in "Tempo" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Design /ColorPalette",
 				Info.plist,
 			);
 			target = B96FFF2B2F6E491E00640D1E /* Tempo */;
