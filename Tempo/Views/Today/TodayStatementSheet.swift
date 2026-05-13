@@ -74,7 +74,7 @@ struct TodayStatementSheet: View {
     
     private var activityReview: some View {
         VStack (alignment: .leading, spacing: 14) {
-            SectionTitle(title: "Review Today's Activity")
+            SectionTitle(title: reviewText)
             
             if activities.isEmpty{
                 SurfaceCard {
@@ -95,6 +95,14 @@ struct TodayStatementSheet: View {
                     }
                 }
             }
+        }
+    }
+    
+    private var reviewText: String {
+        if activities.count > 1 {
+            "Review Today's Activities"
+        } else {
+            "Review Today's Activity"
         }
     }
     

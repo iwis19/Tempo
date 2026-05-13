@@ -23,27 +23,34 @@ class NotificationHandler {
         }
     }
     
-    func sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String) {
+    func cancelNotification(){
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["dailyReminder"])
+    }
+    
+    func sendNotification(hour: Int, minute: Int,  timeInterval: Double = 10, title: String, body: String) {
+        // cancels the previous scheduled notif that user has set
+        cancelNotification()
         var trigger: UNNotificationTrigger?
         
-        if type == "date" {
-            let dateComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .minute], from: date)
-            trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-        } else if type == "time" {
-            trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
-        }
+        // since repeat is on, we only need hour and minute
+        var dateComponents = DateComponents()
+        dateComponents.hour = hour
+        dateComponents.minute = minute
         
+        trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = UNNotificationSound.default
         
         let request = UNNotificationRequest(
-            identifier: UUID().uuidString,
+            identifier: "dailyReminder",
             content: content,
             trigger: trigger
         )
         
         UNUserNotificationCenter.current().add(request)
     }
+
 }

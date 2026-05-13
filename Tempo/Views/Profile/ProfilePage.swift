@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ProfilePage: View {
+    
+    @Environment(NotificationHandler.self) private var notificationHandler
 
     @Environment(UserStore.self) private var userStore
     private var firstName: String {userStore.profile.firstName}
@@ -27,7 +29,11 @@ struct ProfilePage: View {
     var body: some View {
         
         PageContainer {
-            PageHeader(eyebrow: "Profile", title: "Statement Settings", subtitle: "Set the rate, reminder, and rules Tempo uses for your daily statement and dashboard cash projection.")
+            PageHeader(
+                eyebrow: "Profile",
+                title: "Statement Settings",
+                subtitle: nil
+            )
             
             MainCard {
                 HStack(alignment: .center, spacing: 12) {
@@ -190,6 +196,25 @@ struct ProfilePage: View {
                 userStore.setting.reminderHour = newReminderHour
                 userStore.setting.reminderMinute = newReminderMinute
                 userStore.saveSetting()
+                
+                let notificationBodyText = [
+                    "Hey, what have you done today?",
+                    "Take a minute to log today's time!",
+                    "Your daily checkup is ready :)",
+                    "Wrap up the day in Tempo."
+                ]
+                
+                // sends notification
+                if newReminderEnabled {
+                    notificationHandler.sendNotification(
+                        hour: newReminderHour,
+                        minute: newReminderMinute,
+                        title: "Close your statement",
+                        body: notificationBodyText.randomElement() ?? ""
+                    )
+                } else if !newReminderEnabled {
+                    notificationHandler.cancelNotification()
+                }
             }
             .presentationDetents([.large])
         }
@@ -260,4 +285,5 @@ struct ProfilePage: View {
 #Preview {
     ProfilePage()
         .environment(UserStore())
+        .environment(NotificationHandler())
 }
