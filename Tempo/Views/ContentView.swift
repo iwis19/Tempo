@@ -41,13 +41,18 @@ struct ContentView: View {
                         TodayPage()
                     }
                     .toolbar(.hidden, for: .navigationBar)
-                    
+                case .history:
+                    NavigationStack {
+                        HistoryPage()
+                    }
+                    .toolbar(.hidden, for: .navigationBar)
                 case .profile:
                     NavigationStack{
                         ProfilePage()
                     }
                     .toolbar(.hidden, for: .navigationBar)
                 }
+            
                 
                 BetterNavigationBar(selectedTab: $selectedTab)
                     .padding(.horizontal, 22)

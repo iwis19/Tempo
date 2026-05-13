@@ -418,11 +418,15 @@ struct BetterNavigationBar: View {
     @Binding var selectedTab: Tab
 
     var body: some View {
-        HStack {
+        HStack (alignment: .center) {
             // TODO: add more pages here when completed
             tabButton(for: .dashboard)
             tabButton(for: .today)
+                .offset(y:-1.5)
+            
+            tabButton(for: .history)
             tabButton(for: .profile)
+            
         }
         .padding(.horizontal, 24)
         .frame(height: 72)
