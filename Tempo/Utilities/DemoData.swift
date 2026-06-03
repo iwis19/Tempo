@@ -44,11 +44,29 @@ enum DemoData {
         ),
         DayStatement(
             activities: [
+                Activity(name: "Planning block", length: 70, category: .earned),
+                Activity(name: "Meal prep", length: 40, category: .required),
+                Activity(name: "Late scroll", length: 35, category: .spent)
+            ],
+            date: date(daysAgo: 3),
+            isClosed: true
+        ),
+        DayStatement(
+            activities: [
                 Activity(name: "Study block", length: 75, category: .earned),
                 Activity(name: "Commute", length: 50, category: .required),
                 Activity(name: "Gaming detour", length: 45, category: .spent)
             ],
             date: date(daysAgo: 4),
+            isClosed: true
+        ),
+        DayStatement(
+            activities: [
+                Activity(name: "Portfolio work", length: 90, category: .earned),
+                Activity(name: "Errands", length: 45, category: .required),
+                Activity(name: "Streaming break", length: 40, category: .spent)
+            ],
+            date: date(daysAgo: 5),
             isClosed: true
         ),
         DayStatement(

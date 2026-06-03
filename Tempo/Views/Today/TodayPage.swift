@@ -13,11 +13,14 @@ struct TodayPage: View {
     
     // using environment instead of creating a new UserStore() object because this is environment (app wide), rather than creating a new dataset/base for every single different page there is on this app
     @Environment(UserStore.self) private var userStore
+    
     private var firstName: String { userStore.profile.firstName }
     private var hourlyRate: Double { userStore.setting.hourlyRate }
     private var statement: DayStatement { userStore.todayStatement }
     
     @State private var showTodayStatementSheet: Bool = false
+    
+    private var positive: Bool { netTotal >= 0 }
 
     var body: some View {
         PageContainer{
@@ -43,7 +46,7 @@ struct TodayPage: View {
     }
     
     private var statementCard: some View {
-        MainCard {
+        MainCard (positive: positive){
             HStack (alignment: .top) {
                 Text("TODAY'S NET")
                     .font(.system(size:12, weight: .bold))
@@ -52,7 +55,7 @@ struct TodayPage: View {
                 
                 Spacer()
                 
-                MainCardStatusBadge(text: statusBadgeText)
+                MainCardStatusBadge(text: statusBadgeText, positive: positive)
             
             }
 
@@ -75,7 +78,7 @@ struct TodayPage: View {
             HStack (spacing: 12) {
                 ActionButton(
                     title: actionText,
-                    light: false,
+                    light: positive ? false : true,
                     action: {
                         // is statement is already closed, sheet cannot be opened
                         showTodayStatementSheet = true
@@ -85,7 +88,7 @@ struct TodayPage: View {
                 
                 ActionButton(
                     title: "Close Statement",
-                    light: false,
+                    light: positive ? false : true,
                     action: closeStatement
                 )
                 .disabled(statement.isClosed)

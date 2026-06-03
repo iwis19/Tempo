@@ -35,7 +35,7 @@ struct ProfilePage: View {
                 subtitle: nil
             )
             
-            MainCard {
+            MainCard (positive: true){
                 HStack(alignment: .center, spacing: 12) {
                     ZStack {
                         Circle()
@@ -57,7 +57,7 @@ struct ProfilePage: View {
                             
                             Spacer()
                             
-                            MainCardStatusBadge(text: statusBadgeText)
+                            MainCardStatusBadge(text: statusBadgeText, positive: true)
                                 .offset(y: -4)
                         }
                         
