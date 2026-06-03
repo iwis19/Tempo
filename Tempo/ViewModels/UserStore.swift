@@ -39,6 +39,10 @@ final class UserStore {
             isClosed: false
         )
         pastStatement = []
+
+        loadTodayStatement()
+        loadPastStatement()
+        checkForNewDay()
     }
     
     func saveSetting (){
@@ -86,23 +90,46 @@ final class UserStore {
         let past = try? encoder.encode(pastStatement)
         defaults.set(past, forKey: "pastStatement")
     }
+
+    func saveAll() {
+        saveSetting()
+        saveProfile()
+        saveTodayStatement()
+        savePastStatement()
+    }
     
     func checkForNewDay(){
         let calendar = Calendar.current
-        let today = Date()
+        let now = Date()
+        let currentDay = calendar.startOfDay(for: now)
+        let statementDay = calendar.startOfDay(for: todayStatement.date)
         
-        if !calendar.isDate(today, inSameDayAs: todayStatement.date) {
-            
-            // TODO: clear current todaystatement and append yesterday todaystatement into passtatement
-            pastStatement.append(todayStatement)
-            todayStatement = DayStatement(
-                date: today,
-                isClosed: false
-            )
-            
-            saveTodayStatement()
-            savePastStatement()
-            
+        if statementDay == currentDay {
+            return
         }
+        
+        var closedStatement = todayStatement
+        closedStatement.isClosed = true
+        pastStatement.append(closedStatement)
+        
+        // adds in for between today and last saved date since app wasnt loaded to check between possibly
+        var nextDay = calendar.date(byAdding: .day, value: 1, to: statementDay)
+        while let missedDay = nextDay, missedDay < currentDay {
+            pastStatement.append(
+                DayStatement(
+                    date: missedDay,
+                    isClosed: true
+                )
+            )
+            nextDay = calendar.date(byAdding: .day, value: 1, to: missedDay)
+        }
+        
+        todayStatement = DayStatement(
+            date: now,
+            isClosed: false
+        )
+            
+        saveTodayStatement()
+        savePastStatement()
     }
 }

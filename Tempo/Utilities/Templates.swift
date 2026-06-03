@@ -56,13 +56,18 @@ struct PageContainer <Content: View>: View {
     }
 }
 
-
 // PROMINENT GREEN CARD IN MOST PAGES
 struct MainCard <Content: View>: View{
+    let profit: Bool
     let content: Content
-    init(@ViewBuilder content: () -> Content) {
+    init(
+        positive: Bool,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.profit = positive
         self.content = content()
     }
+    
     
     var body: some View {
         VStack (alignment: .leading, spacing: 10){
@@ -70,11 +75,7 @@ struct MainCard <Content: View>: View{
         }
         .padding(22) // add inner space around the view's content by 22 px, rather than all view elements in the stack
         .background(
-            LinearGradient(
-                colors: [Color("tempoDeepGreen"), Color("tempoLeaf")],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            profit ? positiveGradient : negativeGradient
         )
         .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous)) // cuts the entire View into a roundedrectangle
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -114,14 +115,15 @@ struct MainCardBox: View {
 // STATUS BADGE
 struct MainCardStatusBadge : View {
     let text: String
+    let positive: Bool
     
     var body: some View {
         Text(text)
             .font(.system(size: 12, weight: .bold))
-            .foregroundStyle(Color("tempoDeepGreen"))
+            .foregroundStyle(positive ? Color("tempoDeepGreen") : Color("tempoWineRed"))
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(Color("tempoGlow"))
+            .background(positive ? Color("tempoGlow") : Color("tempoLossWash"))
             .clipShape(Capsule())
     }
 }
@@ -313,23 +315,23 @@ struct PageBackground: View {
             LinearGradient(colors: [Color("tempoShell"), Color("tempoShell"), Color.white ,Color("tempoShell"), Color("tempoShell")], startPoint: .topTrailing, endPoint: .bottomLeading)
                 .ignoresSafeArea()
             
-            Circle()
-                .fill(Color("tempoSoftMint").opacity(0.74))
-                .blur(radius: 70)
-                .frame(width: 260, height: 260)
-                .offset(x: 145, y: -250)
-            
-            RoundedRectangle(cornerRadius: 70, style: .continuous)
-                .fill(Color.white.opacity(0.58))
-                .frame(width: 260, height: 340)
-                .rotationEffect(.degrees(24))
-                .offset(x: 165, y: -140)
-            
-            RoundedRectangle(cornerRadius: 56, style: .continuous)
-                .stroke(Color("tempoLeaf").opacity(0.16), lineWidth: 1)
-                .frame(width: 210, height: 210)
-                .rotationEffect(.degrees(-18))
-                .offset(x: -165, y: 290)
+//            Circle()
+//                .fill(Color("tempoSoftMint").opacity(0.74))
+//                .blur(radius: 70)
+//                .frame(width: 260, height: 260)
+//                .offset(x: 145, y: -250)
+//            
+//            RoundedRectangle(cornerRadius: 70, style: .continuous)
+//                .fill(Color.white.opacity(0.58))
+//                .frame(width: 260, height: 340)
+//                .rotationEffect(.degrees(24))
+//                .offset(x: 165, y: -140)
+//            
+//            RoundedRectangle(cornerRadius: 56, style: .continuous)
+//                .stroke(Color("tempoLeaf").opacity(0.16), lineWidth: 1)
+//                .frame(width: 210, height: 210)
+//                .rotationEffect(.degrees(-18))
+//                .offset(x: -165, y: 290)
         }
         .allowsHitTesting(false)
         .ignoresSafeArea()
@@ -569,4 +571,26 @@ struct summaryCard: View {
         }
         return value
     }
+}
+
+
+var positiveGradient: LinearGradient {
+    LinearGradient(
+        colors: [
+            Color("tempoDeepGreen"),
+            Color("tempoLeaf")
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing)
+}
+
+var negativeGradient: LinearGradient {
+    LinearGradient(
+        colors: [
+            Color("tempoWineRed"),
+            Color("tempoLossRed")
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
 }
