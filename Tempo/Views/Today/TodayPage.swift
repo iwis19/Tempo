@@ -70,7 +70,7 @@ struct TodayPage: View {
                     title: "Entries",
                     description: "\(statement.activities.count)"
                 )
-                MainCardBox(title: "Rate", description: "\(CurrencyFormatter.string(hourlyRate))/hr")
+                MainCardBox(title: "Rate", description: "\(CurrencyFormatter.string(statementHourlyRate))/hr")
             }
             
             HStack (spacing: 12) {
@@ -96,7 +96,11 @@ struct TodayPage: View {
     }
     
     private func closeStatement() {
-        userStore.todayStatement.isClosed = true
+        userStore.todayStatement = StatementCalculator.snapshot(
+            for: userStore.todayStatement,
+            hourlyRate: hourlyRate,
+            isClosed: true
+        )
         userStore.saveTodayStatement()
     }
     
@@ -115,7 +119,7 @@ struct TodayPage: View {
                 VStack (spacing: 12) {
                     ForEach(statement.activities) { activity in
                         SurfaceCard{
-                            LedgerRow(activity: activity, amount: ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate))
+                            LedgerRow(activity: activity, amount: ActivityCalculator.amount(for: activity, hourlyRate: statementHourlyRate))
                         }
                     }
                 }
@@ -130,24 +134,24 @@ struct TodayPage: View {
                 title: ActivityCategory.earned.title,
                 value: CurrencyFormatter.string(earnedTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Focused",
-                tint: Flowtone.positive.amountColor,
-                background: Flowtone.positive.badgeBackground,
+                tint: Flowtone.positive.tint,
+                background: Flowtone.positive.background,
                 gain: true
             )
             summaryCard(
                 title: ActivityCategory.required.title,
                 value: CurrencyFormatter.string(requiredTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Basics",
-                tint: Flowtone.neutral.amountColor,
-                background: Flowtone.neutral.badgeBackground,
+                tint: Flowtone.neutral.tint,
+                background: Flowtone.neutral.background,
                 gain: false
             )
             summaryCard(
                 title: ActivityCategory.spent.title,
                 value: CurrencyFormatter.string(spentTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Drift",
-                tint: Flowtone.negative.amountColor,
-                background: Flowtone.negative.badgeBackground,
+                tint: Flowtone.negative.tint,
+                background: Flowtone.negative.background,
                 gain: false
             )
         }
@@ -196,23 +200,27 @@ struct TodayPage: View {
     }
     
     private var earnedTotal: Double {
-        sum(for: .earned)
+        statement.isClosed ? statement.earnedTotal : sum(for: .earned)
     }
     
     private var requiredTotal: Double {
-        sum(for: .required)
+        statement.isClosed ? statement.requiredTotal : sum(for: .required)
     }
     
     private var spentTotal: Double {
-        sum(for: .spent)
+        statement.isClosed ? statement.spentTotal : sum(for: .spent)
     }
     
     private var netTotal: Double {
-        earnedTotal + spentTotal + requiredTotal
+        statement.isClosed ? statement.netTotal : earnedTotal + spentTotal + requiredTotal
     }
     
     private func sum(for category: ActivityCategory) -> Double {
-        statement.activities.filter{ $0.category == category} .reduce(0) { partialResult, activity in partialResult + ActivityCalculator.amount(for:activity, hourlyRate: hourlyRate)}
+        StatementCalculator.total(for: category, in: statement, hourlyRate: hourlyRate)
+    }
+    
+    private var statementHourlyRate: Double {
+        statement.isClosed ? statement.hourlyRateSnapshot : hourlyRate
     }
     
 }

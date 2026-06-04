@@ -483,12 +483,12 @@ struct LedgerRow: View {
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
             Circle()
-                .fill(tone.badgeBackground.opacity(0.95))
+                .fill(tone.background.opacity(0.95))
                 .frame(width: 46, height: 46)
                 .overlay {
-                    Image(systemName: activity.category.iconName)
+                    Image(systemName: activity.category.icon)
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(tone.amountColor)
+                        .foregroundStyle(tone.tint)
                 }
             
             VStack(alignment: .leading, spacing: 6) {
@@ -515,7 +515,7 @@ struct LedgerRow: View {
             
             Text(CurrencyFormatter.string(amount, alwaysShowSign: true))
                 .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(tone.amountColor)
+                .foregroundStyle(tone.tint)
             
         }
         
@@ -624,10 +624,10 @@ struct ActivityRow: View {
                     }) {
                         Text(category.title)
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(activity.category == category ? .white : tone.amountColor)
+                            .foregroundStyle(activity.category == category ? .white : tone.tint)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 10)
-                            .background(activity.category == category ? tone.amountColor : tone.badgeBackground)
+                            .background(activity.category == category ? tone.tint : tone.background)
                             .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)

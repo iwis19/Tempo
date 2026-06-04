@@ -52,7 +52,7 @@ enum ActivityCategory: Codable, Identifiable, CaseIterable {
         }
     }
     
-    var iconName: String {
+    var icon: String {
         switch self {
         case .earned:
             return "arrow.up.right"

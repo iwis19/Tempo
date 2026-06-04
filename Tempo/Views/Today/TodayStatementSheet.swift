@@ -147,10 +147,10 @@ struct TodayStatementSheet: View {
                         Button(action: { draftActivityChoice = category }) {
                             Text(category.title)
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(draftActivityChoice == category ? .white : tone.amountColor)
+                                .foregroundStyle(draftActivityChoice == category ? .white : tone.tint)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 10)
-                                .background(draftActivityChoice == category ? tone.amountColor : tone.badgeBackground)
+                                .background(draftActivityChoice == category ? tone.tint : tone.background)
                                 .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)

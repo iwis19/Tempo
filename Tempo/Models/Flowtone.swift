@@ -12,7 +12,7 @@ enum Flowtone {
     case negative
     case neutral
 
-    var amountColor: Color {
+    var tint: Color {
         switch self {
         case .positive:
             return Color("tempoLeaf")
@@ -23,7 +23,7 @@ enum Flowtone {
         }
     }
 
-    var badgeBackground: Color {
+    var background: Color {
         switch self {
         case .positive:
             return Color("tempoSoftMint").opacity(0.38)

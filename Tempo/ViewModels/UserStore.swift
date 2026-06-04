@@ -23,20 +23,23 @@ final class UserStore {
     
     init()
     {
+        let initialHourlyRate = defaults.object(forKey: "hourlyRate") as? Double ?? 17.95
+        
         profile = UserProfile(
             firstName: defaults.string(forKey: "firstName") ?? "Jane",
             lastName: defaults.string(forKey: "lastName") ?? "Doe"
         )
         setting = UserSettings(
             // reads the data from under the "hourlyRate" key in defaults database, if it doesnt exist, return 17.95 default
-            hourlyRate: defaults.object(forKey: "hourlyRate") as? Double ?? 17.95,
+            hourlyRate: initialHourlyRate,
             reminderEnabled: defaults.object(forKey: "reminderEnabled") as? Bool ?? false,
             reminderHour: defaults.object(forKey: "reminderHour") as? Int ?? 20,
             reminderMinute: defaults.object(forKey: "reminderMinute") as? Int ?? 0
         )
         todayStatement = DayStatement(
             date: Date(),
-            isClosed: false
+            isClosed: false,
+            hourlyRateSnapshot: initialHourlyRate
         )
         pastStatement = []
 
@@ -62,10 +65,12 @@ final class UserStore {
         let decoder = JSONDecoder()
         if let today = defaults.data(forKey: "todayStatement"), let decoded = try? decoder.decode(DayStatement.self, from: today) {
             todayStatement = decoded
-        } else {
+        }
+        else {
             todayStatement = DayStatement(
                 date: Date(),
-                isClosed: false
+                isClosed: false,
+                hourlyRateSnapshot: setting.hourlyRate
             )
         }
     }
@@ -108,8 +113,12 @@ final class UserStore {
             return
         }
         
-        var closedStatement = todayStatement
-        closedStatement.isClosed = true
+        let closedStatement = StatementCalculator.snapshot(
+            for: todayStatement,
+            hourlyRate: setting.hourlyRate,
+            isClosed: true
+        )
+        
         pastStatement.append(closedStatement)
         
         // adds in for between today and last saved date since app wasnt loaded to check between possibly
@@ -118,7 +127,8 @@ final class UserStore {
             pastStatement.append(
                 DayStatement(
                     date: missedDay,
-                    isClosed: true
+                    isClosed: true,
+                    hourlyRateSnapshot: setting.hourlyRate
                 )
             )
             nextDay = calendar.date(byAdding: .day, value: 1, to: missedDay)
@@ -126,7 +136,8 @@ final class UserStore {
         
         todayStatement = DayStatement(
             date: now,
-            isClosed: false
+            isClosed: false,
+            hourlyRateSnapshot: setting.hourlyRate
         )
             
         saveTodayStatement()

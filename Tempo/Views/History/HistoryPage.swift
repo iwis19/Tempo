@@ -11,7 +11,7 @@ struct HistoryPage: View {
     var body: some View {
         PageContainer {
             PageHeader(
-                eyebrow: "Your Past",
+                eyebrow: "History",
                 title: nil,
                 subtitle: nil
             )

@@ -89,3 +89,36 @@ struct ActivityCalculator {
     }
 }
 
+struct StatementCalculator {
+    static func total(for category: ActivityCategory, in statement: DayStatement, hourlyRate: Double) -> Double {
+        statement.activities
+            .filter { $0.category == category }
+            .reduce(0) { partialResult, activity in
+                partialResult + ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate)
+            }
+    }
+    
+    static func netTotal(for statement: DayStatement, hourlyRate: Double) -> Double {
+        ActivityCategory.allCases.reduce(0) { partialResult, category in
+            partialResult + total(for: category, in: statement, hourlyRate: hourlyRate)
+        }
+    }
+    
+    static func snapshot(for statement: DayStatement, hourlyRate: Double, isClosed: Bool) -> DayStatement {
+        let earnedTotal = total(for: .earned, in: statement, hourlyRate: hourlyRate)
+        let requiredTotal = total(for: .required, in: statement, hourlyRate: hourlyRate)
+        let spentTotal = total(for: .spent, in: statement, hourlyRate: hourlyRate)
+        
+        return DayStatement(
+            id: statement.id,
+            activities: statement.activities,
+            date: statement.date,
+            isClosed: isClosed,
+            hourlyRateSnapshot: hourlyRate,
+            earnedTotal: earnedTotal,
+            requiredTotal: requiredTotal,
+            spentTotal: spentTotal,
+            netTotal: earnedTotal + requiredTotal + spentTotal
+        )
+    }
+}

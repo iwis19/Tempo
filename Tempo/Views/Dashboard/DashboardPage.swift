@@ -72,24 +72,24 @@ struct DashboardPage: View {
                 title: ActivityCategory.earned.title,
                 value: CurrencyFormatter.string(earnedTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Focused",
-                tint: Flowtone.positive.amountColor,
-                background: Flowtone.positive.badgeBackground,
+                tint: Flowtone.positive.tint,
+                background: Flowtone.positive.background,
                 gain: true
             )
             summaryCard(
                 title: ActivityCategory.required.title,
                 value: CurrencyFormatter.string(requiredTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Basics",
-                tint: Flowtone.neutral.amountColor,
-                background: Flowtone.neutral.badgeBackground,
+                tint: Flowtone.neutral.tint,
+                background: Flowtone.neutral.background,
                 gain: false
             )
             summaryCard(
                 title: ActivityCategory.spent.title,
                 value: CurrencyFormatter.string(spentTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Drift",
-                tint: Flowtone.negative.amountColor,
-                background: Flowtone.negative.badgeBackground,
+                tint: Flowtone.negative.tint,
+                background: Flowtone.negative.background,
                 gain: false
             )
         }
@@ -275,7 +275,7 @@ struct DashboardPage: View {
 
     private var historyNetTotal: Double {
         pastStatements.reduce(0) { partialResult, statement in
-            partialResult + net(for: statement)
+            partialResult + statement.netTotal
         }
     }
 
@@ -450,7 +450,7 @@ struct DashboardPage: View {
             return Color("tempoInk")
         }
 
-        return tone(for: sevenDayNet).amountColor
+        return tone(for: sevenDayNet).tint
     }
 
     private var averageClosedDayTint: Color {
@@ -462,7 +462,7 @@ struct DashboardPage: View {
             return Color("tempoInk")
         }
 
-        return tone(for: averageClosedDayNet).amountColor
+        return tone(for: averageClosedDayNet).tint
     }
 
     private var bestDayTint: Color {
@@ -474,7 +474,7 @@ struct DashboardPage: View {
             return Color("tempoDeepGreen")
         }
 
-        return tone(for: net(for: bestDayStatement)).amountColor
+        return tone(for: net(for: bestDayStatement)).tint
     }
     
     private var allTimeAverageDayNet: Double {
@@ -524,17 +524,22 @@ struct DashboardPage: View {
     }
 
     private func statementTotal(for category: ActivityCategory, in statement: DayStatement) -> Double {
-        statement.activities
-            .filter { $0.category == category }
-            .reduce(0) { partialResult, activity in
-                partialResult + ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate)
+        if statement.isClosed {
+            switch category {
+            case .earned:
+                return statement.earnedTotal
+            case .required:
+                return statement.requiredTotal
+            case .spent:
+                return statement.spentTotal
             }
+        }
+        
+        return StatementCalculator.total(for: category, in: statement, hourlyRate: hourlyRate)
     }
 
     private func net(for statement: DayStatement) -> Double {
-        statement.activities.reduce(0) { partialResult, activity in
-            partialResult + ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate)
-        }
+        statement.isClosed ? statement.netTotal : StatementCalculator.netTotal(for: statement, hourlyRate: hourlyRate)
     }
 
     private func tone(for amount: Double) -> Flowtone {

@@ -8,11 +8,32 @@
 import Foundation
 
 enum DemoData {
+    private static let hourlyRate = 40.23
+
     private static func date(daysAgo: Int) -> Date {
         Calendar.current.date(byAdding: .day, value: -daysAgo, to: Date()) ?? Date()
     }
 
-    static let todayStatement = DayStatement(
+    private static func statement(
+        activities: [Activity],
+        date: Date,
+        isClosed: Bool
+    ) -> DayStatement {
+        let statement = DayStatement(
+            activities: activities,
+            date: date,
+            isClosed: isClosed,
+            hourlyRateSnapshot: hourlyRate
+        )
+        
+        return StatementCalculator.snapshot(
+            for: statement,
+            hourlyRate: hourlyRate,
+            isClosed: isClosed
+        )
+    }
+
+    static let todayStatement = statement(
         activities: [
             Activity(name: "Focused study", length: 80, category: .earned),
             Activity(name: "Commute", length: 45, category: .required),
@@ -24,7 +45,7 @@ enum DemoData {
     )
 
     static let pastStatements: [DayStatement] = [
-        DayStatement(
+        statement(
             activities: [
                 Activity(name: "Deep work sprint", length: 120, category: .earned),
                 Activity(name: "Grocery run", length: 40, category: .required),
@@ -33,7 +54,7 @@ enum DemoData {
             date: date(daysAgo: 1),
             isClosed: true
         ),
-        DayStatement(
+        statement(
             activities: [
                 Activity(name: "Client edits", length: 95, category: .earned),
                 Activity(name: "Laundry", length: 35, category: .required),
@@ -42,7 +63,7 @@ enum DemoData {
             date: date(daysAgo: 2),
             isClosed: true
         ),
-        DayStatement(
+        statement(
             activities: [
                 Activity(name: "Planning block", length: 70, category: .earned),
                 Activity(name: "Meal prep", length: 40, category: .required),
@@ -51,7 +72,7 @@ enum DemoData {
             date: date(daysAgo: 3),
             isClosed: true
         ),
-        DayStatement(
+        statement(
             activities: [
                 Activity(name: "Study block", length: 75, category: .earned),
                 Activity(name: "Commute", length: 50, category: .required),
@@ -60,7 +81,7 @@ enum DemoData {
             date: date(daysAgo: 4),
             isClosed: true
         ),
-        DayStatement(
+        statement(
             activities: [
                 Activity(name: "Portfolio work", length: 90, category: .earned),
                 Activity(name: "Errands", length: 45, category: .required),
@@ -69,7 +90,7 @@ enum DemoData {
             date: date(daysAgo: 5),
             isClosed: true
         ),
-        DayStatement(
+        statement(
             activities: [
                 Activity(name: "Admin reset", length: 45, category: .required),
                 Activity(name: "Freelance proposal", length: 60, category: .earned)

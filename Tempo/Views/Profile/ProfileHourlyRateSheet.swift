@@ -97,20 +97,20 @@ struct ProfileHourlyRateSheet : View {
                             PreviewRow(
                                 title: "1h Earned",
                                 value: "\(CurrencyFormatter.string(rateValue * ActivityCategory.earned.statementMultiplier, shorten: true, alwaysShowSign: true))",
-                                tint: ActivityCategory.earned.tone.amountColor,
-                                background: Flowtone.positive.badgeBackground
+                                tint: ActivityCategory.earned.tone.tint,
+                                background: Flowtone.positive.background
                             )
                             PreviewRow(
                                 title: "1h Required",
                                 value: "\(CurrencyFormatter.string(rateValue * ActivityCategory.required.statementMultiplier, shorten: true, alwaysShowSign: true))",
-                                tint: ActivityCategory.required.tone.amountColor,
-                                background: Flowtone.neutral.badgeBackground
+                                tint: ActivityCategory.required.tone.tint,
+                                background: Flowtone.neutral.background
                             )
                             PreviewRow(
                                 title: "1h Spent",
                                 value: "\(CurrencyFormatter.string(rateValue * ActivityCategory.spent.statementMultiplier, shorten: true, alwaysShowSign: true))",
-                                tint: ActivityCategory.spent.tone.amountColor,
-                                background: Flowtone.negative.badgeBackground
+                                tint: ActivityCategory.spent.tone.tint,
+                                background: Flowtone.negative.background
                             )
                         }
                     }
