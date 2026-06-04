@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 
-struct DashboardPage: View {
+struct HomePage: View {
     @Environment(UserStore.self) private var userStore
 
     private var hourlyRate: Double { userStore.setting.hourlyRate }
@@ -22,12 +22,11 @@ struct DashboardPage: View {
     var body: some View {
         PageContainer {
             PageHeader(
-                eyebrow: "Dashboard",
+                eyebrow: "Home",
                 title: "\(greetingText), \(displayFirstName)",
                 subtitle: nil
             )
             balanceCard
-            summaryCardRow
             trendSection
         }
     }
@@ -566,6 +565,6 @@ struct DashboardPage: View {
     userStore.pastStatement = DemoData.pastStatements
     userStore.setting.hourlyRate = 40.23
 
-    return DashboardPage()
+    return HomePage()
         .environment(userStore)
 }

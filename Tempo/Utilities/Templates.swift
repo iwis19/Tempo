@@ -435,7 +435,7 @@ struct BetterNavigationBar: View {
     var body: some View {
         HStack (alignment: .center) {
             // TODO: add more pages here when completed
-            tabButton(for: .dashboard)
+            tabButton(for: .home)
             tabButton(for: .today)
                 .offset(y:-1.5)
             

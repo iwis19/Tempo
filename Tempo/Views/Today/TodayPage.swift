@@ -23,7 +23,7 @@ struct TodayPage: View {
     var body: some View {
         PageContainer{
             PageHeader(
-                eyebrow: "Today's Statement",
+                eyebrow: "Today",
                 title: "\(greetingText), \(displayFirstName)",
                 subtitle: nil
             )

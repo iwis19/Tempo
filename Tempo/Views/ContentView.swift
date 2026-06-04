@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab: Tab = .dashboard
+    @State private var selectedTab: Tab = .home
     
     @State private var showLaunchPage = true
 
@@ -37,9 +37,9 @@ struct ContentView: View {
         ZStack (alignment: .bottom) {
             Group {
                 switch selectedTab {
-                case .dashboard:
+                case .home:
                     NavigationStack {
-                        DashboardPage()
+                        HomePage()
                     }
                     .toolbar(.hidden, for: .navigationBar)
                 case .today:
@@ -59,7 +59,6 @@ struct ContentView: View {
                     .toolbar(.hidden, for: .navigationBar)
                 }
             
-                
                 BetterNavigationBar(selectedTab: $selectedTab)
                     .padding(.horizontal, 22)
             }
