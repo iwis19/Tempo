@@ -33,18 +33,6 @@ struct ProfileNameSheet: View {
         lastName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    private var displayName: String {
-        let fullname = "\(normalizedFirstName) \(normalizedLastName)".trimmingCharacters(in: .whitespaces)
-        return fullname
-    }
-
-    private var displayInitials: String {
-        let firstInitial = normalizedFirstName.first.map(String.init) ?? ""
-        let lastInitial = normalizedLastName.first.map(String.init) ?? ""
-        let initials = firstInitial + lastInitial
-        return initials
-    }
-
     private var canSave: Bool {
         !(normalizedFirstName.isEmpty && normalizedLastName.isEmpty)
     }

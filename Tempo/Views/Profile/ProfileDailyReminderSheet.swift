@@ -89,13 +89,17 @@ struct ProfileDailyReminderSheet: View {
                             PreviewRow(
                                 title: "Reminder Status",
                                 value: reminderEnabled ? "On" : "Off",
-                                tint: reminderEnabled ? Color("tempoLeaf") : Color("tempoInk").opacity(0.58)
+                                tint: reminderEnabled ? Color("tempoLeaf") : Color("tempoInk").opacity(0.58),
+                                background: reminderEnabled ? Color("tempoShell") : Color("tempoNeutralCard")
                             )
-                            PreviewRow(
-                                title: "Notification Time",
-                                value: reminderDisplay,
-                                tint: Color("tempoDeepGreen")
-                            )
+                            if reminderEnabled {
+                                PreviewRow(
+                                    title: "Notification Time",
+                                    value: reminderDisplay,
+                                    tint: Color("tempoDeepGreen"),
+                                    background: Color("tempoShell")
+                                )
+                            }
                         }
                     }
                     

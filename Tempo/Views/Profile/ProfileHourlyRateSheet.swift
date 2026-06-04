@@ -96,18 +96,21 @@ struct ProfileHourlyRateSheet : View {
                         VStack(spacing: 12) {
                             PreviewRow(
                                 title: "1h Earned",
-                                value: "+\(CurrencyFormatter.string(rateValue))",
-                                tint: Color("tempoLeaf")
+                                value: "\(CurrencyFormatter.string(rateValue * ActivityCategory.earned.statementMultiplier, shorten: true, alwaysShowSign: true))",
+                                tint: ActivityCategory.earned.tone.amountColor,
+                                background: Flowtone.positive.badgeBackground
                             )
                             PreviewRow(
                                 title: "1h Required",
-                                value: "-\(CurrencyFormatter.string(rateValue * 0.4))",
-                                tint: Color("tempoLossRed")
+                                value: "\(CurrencyFormatter.string(rateValue * ActivityCategory.required.statementMultiplier, shorten: true, alwaysShowSign: true))",
+                                tint: ActivityCategory.required.tone.amountColor,
+                                background: Flowtone.neutral.badgeBackground
                             )
                             PreviewRow(
                                 title: "1h Spent",
-                                value: "-\(CurrencyFormatter.string(rateValue))",
-                                tint: Color("tempoLossRed")
+                                value: "\(CurrencyFormatter.string(rateValue * ActivityCategory.spent.statementMultiplier, shorten: true, alwaysShowSign: true))",
+                                tint: ActivityCategory.spent.tone.amountColor,
+                                background: Flowtone.negative.badgeBackground
                             )
                         }
                     }

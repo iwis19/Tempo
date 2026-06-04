@@ -59,17 +59,20 @@ struct ProfileDailyStatementGuideSheet: View {
                         PreviewRow(
                             title: "Earned",
                             value: "Value gained",
-                            tint: Color("tempoLeaf")
+                            tint: Color("tempoLeaf"),
+                            background: Color("tempoShell")
                         )
                         PreviewRow(
                             title: "Required",
                             value: "Necessary cost",
-                            tint: Color("tempoInk")
+                            tint: Color("tempoInk"),
+                            background: Color("tempoNeutralCard")
                         )
                         PreviewRow(
                             title: "Spent",
                             value: "Value lost",
-                            tint: Color("tempoLossRed")
+                            tint: Color("tempoLossRed"),
+                            background: Color("tempoLossWash")
                         )
                     }
 

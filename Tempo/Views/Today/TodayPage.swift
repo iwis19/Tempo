@@ -5,8 +5,6 @@
 //  Created by Ronnie Gu on 2026-03-25.
 //
 
-//TODO: CHECK UP PAGE TURNS INTO THIS
-
 import SwiftUI
 
 struct TodayPage: View {
@@ -129,27 +127,27 @@ struct TodayPage: View {
     private var summaryCardRow: some View {
         HStack (alignment: .top, spacing: 8) {
             summaryCard(
-                title: "Earned",
+                title: ActivityCategory.earned.title,
                 value: CurrencyFormatter.string(earnedTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Focused",
-                tint: Color("tempoLeaf"),
-                background: Color("tempoMintCard"),
+                tint: Flowtone.positive.amountColor,
+                background: Flowtone.positive.badgeBackground,
                 gain: true
             )
             summaryCard(
-                title: "Required",
+                title: ActivityCategory.required.title,
                 value: CurrencyFormatter.string(requiredTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Basics",
-                tint: Color("tempoLossRed"),
-                background: .white,
+                tint: Flowtone.neutral.amountColor,
+                background: Flowtone.neutral.badgeBackground,
                 gain: false
             )
             summaryCard(
-                title: "Spent",
+                title: ActivityCategory.spent.title,
                 value: CurrencyFormatter.string(spentTotal, shorten: true, alwaysShowSign: true),
                 subtitle: "Drift",
-                tint: Color("tempoLossRed"),
-                background: Color("tempoNeutralCard"),
+                tint: Flowtone.negative.amountColor,
+                background: Flowtone.negative.badgeBackground,
                 gain: false
             )
         }

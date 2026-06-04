@@ -28,10 +28,10 @@ struct ProfilePage: View {
     
     var body: some View {
         
-        PageContainer {
+        PageContainer (scrollable: false){
             PageHeader(
                 eyebrow: "Profile",
-                title: "Statement Settings",
+                title: nil,
                 subtitle: nil
             )
             

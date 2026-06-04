@@ -106,46 +106,6 @@ struct TodayStatementSheet: View {
         }
     }
     
-    private struct ActivityRow: View {
-        @Binding var activity: Activity
-        let amount: Double
-        let onDelete: () -> Void
-
-        var body: some View {
-            SurfaceCard {
-                LedgerRow(activity: activity, amount: amount)
-                
-                HStack(spacing: 10) {
-                    ForEach(ActivityCategory.allCases) { category in
-                        Button(action: {
-                            activity.category = category
-                        }) {
-                            Text(category.title)
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(activity.category == category ? .white : category.tint)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 10)
-                                .background(activity.category == category ? category.tint : category.background)
-                                .clipShape(Capsule())
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    
-                    Spacer()
-                    
-                    Button(action: onDelete) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(Color("tempoLossRed"))
-                            .padding(10)
-                            .background(Color("tempoLossWash").opacity(0.92))
-                            .clipShape(Circle())
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-    }
     
     private func deleteActivity(id: UUID) {
         activities.removeAll { $0.id == id }
@@ -182,13 +142,15 @@ struct TodayStatementSheet: View {
                 
                 HStack (spacing: 10) {
                     ForEach(ActivityCategory.allCases) { category in
-                        Button(action: {draftActivityChoice = category }) {
+                        let tone = category.tone
+                        
+                        Button(action: { draftActivityChoice = category }) {
                             Text(category.title)
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(draftActivityChoice == category ? .white : category.tint)
+                                .foregroundStyle(draftActivityChoice == category ? .white : tone.amountColor)
                                 .padding(.horizontal, 14)
-                                .padding(.vertical, 14)
-                                .background(draftActivityChoice == category ? category.tint : category.background)
+                                .padding(.vertical, 10)
+                                .background(draftActivityChoice == category ? tone.amountColor : tone.badgeBackground)
                                 .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
