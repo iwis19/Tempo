@@ -22,12 +22,15 @@ struct TempoApp: App {
         .environment(userStore) // makes the app own this database
         .environment(notificationHandler)
         
-        // save all data when app is swiped out
+        // save all data when app state is changed
         .onChange(of: scenePhase) { _, newPhase in
+            
+            // app opens
             if newPhase == .active {
                 userStore.checkForNewDay()
             }
             
+            // app closed or in background
             if newPhase == .background || newPhase == .inactive {
                 userStore.saveAll()
             }

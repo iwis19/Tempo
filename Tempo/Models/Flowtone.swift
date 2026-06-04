@@ -23,25 +23,14 @@ enum Flowtone {
         }
     }
 
-    var iconName: String {
-        switch self {
-        case .positive:
-            return "arrow.up.right"
-        case .negative:
-            return "arrow.down.right"
-        case .neutral:
-            return "equal"
-        }
-    }
-
     var badgeBackground: Color {
         switch self {
         case .positive:
             return Color("tempoSoftMint").opacity(0.38)
         case .negative:
-            return Color("tempoLossWash")
+            return Color("tempoLossWash").opacity(0.5)
         case .neutral:
-            return Color("tempoSoftMint").opacity(0.20)
+            return Color("tempoNeutralCard").opacity(0.50)
         }
     }
 }
