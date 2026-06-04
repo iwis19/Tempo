@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-struct StyleTemplates: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
 var greetingText: String {
     let hour = Calendar.current.component(.hour, from: Date())
     
@@ -28,12 +22,14 @@ var greetingText: String {
 // PAGE CONTAINERS
 // <Content: View> indicates that it is generic over some content, but content must also follow View protocol, meaning that this container can hold any child UI inside it
 struct PageContainer <Content: View>: View {
+    let scrollable: Bool
     let bottomInset: CGFloat // how much space is added at the bottom, CGFloat is meant for UI / drawing floating-point number
     let content: Content // page-specific UI i pass in
     
     // @ViewBuilder lets me write multiple UI views naturally inside this container call, content() stores the resulting view
     // "content: () -> Content means that this doesnt take arguments, and that it returns Content type
-    init(bottomInset: CGFloat = 170, @ViewBuilder content: () -> Content) {
+    init(scrollable: Bool = true, bottomInset: CGFloat = 0, @ViewBuilder content: () -> Content) {
+        self.scrollable = scrollable
         self.bottomInset = bottomInset
         self.content = content()
     }
@@ -41,8 +37,21 @@ struct PageContainer <Content: View>: View {
     var body: some View{
         ZStack {
             PageBackground()
-
-            ScrollView(showsIndicators: false) {
+            
+            if scrollable {
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        content
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 22)
+                    .padding(.top, 28)
+                    .padding(.bottom, bottomInset)
+                    .offset(y: -20)
+                }
+                .scrollBounceBehavior(.basedOnSize, axes: Axis.Set.vertical)
+            }
+            else {
                 VStack(alignment: .leading, spacing: 22) {
                     content
                 }
@@ -55,6 +64,7 @@ struct PageContainer <Content: View>: View {
         }
     }
 }
+
 
 // PROMINENT GREEN CARD IN MOST PAGES
 struct MainCard <Content: View>: View{
@@ -211,6 +221,7 @@ struct PreviewRow : View {
     let title: String
     let value: String
     let tint: Color
+    let background: Color
     
     var body : some View{
         HStack {
@@ -226,8 +237,8 @@ struct PreviewRow : View {
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 12)
-        .background(Color("tempoShell").opacity(0.70))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .background(background.opacity(0.70))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 
@@ -342,7 +353,7 @@ struct PageBackground: View {
 // PAGE HEADERS
 struct PageHeader: View {
     let eyebrow: String
-    let title: String
+    let title: String?
     let subtitle: String?
     
     var body: some View {
@@ -351,12 +362,14 @@ struct PageHeader: View {
                 .foregroundStyle(Color("tempoInk").opacity(0.58))
                 .font(.system(size: 14, weight: .semibold))
             
-            Text(title)
-                .foregroundStyle(Color("tempoInk"))
-                .font(.custom("Syne-Regular", size:34))
-            // if userName is too long, it caps this entire line to max 2 lines, and uses ... to replace the exceeding characters
-                .lineLimit(2)
-                .truncationMode(.tail)
+            if let title {
+                Text(title)
+                    .foregroundStyle(Color("tempoInk"))
+                    .font(.custom("Syne-Regular", size:34))
+                // if userName is too long, it caps this entire line to max 2 lines, and uses ... to replace the exceeding characters
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+            }
             
             // similar to python's "if subtitle:", it checks if value equals to nil or not, if not, it unwraps it, but it is a safer method than doing it normally
             if let subtitle {
@@ -464,16 +477,18 @@ struct BetterNavigationBar: View {
 struct LedgerRow: View {
     let activity: Activity
     let amount: Double
+    
+    private var tone: Flowtone { activity.category.tone }
 
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
             Circle()
-                .fill(activity.category.background.opacity(0.95))
+                .fill(tone.badgeBackground.opacity(0.95))
                 .frame(width: 46, height: 46)
                 .overlay {
                     Image(systemName: activity.category.iconName)
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(activity.category.tint)
+                        .foregroundStyle(tone.amountColor)
                 }
             
             VStack(alignment: .leading, spacing: 6) {
@@ -500,7 +515,7 @@ struct LedgerRow: View {
             
             Text(CurrencyFormatter.string(amount, alwaysShowSign: true))
                 .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(activity.category.tint)
+                .foregroundStyle(tone.amountColor)
             
         }
         
@@ -516,7 +531,6 @@ struct summaryCard: View {
     let tint: Color
     let background: Color
     var gain: Bool = true
-    var showsSign: Bool = true
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -540,12 +554,12 @@ struct summaryCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .layoutPriority(1)
-            
-            Spacer()
+        
             
             Text(subtitle)
                 .font(.system(size:13, weight: .medium))
                 .foregroundStyle(Color("tempoInk").opacity(0.64))
+                .padding(.top, 8)
 
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -559,9 +573,6 @@ struct summaryCard: View {
     }
     
     private var valueSign: String {
-        guard showsSign else {
-            return ""
-        }
         return gain ? "+" : "-"
     }
     
@@ -593,4 +604,47 @@ var negativeGradient: LinearGradient {
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
+}
+
+struct ActivityRow: View {
+    @Binding var activity: Activity
+    let amount: Double
+    let onDelete: () -> Void
+
+    var body: some View {
+        SurfaceCard {
+            LedgerRow(activity: activity, amount: amount)
+            
+            HStack(spacing: 10) {
+                ForEach(ActivityCategory.allCases) { category in
+                    let tone = category.tone
+                    
+                    Button(action: {
+                        activity.category = category
+                    }) {
+                        Text(category.title)
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(activity.category == category ? .white : tone.amountColor)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(activity.category == category ? tone.amountColor : tone.badgeBackground)
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+                
+                Spacer()
+                
+                Button(action: onDelete) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color("tempoLossRed"))
+                        .padding(10)
+                        .background(Color("tempoLossWash").opacity(0.5))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
 }

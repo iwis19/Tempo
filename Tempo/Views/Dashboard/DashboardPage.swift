@@ -55,12 +55,12 @@ struct DashboardPage: View {
 
             HStack(spacing: 12) {
                 MainCardBox(
-                    title: "Closed Days",
-                    description: "\(closedStatements.count)"
+                    title: "Logged Days",
+                    description: "\(statementsWithEntries.count)"
                 )
                 MainCardBox(
-                    title: "7D Net",
-                    description: sevenDayNetCompactDisplay
+                    title: "Avg Logged Day",
+                    description: allTimeAverageDayDisplay
                 )
             }
         }
@@ -69,27 +69,27 @@ struct DashboardPage: View {
     private var summaryCardRow: some View {
         HStack(alignment: .top, spacing: 8) {
             summaryCard(
-                title: "Earned",
+                title: ActivityCategory.earned.title,
                 value: CurrencyFormatter.string(earnedTotal, shorten: true, alwaysShowSign: true),
-                subtitle: "All logged",
-                tint: Color("tempoLeaf"),
-                background: Color("tempoMintCard"),
+                subtitle: "Focused",
+                tint: Flowtone.positive.amountColor,
+                background: Flowtone.positive.badgeBackground,
                 gain: true
             )
             summaryCard(
-                title: "Required",
+                title: ActivityCategory.required.title,
                 value: CurrencyFormatter.string(requiredTotal, shorten: true, alwaysShowSign: true),
-                subtitle: "All logged",
-                tint: Color("tempoLossRed"),
-                background: .white,
+                subtitle: "Basics",
+                tint: Flowtone.neutral.amountColor,
+                background: Flowtone.neutral.badgeBackground,
                 gain: false
             )
             summaryCard(
-                title: "Spent",
+                title: ActivityCategory.spent.title,
                 value: CurrencyFormatter.string(spentTotal, shorten: true, alwaysShowSign: true),
-                subtitle: "All logged",
-                tint: Color("tempoLossRed"),
-                background: Color("tempoNeutralCard"),
+                subtitle: "Drift",
+                tint: Flowtone.negative.amountColor,
+                background: Flowtone.negative.badgeBackground,
                 gain: false
             )
         }
@@ -98,12 +98,14 @@ struct DashboardPage: View {
 
     private var trendSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionTitle(title: "Your Previous Week")
 
             SurfaceCard {
+                SectionTitle(title: "Your Last 7 Days")
+                
                 Text("Your week in a graph")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color("tempoInk").opacity(0.85))
+                    .padding(.bottom, 4)
                 
                 if !hasGraphData {
                     Text("Close your first statement to see your weekly trend.")
@@ -118,8 +120,13 @@ struct DashboardPage: View {
                             y: .value("Net", day.net),
                             width: 25
                         )
+                        .cornerRadius(8)
                         .foregroundStyle(day.net >= 0 ? positiveGradient : negativeGradient)
-                        .annotation(position: day.net >= 0 ? .top : .bottom) {
+                        .annotation(
+                            position: day.net >= 0 ? .top : .bottom,
+                            overflowResolution:
+                                .init(x: .fit, y:.disabled) // blocks the numbers from overflowing and messing up bar shape
+                        ) {
                             if selectedDay == day.dayLabel {
                                 let netDisplay = String(format: "%.2f", abs(day.net))
                                 
@@ -131,9 +138,11 @@ struct DashboardPage: View {
                                     .clipShape(RoundedRectangle(cornerRadius:8))
                             }
                         }
+                        
                     }
                     .chartXSelection(value: $selectedDay)
                     .frame(height: 200)
+                    .padding(.top, 6)
                     .padding(.horizontal, 5)
                     .chartXScale(
                         range: .plotDimension(
@@ -147,36 +156,41 @@ struct DashboardPage: View {
                             AxisValueLabel()
                         }
                     }
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 20)
                     //.chartYAxis(.hidden)
                 }
                 
                 Text("Your week by the numbers")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color("tempoInk").opacity(0.85))
+                    .padding(.bottom, 7)
 
                 PreviewRow(
-                    title: "Closed Days",
-                    value: "\(closedStatements.count)",
-                    tint: Color("tempoDeepGreen")
+                    title: "Days With Logs",
+                    value: "\(sevenDayStatements.count)",
+                    tint: Color("tempoDeepGreen"),
+                    background: sevenDayStatements.isEmpty ? Color("tempoNeutralCard") : Color("tempoShell")
                 )
 
                 PreviewRow(
-                    title: "7-Day Net",
+                    title: "7D Net",
                     value: sevenDayNetDisplay,
-                    tint: sevenDayNetTint
+                    tint: sevenDayNetTint,
+                    background: sevenDayNetBackground
                 )
 
                 PreviewRow(
-                    title: "Avg Closed Day",
+                    title: "7D Avg Day",
                     value: averageClosedDayDisplay,
-                    tint: averageClosedDayTint
+                    tint: averageClosedDayTint,
+                    background: averageClosedDayBackground
                 )
 
                 PreviewRow(
-                    title: "Best Day",
+                    title: "7D Best Day",
                     value: bestDayDisplay,
-                    tint: bestDayTint
+                    tint: bestDayTint,
+                    background: bestDayBackground
                 )
             }
         }
@@ -251,10 +265,6 @@ struct DashboardPage: View {
             .sorted { $0.date > $1.date }
     }
 
-    private var recentStatements: [DayStatement] {
-        Array(statementsWithEntries.prefix(5))
-    }
-
     private var totalCash: Double {
         historyNetTotal + todayNetTotal
     }
@@ -290,7 +300,7 @@ struct DashboardPage: View {
             statement.date >= cutoff
         }
     }
-
+    
     private var sevenDayNet: Double {
         sevenDayStatements.reduce(0) { partialResult, statement in
             partialResult + net(for: statement)
@@ -298,19 +308,19 @@ struct DashboardPage: View {
     }
 
     private var averageClosedDayNet: Double {
-        guard !closedStatements.isEmpty else {
+        guard !sevenDayStatements.isEmpty else {
             return 0
         }
 
-        let total = closedStatements.reduce(0) { partialResult, statement in
+        let total = sevenDayStatements.reduce(0) { partialResult, statement in
             partialResult + net(for: statement)
         }
 
-        return total / Double(closedStatements.count)
+        return total / Double(sevenDayStatements.count)
     }
 
     private var bestDayStatement: DayStatement? {
-        statementsWithEntries.max { left, right in
+        sevenDayStatements.max { left, right in
             net(for: left) < net(for: right)
         }
     }
@@ -363,51 +373,7 @@ struct DashboardPage: View {
         return "Today's statement is balanced right now, so your running total is staying flat."
     }
 
-    private var todayNetDisplay: String {
-        guard hourlyRate > 0 else {
-            return "Set rate"
-        }
-
-        if todayStatement.activities.isEmpty {
-            return "No entries"
-        }
-
-        return CurrencyFormatter.string(todayNetTotal, alwaysShowSign: true)
-    }
-
-    private var runningTotalDisplay: String {
-        guard hourlyRate > 0 else {
-            return "Set rate"
-        }
-
-        if statementsWithEntries.isEmpty {
-            return "No days"
-        }
-
-        return CurrencyFormatter.string(totalCash, alwaysShowSign: true)
-    }
-
-    private var hourlyRateDisplay: String {
-        guard hourlyRate > 0 else {
-            return "Set rate"
-        }
-
-        return "\(CurrencyFormatter.string(hourlyRate))/hr"
-    }
-
     private var sevenDayNetDisplay: String {
-        if sevenDayStatements.isEmpty {
-            return "No days"
-        }
-
-        guard hourlyRate > 0 else {
-            return "Set rate"
-        }
-
-        return CurrencyFormatter.string(sevenDayNet, alwaysShowSign: true)
-    }
-
-    private var sevenDayNetCompactDisplay: String {
         if sevenDayStatements.isEmpty {
             return "No days"
         }
@@ -420,7 +386,7 @@ struct DashboardPage: View {
     }
 
     private var averageClosedDayDisplay: String {
-        if closedStatements.isEmpty {
+        if sevenDayStatements.isEmpty {
             return "No days"
         }
 
@@ -442,29 +408,37 @@ struct DashboardPage: View {
 
         return CurrencyFormatter.string(net(for: bestDayStatement), alwaysShowSign: true)
     }
-
-    private var todayNetTint: Color {
-        if hourlyRate <= 0 {
-            return Color("tempoLossRed")
+    
+    private var bestDayBackground: Color {
+        guard let bestDayStatement else {
+            return Color("tempoNeutralCard")
         }
-
-        if todayStatement.activities.isEmpty {
-            return Color("tempoInk")
-        }
-
-        return tone(for: todayNetTotal).amountColor
+        
+        return net(for: bestDayStatement) >= 0 ? Color("tempoShell") : Color("tempoLossWash")
     }
-
-    private var runningTotalTint: Color {
-        if hourlyRate <= 0 {
-            return Color("tempoLossRed")
+    
+    private var averageClosedDayBackground: Color {
+        if sevenDayStatements.isEmpty {
+            return Color("tempoNeutralCard")
         }
 
-        if statementsWithEntries.isEmpty {
-            return Color("tempoInk")
+        guard hourlyRate > 0 else {
+            return Color("tempoNeutralCard")
         }
 
-        return tone(for: totalCash).amountColor
+        return averageClosedDayNet >= 0 ? Color("tempoShell") : Color("tempoLossWash")
+    }
+    
+    private var sevenDayNetBackground: Color {
+        if sevenDayStatements.isEmpty {
+            return Color("tempoNeutralCard")
+        }
+
+        guard hourlyRate > 0 else {
+            return Color("tempoNeutralCard")
+        }
+
+        return sevenDayNet >= 0 ? Color("tempoShell") : Color("tempoLossWash")
     }
 
     private var sevenDayNetTint: Color {
@@ -484,7 +458,7 @@ struct DashboardPage: View {
             return Color("tempoLossRed")
         }
 
-        if closedStatements.isEmpty {
+        if sevenDayStatements.isEmpty {
             return Color("tempoInk")
         }
 
@@ -501,6 +475,30 @@ struct DashboardPage: View {
         }
 
         return tone(for: net(for: bestDayStatement)).amountColor
+    }
+    
+    private var allTimeAverageDayNet: Double {
+        guard !statementsWithEntries.isEmpty else {
+            return 0
+        }
+
+        let total = statementsWithEntries.reduce(0) { partialResult, statement in
+            partialResult + net(for: statement)
+        }
+
+        return total / Double(statementsWithEntries.count)
+    }
+
+    private var allTimeAverageDayDisplay: String {
+        if statementsWithEntries.isEmpty {
+            return "No days"
+        }
+
+        guard hourlyRate > 0 else {
+            return "Set rate"
+        }
+
+        return CurrencyFormatter.string(allTimeAverageDayNet, shorten: true, alwaysShowSign: true)
     }
 
     private var activeTodayStatement: [DayStatement] {
@@ -529,23 +527,14 @@ struct DashboardPage: View {
         statement.activities
             .filter { $0.category == category }
             .reduce(0) { partialResult, activity in
-                partialResult + amount(for: activity)
+                partialResult + ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate)
             }
     }
 
     private func net(for statement: DayStatement) -> Double {
         statement.activities.reduce(0) { partialResult, activity in
-            partialResult + amount(for: activity)
+            partialResult + ActivityCalculator.amount(for: activity, hourlyRate: hourlyRate)
         }
-    }
-
-    private func amount(for activity: Activity) -> Double {
-        guard hourlyRate > 0 else {
-            return 0
-        }
-
-        let hours = Double(activity.durationMinutes) / 60
-        return hours * hourlyRate * activity.category.statementMultiplier
     }
 
     private func tone(for amount: Double) -> Flowtone {
@@ -559,21 +548,6 @@ struct DashboardPage: View {
 
         return .neutral
     }
-
-    private func statementTitle(for statement: DayStatement) -> String {
-        if Calendar.current.isDateInToday(statement.date) {
-            return "Today"
-        }
-
-        return statementDateText(for: statement.date)
-    }
-
-    private func statementSubtitle(for statement: DayStatement) -> String {
-        let status = statement.isClosed ? "Closed" : "Open"
-        let entryCount = statement.activities.count == 1 ? "1 entry" : "\(statement.activities.count) entries"
-        return "\(status) • \(entryCount)"
-    }
-
     private func statementDateText(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
@@ -589,52 +563,4 @@ struct DashboardPage: View {
 
     return DashboardPage()
         .environment(userStore)
-}
-
-private struct DashboardStatementRow: View {
-    let title: String
-    let subtitle: String
-    let amount: Double
-
-    private var tone: Flowtone {
-        if amount > 0 {
-            return .positive
-        }
-
-        if amount < 0 {
-            return .negative
-        }
-
-        return .neutral
-    }
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 14) {
-            Circle()
-                .fill(tone.badgeBackground)
-                .frame(width: 44, height: 44)
-                .overlay {
-                    Image(systemName: tone.iconName)
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(tone.amountColor)
-                }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color("tempoInk"))
-
-                Text(subtitle)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.58))
-            }
-
-            Spacer()
-
-            Text(CurrencyFormatter.string(amount, alwaysShowSign: true))
-                .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(tone.amountColor)
-        }
-        .padding(.vertical, 6)
-    }
 }

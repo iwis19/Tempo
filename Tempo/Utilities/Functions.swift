@@ -15,7 +15,7 @@ struct CurrencyFormatter {
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.currencySymbol = "$"
-        formatter.minimumFractionDigits = 0
+        formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
         return formatter
     }()
@@ -80,10 +80,12 @@ struct TimeFormatter {
 
 struct ActivityCalculator {
     static func amount(for activity: Activity, hourlyRate: Double) -> Double {
+        guard hourlyRate > 0 else {
+            return 0
+        }
 
         let hours = Double(activity.durationMinutes) / 60
         return hours * hourlyRate * activity.category.statementMultiplier
     }
 }
-
 

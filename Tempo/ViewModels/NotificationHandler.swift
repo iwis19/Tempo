@@ -27,17 +27,16 @@ class NotificationHandler {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["dailyReminder"])
     }
     
-    func sendNotification(hour: Int, minute: Int,  timeInterval: Double = 10, title: String, body: String) {
+    func sendNotification(hour: Int, minute: Int, title: String, body: String) {
         // cancels the previous scheduled notif that user has set
         cancelNotification()
-        var trigger: UNNotificationTrigger?
         
         // since repeat is on, we only need hour and minute
         var dateComponents = DateComponents()
         dateComponents.hour = hour
         dateComponents.minute = minute
         
-        trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
 
         let content = UNMutableNotificationContent()
         content.title = title
