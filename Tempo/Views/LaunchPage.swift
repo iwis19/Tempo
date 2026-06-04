@@ -5,7 +5,6 @@
 //  Created by Ronnie Gu on 2026-03-21.
 //
 
-import Combine
 import SwiftUI
 
 struct LaunchPage: View {
@@ -25,15 +24,8 @@ struct LaunchPage: View {
         "months.",
         "years."
     ]
-    private var currentSubtitleEnding: String {subtitleEnding[currentSubtitleIndex]}
-    @State private var currentSubtitleIndex = 0
-    private let subtitleTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
-    private var subtitleTransition: AnyTransition {
-        .asymmetric(
-            insertion: .move(edge: .bottom).combined(with: .opacity),
-            removal: .move(edge: .top).combined(with: .opacity)
-        )
-    }
+    
+    private let subtitleIndex: Int = Int.random(in: 0...6)
     
     var body: some View {
         ZStack {
@@ -47,13 +39,6 @@ struct LaunchPage: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .padding(.top, 190)
-        }
-        
-        // rotating subtitle text
-        .onReceive(subtitleTimer) { _ in
-            withAnimation(.easeIn(duration: 0.45)) {
-                currentSubtitleIndex = (currentSubtitleIndex + 1) % subtitleEnding.count
-            }
         }
         // waits 0.5s, then shows the app name and app subtitle
         .onAppear{
@@ -102,11 +87,9 @@ struct LaunchPage: View {
                 .foregroundStyle(.white.opacity(fullSplash ? subtitleOpacity : 0))
                 .font(.system(size: subtitleFontSize, weight: .medium))
             
-            Text(currentSubtitleEnding)
-                .id(currentSubtitleIndex)
+            Text(subtitleEnding[subtitleIndex])
                 .foregroundStyle(.white.opacity(fullSplash ? subtitleOpacity : 0))
                 .font(.system(size: subtitleFontSize, weight: .medium))
-                .transition(subtitleTransition)
         }
         .frame(maxWidth: 260)
         .offset(y:-40)
