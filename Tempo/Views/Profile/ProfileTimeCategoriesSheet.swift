@@ -65,7 +65,10 @@ struct ProfileTimeCategoriesSheet: View {
                     )
 
                     SurfaceCard {
-                        SectionTitle(title: "Simple Rule")
+                        SectionTitle(
+                            title: "Simple Rule",
+                            subtitle: nil
+                        )
 
                         Text("Earned helps you. Required has to get done. Spent drains time or attention.")
                             .font(.system(size: 15, weight: .medium))

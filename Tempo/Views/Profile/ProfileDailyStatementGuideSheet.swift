@@ -29,7 +29,10 @@ struct ProfileDailyStatementGuideSheet: View {
                     .padding(.top, 12)
 
                     SurfaceCard {
-                        SectionTitle(title: "How It Works")
+                        SectionTitle(
+                            title: "How It Works",
+                            subtitle: nil
+                        )
 
                         StatementFlowStepRow(
                             number: "1",
@@ -54,7 +57,10 @@ struct ProfileDailyStatementGuideSheet: View {
                     }
 
                     SurfaceCard {
-                        SectionTitle(title: "What Each One Means")
+                        SectionTitle(
+                            title: "What Each One Means",
+                            subtitle: nil
+                        )
 
                         PreviewRow(
                             title: "Earned",
@@ -77,7 +83,10 @@ struct ProfileDailyStatementGuideSheet: View {
                     }
 
                     SurfaceCard {
-                        SectionTitle(title: "Simple Goal")
+                        SectionTitle(
+                            title: "Simple Goal",
+                            subtitle: nil
+                        )
 
                         Text("Aim for more Earned time, less Spent time, and a clear view of your Required time.")
                             .font(.system(size: 15, weight: .medium))

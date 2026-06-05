@@ -85,7 +85,7 @@ struct MainCard <Content: View>: View{
         }
         .padding(22) // add inner space around the view's content by 22 px, rather than all view elements in the stack
         .background(
-            profit ? positiveGradient : negativeGradient
+            profit ? positiveGradient() : negativeGradient()
         )
         .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous)) // cuts the entire View into a roundedrectangle
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -167,11 +167,18 @@ struct SurfaceCard <Content: View>: View {
 // SECTION TITLES
 struct SectionTitle : View {
     let title: String
+    let subtitle: String?
     
     var body : some View {
         Text(title)
             .font(.system(size: 18, weight: .semibold))
             .foregroundStyle(Color("tempoInk"))
+        
+        if let subtitle{
+            Text(subtitle)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color("tempoInk").opacity(0.62))
+        }
     }
 }
 
@@ -393,6 +400,31 @@ struct DragIndicator: View {
 }
 
 
+struct NavigationButton: View {
+    let icon: String
+    let action: () -> Void
+    
+    init(
+        icon: String,
+        action: @escaping () -> Void) {
+        self.icon = icon
+        self.action = action
+    }
+    
+    var body: some View {
+        Button (action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(Color("tempoDeepGreen"))
+                .frame(width: 50, height: 50)
+                .background(Color("tempoSoftMint").opacity(0.36))
+                .clipShape(Circle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+
 // ACTION BUTTON
 struct ActionButton: View{
     let title: String
@@ -497,7 +529,7 @@ struct LedgerRow: View {
                     .foregroundStyle(Color("tempoInk"))
                 
                 HStack(spacing: 6) {
-                    Text("\(activity.durationMinutes)m")
+                    Text(TimeFormatter.minuteCountString(minutes: activity.durationMinutes))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Color("tempoInk").opacity(0.58))
                     
@@ -513,7 +545,7 @@ struct LedgerRow: View {
             
             Spacer()
             
-            Text(CurrencyFormatter.string(amount, alwaysShowSign: true))
+            Text(CurrencyFormatter.string(amount, shorten: true, alwaysShowSign: true))
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(tone.tint)
             
@@ -585,24 +617,24 @@ struct summaryCard: View {
 }
 
 
-var positiveGradient: LinearGradient {
+func positiveGradient(graph: Bool = false) -> LinearGradient {
     LinearGradient(
         colors: [
             Color("tempoDeepGreen"),
             Color("tempoLeaf")
         ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing)
+        startPoint: graph ? .bottom : .topLeading,
+        endPoint: graph ? .top : .bottomTrailing)
 }
 
-var negativeGradient: LinearGradient {
+func negativeGradient(graph: Bool = false) -> LinearGradient {
     LinearGradient(
         colors: [
             Color("tempoWineRed"),
             Color("tempoLossRed")
         ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
+        startPoint: graph ? .top : .topLeading,
+        endPoint: graph ? .bottom : .bottomTrailing
     )
 }
 
@@ -646,5 +678,156 @@ struct ActivityRow: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+}
+
+
+struct CategoryMixBar: View {
+    
+    let totalTime: Int // in mins
+    let percent: Double // in decimals 0-1
+    let amount: Double
+    let activity: ActivityCategory
+    
+    var percentIn100: Int {
+        return Int((percent * 100).rounded())
+    }
+    
+    var body: some View {
+        
+        VStack {
+            HStack (alignment: .center, spacing: 14){
+                Circle()
+                    .fill(activity.tone.background.opacity(0.95))
+                    .frame(width: 46, height: 46)
+                    .overlay {
+                        Image(systemName: activity.icon)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(activity.tone.tint)
+                    }
+                
+                VStack (alignment: .leading, spacing: 4) {
+                    Text(activity.title)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color("tempoInk"))
+                    
+                    Text(TimeFormatter.minuteCountString(minutes: totalTime))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                }
+                
+                Spacer()
+                
+                VStack (alignment: .trailing, spacing: 4) {
+                    Text("\(CurrencyFormatter.string(amount, shorten: true, alwaysShowSign: true))")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(activity.tone.tint)
+                    
+                    Text("\(percentIn100)%")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                }
+            }
+            GeometryReader { area in
+                
+                ZStack (alignment: .leading){
+                    Capsule()
+                        .fill(Color("tempoNeutralCard"))
+
+                    Capsule()
+                        .fill(activity.tone.tint.opacity(activity == .required ? 0.44 : 0.78))
+                        .frame(width: area.size.width * min(max(percent, 0), 1))
+                }
+            }
+            .frame(height: 7)
+        }
+        .padding(12)
+        .background(activity.tone.background.opacity(0.65))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay{
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(activity.tone.background, lineWidth: 1)
+        }
+    }
+    
+}
+
+struct statementCompactRow: View {
+    let statement: StatementSummary
+    
+    var tone: Flowtone {
+        switch statement.netTotal {
+        case ..<0:
+            return .negative
+        case 0:
+            return .neutral
+        default:
+            return .positive
+        }
+    }
+    
+    var body: some View {
+        SurfaceCard {
+            VStack {
+                HStack {
+                    VStack (alignment: .leading, spacing: 6){
+                        Text(statement.date)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Color("tempoInk"))
+                        
+                        Text("\(statement.entries) entries")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color("tempoInk").opacity(0.58))
+                    }
+                    .padding(.leading, 3)
+                    
+                    Spacer()
+                    
+                    Text(CurrencyFormatter.string(statement.netTotal, shorten: true, alwaysShowSign: true))
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(tone.tint)
+                        .padding(.trailing, 3)
+                }
+                
+                HStack {
+                    statementCompactRowBox(
+                        activityType: .earned,
+                        amount: statement.earnedMinutes // place holder
+                    )
+                    statementCompactRowBox(
+                        activityType: .required,
+                        amount: statement.requiredMinutes // place holder
+                    )
+                    statementCompactRowBox(
+                        activityType: .spent,
+                        amount: statement.spentMinutes // place holder
+                    )
+                }
+                
+            }
+        }
+    }
+}
+
+struct statementCompactRowBox: View {
+    let activityType: ActivityCategory
+    let amount: String // time in minutes
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(activityType.title)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(Color("tempoInk").opacity(0.58))
+                .padding(.bottom, 3)
+            
+            Text(amount)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(activityType.tone.tint)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .background(activityType.tone.background)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }

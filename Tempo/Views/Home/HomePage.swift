@@ -44,7 +44,7 @@ struct HomePage: View {
                 MainCardStatusBadge(text: statusBadgeText, positive: positive)
             }
 
-            Text(CurrencyFormatter.string(totalCash))
+            Text(CurrencyFormatter.string(totalCash, shorten: true, alwaysShowSign: true))
                 .font(.custom("Syne-Regular", size: 46))
                 .foregroundStyle(Color.white)
 
@@ -99,7 +99,10 @@ struct HomePage: View {
         VStack(alignment: .leading, spacing: 14) {
 
             SurfaceCard {
-                SectionTitle(title: "Your Last 7 Days")
+                SectionTitle(
+                    title: "Your Last 7 Days",
+                    subtitle: nil
+                )
                 
                 Text("Your week in a graph")
                     .font(.system(size: 16, weight: .medium))
@@ -120,7 +123,7 @@ struct HomePage: View {
                             width: 25
                         )
                         .cornerRadius(8)
-                        .foregroundStyle(day.net >= 0 ? positiveGradient : negativeGradient)
+                        .foregroundStyle(day.net >= 0 ? positiveGradient(graph: true) : negativeGradient(graph: true))
                         .annotation(
                             position: day.net >= 0 ? .top : .bottom,
                             overflowResolution:
@@ -167,29 +170,29 @@ struct HomePage: View {
                 PreviewRow(
                     title: "Days With Logs",
                     value: "\(sevenDayStatements.count)",
-                    tint: Color("tempoDeepGreen"),
-                    background: sevenDayStatements.isEmpty ? Color("tempoNeutralCard") : Color("tempoShell")
+                    tint: sevenDayLogsColor.tint,
+                    background: sevenDayLogsColor.background
                 )
 
                 PreviewRow(
                     title: "7D Net",
                     value: sevenDayNetDisplay,
-                    tint: sevenDayNetTint,
-                    background: sevenDayNetBackground
+                    tint: sevenDayNetColor.tint,
+                    background: sevenDayNetColor.background
                 )
 
                 PreviewRow(
                     title: "7D Avg Day",
                     value: averageClosedDayDisplay,
-                    tint: averageClosedDayTint,
-                    background: averageClosedDayBackground
+                    tint: averageClosedDayColor.tint,
+                    background: averageClosedDayColor.background
                 )
 
                 PreviewRow(
                     title: "7D Best Day",
                     value: bestDayDisplay,
-                    tint: bestDayTint,
-                    background: bestDayBackground
+                    tint: bestDayColor.tint,
+                    background: bestDayColor.background
                 )
             }
         }
@@ -408,72 +411,44 @@ struct HomePage: View {
         return CurrencyFormatter.string(net(for: bestDayStatement), alwaysShowSign: true)
     }
     
-    private var bestDayBackground: Color {
-        guard let bestDayStatement else {
-            return Color("tempoNeutralCard")
+    private var sevenDayLogsColor: Flowtone {
+        guard !sevenDayStatements.isEmpty else {
+            return .neutral
         }
         
-        return net(for: bestDayStatement) >= 0 ? Color("tempoShell") : Color("tempoLossWash")
+        return .positive
     }
     
-    private var averageClosedDayBackground: Color {
-        if sevenDayStatements.isEmpty {
-            return Color("tempoNeutralCard")
-        }
-
+    private var sevenDayNetColor: Flowtone {
         guard hourlyRate > 0 else {
-            return Color("tempoNeutralCard")
+            return .negative
         }
-
-        return averageClosedDayNet >= 0 ? Color("tempoShell") : Color("tempoLossWash")
+        
+        guard !sevenDayStatements.isEmpty else {
+            return .neutral
+        }
+        
+        return tone(for: sevenDayNet)
     }
     
-    private var sevenDayNetBackground: Color {
-        if sevenDayStatements.isEmpty {
-            return Color("tempoNeutralCard")
-        }
-
+    private var averageClosedDayColor: Flowtone {
         guard hourlyRate > 0 else {
-            return Color("tempoNeutralCard")
+            return .negative
         }
-
-        return sevenDayNet >= 0 ? Color("tempoShell") : Color("tempoLossWash")
+        
+        guard !sevenDayStatements.isEmpty else {
+            return .neutral
+        }
+        
+        return tone(for: averageClosedDayNet)
     }
 
-    private var sevenDayNetTint: Color {
-        if hourlyRate <= 0 {
-            return Color("tempoLossRed")
-        }
-
-        if sevenDayStatements.isEmpty {
-            return Color("tempoInk")
-        }
-
-        return tone(for: sevenDayNet).tint
-    }
-
-    private var averageClosedDayTint: Color {
-        if hourlyRate <= 0 {
-            return Color("tempoLossRed")
-        }
-
-        if sevenDayStatements.isEmpty {
-            return Color("tempoInk")
-        }
-
-        return tone(for: averageClosedDayNet).tint
-    }
-
-    private var bestDayTint: Color {
+    private var bestDayColor: Flowtone {
         guard let bestDayStatement else {
-            return Color("tempoInk")
+            return .neutral
         }
 
-        guard hourlyRate > 0 else {
-            return Color("tempoDeepGreen")
-        }
-
-        return tone(for: net(for: bestDayStatement)).tint
+        return tone(for: net(for: bestDayStatement))
     }
     
     private var allTimeAverageDayNet: Double {
@@ -552,6 +527,7 @@ struct HomePage: View {
 
         return .neutral
     }
+    
     private func statementDateText(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"

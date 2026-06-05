@@ -82,7 +82,10 @@ struct ProfilePage: View {
 
             SurfaceCard {
                 VStack (alignment: .leading) {
-                    SectionTitle(title: "Personal")
+                    SectionTitle(
+                        title: "Personal",
+                        subtitle: nil
+                    )
                         .padding(.leading, 5) // padding to line up text
                     
                     Button (action: {showNameSheet = true}) {
@@ -120,7 +123,10 @@ struct ProfilePage: View {
             
             SurfaceCard {
                 VStack (alignment: .leading){
-                    SectionTitle(title: "Learn Tempo")
+                    SectionTitle(
+                        title: "Learn Tempo",
+                        subtitle: nil
+                    )
                     
                     Button (action: {showTimeCategorySheet = true}) {
                         SettingRow(
@@ -277,7 +283,7 @@ struct ProfilePage: View {
         if !reminderEnabled {
             return "Off"
         }
-        return TimeFormatter.string(hour: reminderHour, minute: reminderMinute)
+        return TimeFormatter.reminderString(hour: reminderHour, minute: reminderMinute)
     }
 
 }

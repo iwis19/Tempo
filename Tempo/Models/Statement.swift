@@ -41,5 +41,16 @@ struct DayStatement: Identifiable, Codable {
         self.spentTotal = spentTotal
         self.netTotal = netTotal
     }
+}
+
+struct StatementSummary: Identifiable {
+    let date: String
+    let netTotal: Double
+    let entries: Int
+    let earnedMinutes: String
+    let requiredMinutes: String
+    let spentMinutes: String
+    
+    var id: String { date }
     
 }

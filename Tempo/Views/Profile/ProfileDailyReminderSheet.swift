@@ -83,7 +83,10 @@ struct ProfileDailyReminderSheet: View {
                     }
                     
                     SurfaceCard{
-                        SectionTitle(title:"Preview")
+                        SectionTitle(
+                            title:"Preview",
+                            subtitle: nil
+                        )
                         
                         VStack(spacing: 12){
                             PreviewRow(

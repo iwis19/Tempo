@@ -60,7 +60,7 @@ struct DecimalFormatter {
 }
 
 struct TimeFormatter {
-    static func string(hour: Int, minute: Int) -> String {
+    static func reminderString(hour: Int, minute: Int) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         
@@ -74,6 +74,82 @@ struct TimeFormatter {
         }
         
         return formatter.string(from: date)
+    }
+    
+    static func minuteCountString(minutes: Int) -> String {
+        
+        // start from mins -> hours -> days -> weeks -> month
+        
+        var output: String = ""
+        
+        var mins: Int = minutes
+        
+        let weeks: Int = mins / 10080
+        mins %= 10080
+        
+        let days: Int = mins / 1440
+        mins %= 1440
+        
+        let hours: Int = mins / 60
+        mins %= 60
+
+        if weeks != 0 {
+            output.append("\(weeks)w ")
+        }
+        
+        if days != 0 {
+            output.append("\(days)d ")
+        }
+        
+        if hours != 0 {
+            output.append("\(hours)h ")
+        }
+        
+        output.append("\(mins)m")
+        
+        return output
+    }
+}
+
+struct CalendarFormatter {
+    static func dayTitle(for date: Date) -> String {
+        let month = date.formatted(.dateTime.month(.wide))
+        let day = Calendar.current.component(.day, from: date)
+
+        let ordinal = NumberFormatter()
+        ordinal.numberStyle = .ordinal
+
+        return "\(month) \(ordinal.string(from: NSNumber(value: day)) ?? "\(day)")"
+    }
+
+    static func weekTitle(for date: Date) -> String {
+        let calendar = Calendar.current
+
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: date),
+              let end = calendar.date(byAdding: .day, value: -1, to: interval.end) else {
+            return dayTitle(for: date)
+        }
+
+        let startText = interval.start.formatted(.dateTime.month(.abbreviated).day())
+        let endText = end.formatted(.dateTime.month(.abbreviated).day())
+
+        return "\(startText) - \(endText)"
+    }
+
+    static func monthTitle(for date: Date) -> String {
+        date.formatted(.dateTime.month(.wide).year())
+    }
+
+    static func quarterTitle(for date: Date) -> String {
+        let month = Calendar.current.component(.month, from: date)
+        let year = Calendar.current.component(.year, from: date)
+        let quarter = ((month - 1) / 3) + 1
+
+        return "Q\(quarter) \(year)"
+    }
+
+    static func yearTitle(for date: Date) -> String {
+        date.formatted(.dateTime.year())
     }
 }
 

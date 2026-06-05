@@ -74,7 +74,10 @@ struct TodayStatementSheet: View {
     
     private var activityReview: some View {
         VStack (alignment: .leading, spacing: 14) {
-            SectionTitle(title: reviewText)
+            SectionTitle(
+                title: reviewText,
+                subtitle: nil
+            )
             
             if activities.isEmpty{
                 SurfaceCard {
@@ -114,7 +117,10 @@ struct TodayStatementSheet: View {
     private var quickAddSection: some View {
         
         SurfaceCard {
-            SectionTitle(title: "Quick Add")
+            SectionTitle(
+                title: "Quick Add",
+                subtitle: nil
+            )
             
             VStack (alignment: .leading, spacing: 14){
                 TextField("Activity title", text: $draftActivityTitle)

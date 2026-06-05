@@ -106,7 +106,10 @@ struct TodayPage: View {
     
     private var transactionsSection: some View {
         VStack (alignment: .leading, spacing: 14) {
-            SectionTitle(title: "Today's Transactions")
+            SectionTitle(
+                title: "Today's Transactions",
+                subtitle: nil
+            )
             
             if statement.activities.isEmpty {
                 SurfaceCard {
