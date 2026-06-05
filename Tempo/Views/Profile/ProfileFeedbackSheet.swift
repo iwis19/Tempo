@@ -98,8 +98,8 @@ struct ProfileFeedbackSheet: View {
                                 }
                             }
                         )
-                            .disabled(!canSend)
-                            .opacity(canSend ? 1 : 0.55)
+                        .disabled(!canSend || sendingFeedback)
+                        .opacity(canSend && !sendingFeedback ? 1 : 0.55)
                     }
                 
                     if let feedbackError {
@@ -108,17 +108,22 @@ struct ProfileFeedbackSheet: View {
                             .foregroundStyle(Color("tempoLossRed"))
                     }
                     
-                    // TODO: COMMENT THIS OUT
-                    if let debuggingError {
-                        Text(debuggingError)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Color("tempoLossRed"))
-                    }
+//                    // TODO: COMMENT THIS OUT
+//                    if let debuggingError {
+//                        Text(debuggingError)
+//                            .font(.system(size: 13, weight: .medium))
+//                            .foregroundStyle(Color("tempoLossRed"))
+//                    }
                     
                 }
                 .padding(.horizontal, 22)
                 .padding(.top, 20)
                 .padding(.bottom, 34)
+            }
+            
+            if sendingFeedback {
+                ProgressView()
+                    .tint(Color("tempoLeaf"))
             }
         }
     }
