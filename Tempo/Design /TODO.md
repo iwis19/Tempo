@@ -1,5 +1,5 @@
 #short term
-- work on history page for past statements
+- work on graph in history page
 - put user feedback in an actual database (nosql)
 - edgecase
 
