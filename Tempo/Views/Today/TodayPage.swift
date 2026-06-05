@@ -61,9 +61,10 @@ struct TodayPage: View {
                 .font(.custom("Syne-Regular", size: 46))
                 .foregroundStyle(Color.white)
             
-            Text(statementDescription)
+            Text(statementCardSubtitle)
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.84))
+                .padding(.bottom, 5)
             
             HStack (spacing: 12) {
                 MainCardBox(
@@ -173,9 +174,9 @@ struct TodayPage: View {
         return "Statement Open"
     }
     
-    private var statementDescription: String {
+    private var statementCardSubtitle: String {
         if statement.isClosed {
-            return "Today's statement is closed and ready in the ledger."
+            return "Today's statement is closed."
         }
         if hourlyRate <= 0 {
             return "Set your hourly rate in profile to turn time into statement value."

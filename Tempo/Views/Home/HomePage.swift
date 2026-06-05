@@ -26,12 +26,12 @@ struct HomePage: View {
                 title: "\(greetingText), \(displayFirstName)",
                 subtitle: nil
             )
-            balanceCard
+            statementCard
             trendSection
         }
     }
 
-    private var balanceCard: some View {
+    private var statementCard: some View {
         MainCard (positive: positive) {
             HStack(alignment: .top) {
                 Text("TOTAL CASH")
@@ -48,9 +48,10 @@ struct HomePage: View {
                 .font(.custom("Syne-Regular", size: 46))
                 .foregroundStyle(Color.white)
 
-            Text(balanceDescription)
+            Text(statementCardSubtitle)
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.84))
+                .padding(.bottom, 5)
 
             HStack(spacing: 12) {
                 MainCardBox(
@@ -351,7 +352,7 @@ struct HomePage: View {
         return "Flat Today"
     }
 
-    private var balanceDescription: String {
+    private var statementCardSubtitle: String {
         if statementsWithEntries.isEmpty {
             return "Close your first statement to start building a running total and a real history trend."
         }

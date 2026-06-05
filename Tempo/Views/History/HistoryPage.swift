@@ -113,7 +113,7 @@ struct HistoryPage: View {
             
             rangeSelector
             periodNavigator
-            mainCard
+            statementCard
             categoryBreakdown
             graphBreakdown
             statementListing
@@ -191,7 +191,15 @@ struct HistoryPage: View {
         return CurrencyFormatter.string(now - prev, shorten: true, alwaysShowSign: true) + " From Previous"
     }
     
-    private var mainCard: some View {
+    private var statementCardSubtitle: String {
+        guard loggedDays > 0 else {
+            return "No logged statements in this period."
+        }
+
+        return "Net change across \(loggedDays) logged days."
+    }
+    
+    private var statementCard: some View {
         MainCard (positive: positive) {
             HStack (alignment: .top){
                 Text(selectedType.mainCardTitle)
@@ -208,9 +216,10 @@ struct HistoryPage: View {
                 .font(.custom("Syne-Regular", size: 46))
                 .foregroundStyle(Color.white)
             
-            Text("subtitle that makes sense")
+            Text(statementCardSubtitle)
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.84))
+                .padding(.bottom, 5)
             
             HStack (spacing: 8) {
                 MainCardBox(
