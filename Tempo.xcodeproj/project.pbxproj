@@ -10,6 +10,7 @@
 		B9D47F992FD2B22400DA7B18 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = B9D47F982FD2B22400DA7B18 /* Auth */; };
 		B9D47F9B2FD2B22400DA7B18 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = B9D47F9A2FD2B22400DA7B18 /* Functions */; };
 		B9D47F9D2FD2B22400DA7B18 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = B9D47F9C2FD2B22400DA7B18 /* Storage */; };
+		B9D47FEA2FD2B7ED00DA7B18 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = B9D47FE92FD2B7ED00DA7B18 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9D47FEA2FD2B7ED00DA7B18 /* Supabase in Frameworks */,
 				B9D47F9D2FD2B22400DA7B18 /* Storage in Frameworks */,
 				B9D47F9B2FD2B22400DA7B18 /* Functions in Frameworks */,
 				B9D47F992FD2B22400DA7B18 /* Auth in Frameworks */,
@@ -56,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				B96FFF2E2F6E491E00640D1E /* Tempo */,
+				B9D47FE82FD2B7ED00DA7B18 /* Frameworks */,
 				B96FFF2D2F6E491E00640D1E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,6 +69,13 @@
 				B96FFF2C2F6E491E00640D1E /* Tempo.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B9D47FE82FD2B7ED00DA7B18 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -91,6 +101,7 @@
 				B9D47F982FD2B22400DA7B18 /* Auth */,
 				B9D47F9A2FD2B22400DA7B18 /* Functions */,
 				B9D47F9C2FD2B22400DA7B18 /* Storage */,
+				B9D47FE92FD2B7ED00DA7B18 /* Supabase */,
 			);
 			productName = Tempo;
 			productReference = B96FFF2C2F6E491E00640D1E /* Tempo.app */;
@@ -390,6 +401,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B9D47F972FD2B22400DA7B18 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Storage;
+		};
+		B9D47FE92FD2B7ED00DA7B18 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9D47F972FD2B22400DA7B18 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
