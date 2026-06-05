@@ -28,7 +28,7 @@ struct ProfilePage: View {
     
     var body: some View {
         
-        PageContainer (scrollable: false){
+        PageContainer{
             PageHeader(
                 eyebrow: "Profile",
                 title: nil,

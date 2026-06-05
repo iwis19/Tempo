@@ -6,10 +6,16 @@
 //
 
 import SwiftUI
+internal import PostgREST
+import Supabase
+import Foundation
 
-// TODO: MAKE DATABASE FOR FEEDBACK (PREFERABLY FIREBASE/MONGODB)
 struct ProfileFeedbackSheet: View {
     @Environment(\.dismiss) private var dismiss
+    
+    @State private var sendingFeedback: Bool = false
+    @State private var feedbackError: String? = nil
+    @State private var debuggingError: String? = nil
 
     @State private var feedbackTopic = "General"
     @State private var feedbackMessage = ""
@@ -86,11 +92,29 @@ struct ProfileFeedbackSheet: View {
                         )
                         ActionButton(
                             title: "Send Feedback",
-                            action: sendFeedback
+                            action: {
+                                Task {
+                                    await sendFeedback()
+                                }
+                            }
                         )
                             .disabled(!canSend)
                             .opacity(canSend ? 1 : 0.55)
                     }
+                
+                    if let feedbackError {
+                        Text(feedbackError)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color("tempoLossRed"))
+                    }
+                    
+                    // TODO: COMMENT THIS OUT
+                    if let debuggingError {
+                        Text(debuggingError)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color("tempoLossRed"))
+                    }
+                    
                 }
                 .padding(.horizontal, 22)
                 .padding(.top, 20)
@@ -99,12 +123,33 @@ struct ProfileFeedbackSheet: View {
         }
     }
 
-    private func sendFeedback() {
+    private func sendFeedback() async {
         guard canSend else {
             return
         }
+        
+        sendingFeedback = true
+        
+        let feedback = Feedback(
+            id: nil,
+            date: Date(),
+            topic: feedbackTopic,
+            information: feedbackMessage
+        )
+        
+        do{
+            try await client
+                .from("UserFeedback")
+                .insert(feedback)
+                .execute()
 
-        dismiss()
+            dismiss()
+        } catch {
+            debuggingError = error.localizedDescription
+            feedbackError = "Please try again in a bit."
+        }
+        
+        sendingFeedback = false
     }
 }
 
