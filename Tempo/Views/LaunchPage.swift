@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct LaunchPage: View {
     
@@ -14,6 +15,8 @@ struct LaunchPage: View {
     private let subtitleOpacity: Double = 0.92
     
     @State private var fullSplash = false
+    
+    @State private var email: String = ""
     
     private let subtitleEnding = [
         "seconds.",
@@ -25,7 +28,18 @@ struct LaunchPage: View {
         "years."
     ]
     
-    private let subtitleIndex: Int = Int.random(in: 0...6)
+    private var currentSubtitleEnding: String {subtitleEnding[currentSubtitleIndex]}
+    
+    @State private var currentSubtitleIndex = 0
+    
+    private let subtitleTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    private var subtitleTransition: AnyTransition {
+        .asymmetric(
+            insertion: .move(edge: .bottom).combined(with: .opacity),
+            removal: .move(edge: .top).combined(with: .opacity)
+        )
+    }
+    
     
     var body: some View {
         ZStack {
@@ -36,9 +50,17 @@ struct LaunchPage: View {
                 appLogo
                 appTitle
                 appSubtitle
+                //appLogin
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .padding(.top, 190)
+            .padding(.horizontal, 20)
+        }
+        // rotating subtitle text
+        .onReceive(subtitleTimer) { _ in
+            withAnimation(.easeIn(duration: 0.45)) {
+                currentSubtitleIndex = (currentSubtitleIndex + 1) % subtitleEnding.count
+            }
         }
         // waits 0.5s, then shows the app name and app subtitle
         .onAppear{
@@ -87,12 +109,40 @@ struct LaunchPage: View {
                 .foregroundStyle(.white.opacity(fullSplash ? subtitleOpacity : 0))
                 .font(.system(size: subtitleFontSize, weight: .medium))
             
-            Text(subtitleEnding[subtitleIndex])
+            Text(currentSubtitleEnding)
+                .id(currentSubtitleIndex)
                 .foregroundStyle(.white.opacity(fullSplash ? subtitleOpacity : 0))
                 .font(.system(size: subtitleFontSize, weight: .medium))
+                .transition(subtitleTransition)
         }
         .frame(maxWidth: 260)
         .offset(y:-40)
+    }
+    
+    private var appLogin: some View {
+        
+        // login button
+        
+        SecureField("User Email", text: $email, prompt: Text("Email Address").foregroundStyle(.white))
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 16))
+            .foregroundStyle(Color("tempoShell").opacity(0.35))
+            .overlay{
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color("tempoInk").opacity(0.66), lineWidth: 1)
+            }
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .padding(.top, 70)
+            .padding(.horizontal, 30)
+        
+//        Button(action: {
+//            Task {
+//                do {
+//                    let appuser = try await
+//                }
+//            }
+//        })
     }
 }
 
