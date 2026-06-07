@@ -7,99 +7,31 @@
 
 import SwiftUI
 import Foundation
+import Charts
 
 struct HistoryPage: View {
     
     @Environment(UserStore.self) private var userStore
     
     @State private var selectedType: ChartType = .day  // default type is day
-    @State private var selectedDay: Date = yesterday // default date is yesterday
+    @State private var selectedDay: Date = Date() // default date is today
+    
+    @State private var selectedPeriod: String?
     
     private var hourlyRate: Double { userStore.setting.hourlyRate }
-    private var pastStatement: [DayStatement] { userStore.pastStatement }
+    private var todayStatement: DayStatement { userStore.todayStatement }
+    private var pastStatements: [DayStatement] { userStore.pastStatements }
+    
+    private var allStatements: [DayStatement] {
+        pastStatements + [todayStatement]
+    }
     
     private var periodIntervalStatement: [DayStatement] { statements(in: periodInterval) }
     private var previousPeriodIntervalStatement: [DayStatement] { statements(in: previousPeriodInterval)}
     
     private var netTotal: Double { allNet(for: periodIntervalStatement) }
     private var previousNetTotal: Double { allNet(for: previousPeriodIntervalStatement) }
-    
-    private var netTotalDisplay: String {
-        CurrencyFormatter.string(netTotal, shorten: true, alwaysShowSign: true)
-    }
-    
-    private var previousNetTotalDisplay: String {
-        CurrencyFormatter.string(previousNetTotal, shorten: true, alwaysShowSign: true)
-    }
-    
-    private func statements(in interval: DateInterval) -> [DayStatement] {
-        pastStatement.filter { statement in
-            let statementDay = Calendar.current.startOfDay(for: statement.date)
-            return statementDay >= interval.start && statementDay < interval.end
-        }
-    }
-    
-    private func totalEntries(in statements: [DayStatement]) -> Int {
-        statements.reduce(0) { partialResult, statement in
-            partialResult + statement.activities.count
-        }
-    }
-    
-    private func statementsWithEntries(for statements: [DayStatement]) -> [DayStatement] {
-        return statements
-            .filter { !$0.activities.isEmpty }
-            .sorted { $0.date > $1.date }
-    }
-    
-    private func allNet(for statements: [DayStatement]) -> Double {
-        statements.reduce(0) { partialResult, statement in
-            if statement.isClosed {
-                return partialResult + statement.netTotal
-            }
-
-            return partialResult + StatementCalculator.netTotal(
-                for: statement,
-                hourlyRate: hourlyRate
-            )
-        }
-    }
-    
-    private func categoryMinutes(for category: ActivityCategory, in statements: [DayStatement]) -> Int {
-        statements.reduce(0) { partialResult, statement in
-            partialResult + statement.activities
-                .filter { $0.category == category }
-                .reduce(0) { activityTotal, activity in
-                    activityTotal + activity.durationMinutes
-                }
-        }
-    }
-    
-    private func categoryNet(for category: ActivityCategory, in statements: [DayStatement]) -> Double {
-        statements.reduce(0) { partialResult, statement in
-            var total: Double
-
-            switch category {
-            case .earned:
-                total = statement.earnedTotal
-            case .required:
-                total = statement.requiredTotal
-            case .spent:
-                total = statement.spentTotal
-            }
-
-            return partialResult + total
-        }
-    }
-    
-    private func categoryShare(for category: ActivityCategory) -> Double {
-        let total = categoryMinutes(for: .earned, in: periodIntervalStatement) + categoryMinutes(for: .required, in: periodIntervalStatement) + categoryMinutes(for: .spent, in: periodIntervalStatement)
-
-        guard total > 0 else {
-            return 0
-        }
-        
-        return Double(categoryMinutes(for: category, in: periodIntervalStatement)) / Double(total)
-    }
+    private var periodDelta: Double { netTotal - previousNetTotal }
     
     private var positive: Bool { netTotal >= 0 }
     
@@ -115,8 +47,11 @@ struct HistoryPage: View {
             periodNavigator
             statementCard
             categoryBreakdown
-            graphBreakdown
-            statementListing
+            periodBreakdown
+            
+            if showStatementListing{
+                statementListing
+            }
         }
     }
     
@@ -127,6 +62,7 @@ struct HistoryPage: View {
                     action:{
                         withAnimation(.spring(response: 0.28, dampingFraction: 0.88)){
                             selectedType = type
+                            selectedPeriod = nil
                         }
                     }
                 ){
@@ -184,21 +120,6 @@ struct HistoryPage: View {
         }
     }
     
-    private var statusBadgeText: String {
-        let prev = previousNetTotal
-        let now = netTotal
-        
-        return CurrencyFormatter.string(now - prev, shorten: true, alwaysShowSign: true) + " From Previous"
-    }
-    
-    private var statementCardSubtitle: String {
-        guard loggedDays > 0 else {
-            return "No logged statements in this period."
-        }
-
-        return "Net change across \(loggedDays) logged days."
-    }
-    
     private var statementCard: some View {
         MainCard (positive: positive) {
             HStack (alignment: .top){
@@ -245,36 +166,6 @@ struct HistoryPage: View {
         }
     }
     
-    private var bestDayStatementNet: String {
-        guard let statement = bestDayStatement else {
-            return CurrencyFormatter.string(0, shorten: true)
-        }
-        
-        return CurrencyFormatter.string(statement.netTotal, shorten: true)
-    }
-    
-    private var bestDayStatement: DayStatement? {
-        periodIntervalStatement.max { left, right in
-            left.netTotal < right.netTotal
-        }
-    }
-    
-    private var loggedDays: Int {
-        statementsWithEntries(for: periodIntervalStatement).count
-    }
-    
-    private var avgLoggedDay: String {
-        guard loggedDays > 0 else {
-            return CurrencyFormatter.string(0, shorten: true)
-        }
-
-        return CurrencyFormatter.string(netTotal / Double(loggedDays), shorten: true)
-    }
-    
-    private var spentShare: Int {
-        Int(categoryShare(for: .spent) * 100)
-    }
-    
     private var categoryBreakdown: some View {
         SurfaceCard {
             SectionTitle(
@@ -303,12 +194,72 @@ struct HistoryPage: View {
         }
     }
     
-    private var graphBreakdown: some View {
+    private var periodBreakdown: some View {
         SurfaceCard {
             SectionTitle(
                 title: "\(selectedType.longTitle) Breakdown",
                 subtitle: nil
             )
+            
+            Text("Trends (\(selectedType.breakdownText))")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(Color("tempoInk").opacity(0.85))
+                .padding(.bottom, 4)
+            
+            if !hasGraphData(for: periodInterval) {
+                Text("You have no trends in this period.")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(Color("tempoInk").opacity(0.65))
+                        .padding(.bottom, 8)
+            }
+            else {
+                Chart(graphData) { data in
+                    BarMark(
+                        x: .value("Period", data.label),
+                        y: .value("Net", data.net)
+                    )
+                    .cornerRadius(8)
+                    .foregroundStyle(data.net >= 0 ? positiveGradient(graph: true) : negativeGradient(graph: true))
+                    .annotation(
+                        position: data.net >= 0 ? .top : .bottom,
+                        overflowResolution:
+                            .init(x: .fit, y: .disabled)
+                    ){
+                        if selectedPeriod == data.label {
+                            let netDisplay = String(format: "%.2f", abs(data.net))
+                            
+                            Text(data.net >= 0 ? "+$\(netDisplay)" : "-$\(netDisplay)")
+                                .foregroundStyle(Color("tempoInk"))
+                                .font(.system(size: 17))
+                                .padding(6)
+                                .background(Color(.white))
+                                .clipShape(RoundedRectangle(cornerRadius:8))
+                        }
+                    }
+                }
+                .frame(height: 200)
+                .padding(.top, 6)
+                .padding(.horizontal, 5)
+                .padding(.bottom, 20)
+                .chartXSelection(value: $selectedPeriod)
+                .chartXScale(
+                    range:
+                        .plotDimension(
+                            startPadding: 6,
+                            endPadding: 6
+                        )
+                )
+                .chartXAxis{
+                    AxisMarks { _ in
+                        AxisValueLabel()
+                    }
+                }
+            }
+            
+            Text("Statistics")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(Color("tempoInk").opacity(0.85))
+                .padding(.bottom, 4)
             
             PreviewRow(
                 title: "Previous \(selectedType.longTitle)",
@@ -324,6 +275,267 @@ struct HistoryPage: View {
                 background: mostActiveCategoryColor.background
             )
         }
+    }
+    
+    private func hasGraphData(for interval: DateInterval) -> Bool {
+        let statements = statements(in: interval)
+        
+        return statements.contains { statement in
+            statement.activities.count > 0
+        }
+    }
+    
+    private func withinDayGraphData(for interval: DateInterval) -> [GraphData] {
+        
+        let dayStatement: [DayStatement] = statements(in: interval)
+        
+        return DayPart.allCases.map { part in
+            let total = dayStatement.reduce(0) { statementTotal, statement in
+                let rate = statement.isClosed ? statement.hourlyRateSnapshot : hourlyRate
+
+                let activityTotal = statement.activities
+                    .filter { DayPart.of($0.createdAt) == part }
+                    .reduce(0) { total, activity in
+                        total + ActivityCalculator.amount(for: activity, hourlyRate: rate)
+                    }
+
+                return statementTotal + activityTotal
+            }
+            
+            return GraphData(label: part.title, net: total)
+        }
+    }
+    
+    private func dayGraphData(for interval: DateInterval) -> [GraphData] {
+        
+        var data: [GraphData] = []
+        var day: Date = interval.start
+        
+        while day < interval.end {
+            let nextDay = Calendar.current.date(
+                byAdding: .day,
+                value: 1,
+                to: day
+            ) ?? interval.end
+            
+            let dayInterval = DateInterval(start: day, end: nextDay)
+            let label = day.formatted(.dateTime.weekday(.abbreviated))
+            
+            data.append(
+                GraphData(
+                    label: label,
+                    net: allNet(for: statements(in: dayInterval))
+                )
+            )
+            
+            day = nextDay
+        }
+        
+        return data
+    }
+    
+    private func weekGraphData(for interval: DateInterval) -> [GraphData] {
+        
+        var data: [GraphData] = []
+        var week: Int = 1
+        var start: Date = interval.start
+        
+        while start < interval.end {
+            let nextEnd = Calendar.current.date(
+                byAdding: .day,
+                value: 7,
+                to: start
+            ) ?? interval.end
+            let end = nextEnd < interval.end ? nextEnd : interval.end
+            let weekInterval = DateInterval(start: start, end: end)
+            let label = "W\(week)"
+            
+            data.append(
+                GraphData(
+                    label: label, net: allNet(for: statements(in: weekInterval)))
+            )
+            
+            start = end
+            week += 1
+        }
+        
+        return data
+        
+    }
+    
+    private func monthGraphData(for interval: DateInterval, count: Int) -> [GraphData] {
+        
+        (0..<count).compactMap { offset in
+            guard
+                let start = Calendar.current.date(byAdding: .month, value: offset, to: interval.start),
+                let end = Calendar.current.date(byAdding: .month, value: 1, to: start)
+            else {
+                return nil
+            }
+            
+            let label = start.formatted(.dateTime.month(.abbreviated))
+            
+            return GraphData(label: label, net: allNet(for: statements(in: DateInterval(start: start, end: end))))
+        }
+    }
+    
+    private var graphData: [GraphData] {
+        switch selectedType {
+        case .day:
+            return withinDayGraphData(for: periodInterval) // give category
+        case .week:
+            return dayGraphData(for: periodInterval) // give day
+        case .month:
+            return weekGraphData(for: periodInterval) // give week
+        case .quarter:
+            return monthGraphData(for: periodInterval, count: 3)
+        case .year:
+            return monthGraphData(for: periodInterval, count: 12) // give month
+        }
+    }
+    
+    private var netTotalDisplay: String {
+        CurrencyFormatter.string(netTotal, shorten: true, alwaysShowSign: true)
+    }
+    
+    private var previousNetTotalDisplay: String {
+        CurrencyFormatter.string(previousNetTotal, shorten: true, alwaysShowSign: true)
+    }
+    
+    private func statements(in interval: DateInterval) -> [DayStatement] {
+        allStatements.filter { statement in
+            let statementDay = Calendar.current.startOfDay(for: statement.date)
+            return statementDay >= interval.start && statementDay < interval.end
+        }
+    }
+    
+    private func totalEntries(in statements: [DayStatement]) -> Int {
+        statements.reduce(0) { partialResult, statement in
+            partialResult + statement.activities.count
+        }
+    }
+    
+    private func statementsWithEntries(for statements: [DayStatement]) -> [DayStatement] {
+        return statements
+            .filter { !$0.activities.isEmpty }
+            .sorted { $0.date > $1.date }
+    }
+    
+    private func allNet(for statements: [DayStatement]) -> Double {
+        statements.reduce(0) { partialResult, statement in
+            partialResult + net(for: statement)
+        }
+    }
+    
+    private func net(for statement: DayStatement) -> Double {
+        statement.isClosed ? statement.netTotal : StatementCalculator.netTotal(for: statement, hourlyRate: hourlyRate)
+    }
+    
+    private func categoryMinutes(for category: ActivityCategory, in statements: [DayStatement]) -> Int {
+        statements.reduce(0) { partialResult, statement in
+            partialResult + statement.activities
+                .filter { $0.category == category }
+                .reduce(0) { activityTotal, activity in
+                    activityTotal + activity.durationMinutes
+                }
+        }
+    }
+    
+    private func categoryNet(for category: ActivityCategory, in statements: [DayStatement]) -> Double {
+        statements.reduce(0) { partialResult, statement in
+            var total: Double
+
+            switch category {
+            case .earned:
+                total = statement.isClosed ? statement.earnedTotal : StatementCalculator.total(for: .earned, in: statement, hourlyRate: hourlyRate)
+            case .required:
+                total = statement.isClosed ? statement.requiredTotal : StatementCalculator.total(for: .required, in: statement, hourlyRate: hourlyRate)
+            case .spent:
+                total = statement.isClosed ? statement.spentTotal : StatementCalculator.total(for: .spent, in: statement, hourlyRate: hourlyRate)
+            }
+
+            return partialResult + total
+        }
+    }
+    
+    private func categoryShare(for category: ActivityCategory) -> Double {
+        let total = categoryMinutes(for: .earned, in: periodIntervalStatement) + categoryMinutes(for: .required, in: periodIntervalStatement) + categoryMinutes(for: .spent, in: periodIntervalStatement)
+
+        guard total > 0 else {
+            return 0
+        }
+        
+        return Double(categoryMinutes(for: category, in: periodIntervalStatement)) / Double(total)
+    }
+    
+    private var showStatementListing: Bool {
+        return selectedType != .day
+    }
+    
+    private var statementListing: some View {
+        
+        VStack (alignment: .leading, spacing: 14) {
+            SectionTitle(
+                title: "\(selectedType.statementListingText) in This Period",
+                subtitle: nil
+            )
+
+            if statementList.isEmpty {
+                SurfaceCard {
+                    Text("No statements logged in this period.")
+                        .foregroundStyle(Color("tempoInk"))
+                }
+            }
+            else {
+                ForEach(statementList) { statement in
+                    statementCompactRow(
+                        statement: statement
+                    )
+                }
+            }
+        }
+    }
+    
+    private var statusBadgeText: String {
+        CurrencyFormatter.string(periodDelta, shorten: true, alwaysShowSign: true) + " From Previous"
+    }
+    
+    private var statementCardSubtitle: String {
+        guard loggedDays > 0 else {
+            return "No logged statements in this period."
+        }
+
+        return "Net change across \(loggedDays) logged days."
+    }
+    
+    private var bestDayStatementNet: String {
+        guard let statement = bestDayStatement else {
+            return CurrencyFormatter.string(0, shorten: true)
+        }
+        
+        return CurrencyFormatter.string(net(for: statement), shorten: true)
+    }
+    
+    private var bestDayStatement: DayStatement? {
+        periodIntervalStatement.max { left, right in
+            net(for: left) < net(for: right)
+        }
+    }
+    
+    private var loggedDays: Int {
+        statementsWithEntries(for: periodIntervalStatement).count
+    }
+    
+    private var avgLoggedDay: String {
+        guard loggedDays > 0 else {
+            return CurrencyFormatter.string(0, shorten: true)
+        }
+
+        return CurrencyFormatter.string(netTotal / Double(loggedDays), shorten: true)
+    }
+    
+    private var spentShare: Int {
+        Int(categoryShare(for: .spent) * 100)
     }
     
     private var mostActiveCategory: String {
@@ -371,30 +583,6 @@ struct HistoryPage: View {
         return previousNetTotal > 0 ? .positive : .negative
     }
     
-    private var statementListing: some View {
-        
-        VStack (alignment: .leading, spacing: 14) {
-            SectionTitle(
-                title: "Statements in This Period",
-                subtitle: nil
-            )
-
-            if statementList.isEmpty {
-                SurfaceCard {
-                    Text("hello")
-                        .foregroundStyle(Color("tempoInk"))
-                }
-            }
-            else {
-                ForEach(statementList) { statement in
-                    statementCompactRow(
-                        statement: statement
-                    )
-                }
-            }
-        }
-    }
-    
     private func temporaryMoveDate (_ value: Int) -> Date {
         return Calendar.current.date(
             byAdding: selectedType.navigationComponent,
@@ -404,23 +592,27 @@ struct HistoryPage: View {
     
     // only used for moving forward, so value from temporaryMoveDate is assumed 1
     private var navigationButtonDisabled: Bool {
-        if Calendar.current.startOfDay(for: temporaryMoveDate(1)) >= Calendar.current.startOfDay(for: Date()) {
-            return true
-        }
-        return false
+        let targetInterval = interval(for: selectedType, containing: temporaryMoveDate(1))
+        return targetInterval.start > Calendar.current.startOfDay(for: Date())
     }
     
     private func movePeriod (_ value: Int) {
-        
         let newDate = temporaryMoveDate(value)
+        let targetInterval = interval(for: selectedType, containing: newDate)
+        let today = Calendar.current.startOfDay(for: Date())
         
-        if Calendar.current.startOfDay(for: newDate) < Calendar.current.startOfDay(for: Date()) {
+        guard targetInterval.start <= today else {
+            return
+        }
+        
+        selectedPeriod = nil
+        
+        if value > 0 && Calendar.current.startOfDay(for: newDate) > today && today < targetInterval.end {
+            selectedDay = today
+        }
+        else {
             selectedDay = newDate
         }
-    }
-
-    private static var yesterday: Date {
-        Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
     }
     
     private var selectedTypeTitle: String {
@@ -492,7 +684,7 @@ struct HistoryPage: View {
     private var statementList: [StatementSummary] {
         switch selectedType {
         case .day, .week, .month:
-            return periodIntervalStatement
+            return statementsWithEntries(for: periodIntervalStatement)
                 .sorted { $0.date < $1.date }
                 .map { summary(for: [$0], date: CalendarFormatter.dayTitle(for: $0.date))}
         case .quarter:
@@ -519,7 +711,7 @@ struct HistoryPage: View {
                 return nil
             }
             
-            let monthStatements = statements(in: DateInterval(start: start, end: end))
+            let monthStatements = statementsWithEntries(for: statements(in: DateInterval(start: start, end: end)))
             
             guard !monthStatements.isEmpty else {
                 return nil
@@ -536,7 +728,7 @@ struct HistoryPage: View {
 #Preview {
     let userStore = UserStore()
     userStore.todayStatement = DemoData.todayStatement
-    userStore.pastStatement = DemoData.historyStatements
+    userStore.pastStatements = DemoData.historyStatements
     userStore.setting.hourlyRate = 40.23
     
     return HistoryPage()

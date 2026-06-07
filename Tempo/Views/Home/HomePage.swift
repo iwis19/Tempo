@@ -13,7 +13,11 @@ struct HomePage: View {
 
     private var hourlyRate: Double { userStore.setting.hourlyRate }
     private var todayStatement: DayStatement { userStore.todayStatement }
-    private var pastStatements: [DayStatement] { userStore.pastStatement }
+    private var pastStatements: [DayStatement] { userStore.pastStatements }
+    
+    private var allStatements: [DayStatement] {
+        pastStatements + [todayStatement]
+    }
     
     @State private var selectedDay: String?
     
@@ -23,7 +27,7 @@ struct HomePage: View {
         PageContainer {
             PageHeader(
                 eyebrow: "Home",
-                title: "\(greetingText), \(displayFirstName)",
+                title: "\(TimeFormatter.greetingText(for: Date())), \(displayFirstName)",
                 subtitle: nil
             )
             statementCard
@@ -101,39 +105,39 @@ struct HomePage: View {
 
             SurfaceCard {
                 SectionTitle(
-                    title: "Your Last 7 Days",
+                    title: "Your Past 7 Days",
                     subtitle: nil
                 )
                 
-                Text("Your week in a graph")
+                Text("Trends")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color("tempoInk").opacity(0.85))
                     .padding(.bottom, 4)
                 
                 if !hasGraphData {
-                    Text("Close your first statement to see your weekly trend.")
+                    Text("Close your first statement to see your recent trend.")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(Color("tempoInk").opacity(0.65))
                             .padding(.bottom, 8)
                 }
                 else {
-                    Chart(graphData) { day in
+                    Chart(graphData) { data in
                         BarMark(
-                            x: .value("Day", day.dayLabel),
-                            y: .value("Net", day.net),
+                            x: .value("Day", data.label),
+                            y: .value("Net", data.net),
                             width: 25
                         )
                         .cornerRadius(8)
-                        .foregroundStyle(day.net >= 0 ? positiveGradient(graph: true) : negativeGradient(graph: true))
+                        .foregroundStyle(data.net >= 0 ? positiveGradient(graph: true) : negativeGradient(graph: true))
                         .annotation(
-                            position: day.net >= 0 ? .top : .bottom,
+                            position: data.net >= 0 ? .top : .bottom,
                             overflowResolution:
                                 .init(x: .fit, y:.disabled) // blocks the numbers from overflowing and messing up bar shape
                         ) {
-                            if selectedDay == day.dayLabel {
-                                let netDisplay = String(format: "%.2f", abs(day.net))
+                            if selectedDay == data.label {
+                                let netDisplay = String(format: "%.2f", abs(data.net))
                                 
-                                Text(day.net >= 0 ? "+$\(netDisplay)" : "-$\(netDisplay)")
+                                Text(data.net >= 0 ? "+$\(netDisplay)" : "-$\(netDisplay)")
                                     .foregroundStyle(Color("tempoInk"))
                                     .font(.system(size: 17))
                                     .padding(6)
@@ -163,7 +167,7 @@ struct HomePage: View {
                     //.chartYAxis(.hidden)
                 }
                 
-                Text("Your week by the numbers")
+                Text("Statistics")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color("tempoInk").opacity(0.85))
                     .padding(.bottom, 7)
@@ -211,15 +215,6 @@ struct HomePage: View {
             }
             .contains { !$0.activities.isEmpty }
     }
-
-    
-    private struct GraphData: Identifiable {
-        var day: Date
-        var dayLabel: String
-        var net: Double
-        
-        var id: Date { day }
-    }
     
     private var graphData: [GraphData] {
         let calendar = Calendar.current
@@ -236,8 +231,7 @@ struct HomePage: View {
                 let day = calendar.startOfDay(for: statement.date)
                 
                 return GraphData(
-                    day: day,
-                    dayLabel: weekdayText(for: day),
+                    label: weekdayText(for: day),
                     net: net(for: statement)
                 )
             }
@@ -256,8 +250,7 @@ struct HomePage: View {
     }
 
     private var statementsWithEntries: [DayStatement] {
-        let combined = pastStatements + activeTodayStatement
-        return combined
+        return allStatements
             .filter { !$0.activities.isEmpty }
             .sorted { $0.date > $1.date }
     }
@@ -277,7 +270,7 @@ struct HomePage: View {
     }
 
     private var historyNetTotal: Double {
-        pastStatements.reduce(0) { partialResult, statement in
+        allStatements.reduce(0) { partialResult, statement in
             partialResult + statement.netTotal
         }
     }
@@ -476,14 +469,6 @@ struct HomePage: View {
         return CurrencyFormatter.string(allTimeAverageDayNet, shorten: true, alwaysShowSign: true)
     }
 
-    private var activeTodayStatement: [DayStatement] {
-        if todayStatement.activities.isEmpty && !todayStatement.isClosed {
-            return []
-        }
-
-        return [todayStatement]
-    }
-
     private var closedTodayStatement: [DayStatement] {
         if todayStatement.isClosed && !todayStatement.activities.isEmpty {
             return [todayStatement]
@@ -539,7 +524,7 @@ struct HomePage: View {
 #Preview {
     let userStore = UserStore()
     userStore.todayStatement = DemoData.todayStatement
-    userStore.pastStatement = DemoData.pastStatements
+    userStore.pastStatements = DemoData.pastStatements
     userStore.setting.hourlyRate = 40.23
 
     return HomePage()

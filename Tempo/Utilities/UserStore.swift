@@ -17,7 +17,7 @@ final class UserStore {
     var setting: UserSettings
     var profile: UserProfile
     var todayStatement: DayStatement
-    var pastStatement: [DayStatement]
+    var pastStatements: [DayStatement]
     
     private let defaults = UserDefaults.standard
     
@@ -41,10 +41,10 @@ final class UserStore {
             isClosed: false,
             hourlyRateSnapshot: initialHourlyRate
         )
-        pastStatement = []
+        pastStatements = []
 
         loadTodayStatement()
-        loadPastStatement()
+        loadPastStatements()
         checkForNewDay()
     }
     
@@ -75,12 +75,12 @@ final class UserStore {
         }
     }
     
-    func loadPastStatement() {
+    func loadPastStatements() {
         let decoder = JSONDecoder()
-        if let past = defaults.data(forKey: "pastStatement"), let decoded = try? decoder.decode([DayStatement].self, from:past) {
-            pastStatement = decoded
+        if let past = defaults.data(forKey: "pastStatements"), let decoded = try? decoder.decode([DayStatement].self, from:past) {
+            pastStatements = decoded
         } else {
-            pastStatement = []
+            pastStatements = []
         }
     }
     
@@ -90,17 +90,17 @@ final class UserStore {
         defaults.set(today, forKey: "todayStatement")
     }
     
-    func savePastStatement() {
+    func savePastStatements() {
         let encoder = JSONEncoder()
-        let past = try? encoder.encode(pastStatement)
-        defaults.set(past, forKey: "pastStatement")
+        let past = try? encoder.encode(pastStatements)
+        defaults.set(past, forKey: "pastStatements")
     }
 
     func saveAll() {
         saveSetting()
         saveProfile()
         saveTodayStatement()
-        savePastStatement()
+        savePastStatements()
     }
     
     func checkForNewDay(){
@@ -119,12 +119,12 @@ final class UserStore {
             isClosed: true
         )
         
-        pastStatement.append(closedStatement)
+        pastStatements.append(closedStatement)
         
         // adds in for between today and last saved date since app wasnt loaded to check between possibly
         var nextDay = calendar.date(byAdding: .day, value: 1, to: statementDay)
         while let missedDay = nextDay, missedDay < currentDay {
-            pastStatement.append(
+            pastStatements.append(
                 DayStatement(
                     date: missedDay,
                     isClosed: true,
@@ -141,6 +141,6 @@ final class UserStore {
         )
             
         saveTodayStatement()
-        savePastStatement()
+        savePastStatements()
     }
 }

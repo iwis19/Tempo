@@ -24,7 +24,7 @@ struct TodayPage: View {
         PageContainer{
             PageHeader(
                 eyebrow: "Today",
-                title: "\(greetingText), \(displayFirstName)",
+                title: "\(TimeFormatter.greetingText(for: Date())), \(displayFirstName)",
                 subtitle: nil
             )
             statementCard
