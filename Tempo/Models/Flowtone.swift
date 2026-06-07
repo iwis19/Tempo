@@ -2,9 +2,10 @@
 //  Flowtone.swift
 //  Tempo
 //
-//  Created by Ronnie Gu on 2026-04-26.
+//  Created by Ronnie Gu on 2026-06-07.
 //
 
+import Foundation
 import SwiftUI
 
 enum Flowtone {
@@ -34,3 +35,5 @@ enum Flowtone {
         }
     }
 }
+
+

@@ -2,7 +2,7 @@
 //  ChartType.swift
 //  Tempo
 //
-//  Created by Glen gu on 2026-06-04.
+//  Created by Ronnie Gu on 2026-06-04.
 //
 
 import Foundation
@@ -115,10 +115,10 @@ enum ChartType: CaseIterable, Identifiable {
         }
     }
     
-    var periodStep: String {
+    var statementListingText: String {
         switch self {
         case .day:
-            return "Day"
+            return "N/A"
         case .week:
             return "Days"
         case .month:
@@ -129,6 +129,19 @@ enum ChartType: CaseIterable, Identifiable {
             return "Months"
         }
     
+    }
+    
+    var breakdownText: String {
+        switch self {
+        case .day:
+            return "by time of day"
+        case .week:
+            return "by day"
+        case .month:
+            return "by week"
+        case .quarter, .year:
+            return "by month"
+        }
     }
     
     
