@@ -49,20 +49,17 @@ Tempo-main/
 │   └── project.xcworkspace/
 │       └── xcshareddata/
 │           └── swiftpm/                 
-│
 ├── Tempo/
 │   ├── Assets.xcassets/                 # App icons, colors, wallpapers, assets
 │   │   ├── AppIcon.appiconset/
 │   │   ├── Icon.imageset/
 │   │   ├── wallpaper.imageset/
 │   │   └── *.colorset/                  # Custom Tempo color palette
-│   │
 │   ├── Design/                          # Design resources & documentation
 │   │   ├── ColorPalette
 │   │   ├── Learnings.md
 │   │   ├── TODO.md
 │   │   └── Syne-Regular.ttf
-│   │
 │   ├── Models/                          # Core app data models
 │   │   ├── Chart.swift
 │   │   ├── DayPart.swift
@@ -71,11 +68,9 @@ Tempo-main/
 │   │   ├── GraphData.swift
 │   │   ├── Statement.swift
 │   │   └── Tab.swift
-│   │
 │   ├── Services/                        # External services & user management
 │   │   ├── Supabase.swift
 │   │   └── User.swift
-│   │
 │   ├── Utilities/                       # Shared helpers, templates, notifications
 │   │   ├── DemoData.swift
 │   │   ├── Functions.swift
@@ -83,21 +78,16 @@ Tempo-main/
 │   │   ├── SignInHelper.swift
 │   │   ├── Templates.swift
 │   │   └── UserStore.swift
-│   │
 │   ├── Views/                           
 │   │   ├── ContentView.swift            # Root tab/navigation container
 │   │   ├── LaunchPage.swift             # App launch/onboarding screen
-│   │   │
 │   │   ├── Home/
 │   │   │   └── HomePage.swift           # Dashboard/home experience
-│   │   │
 │   │   ├── Today/
 │   │   │   ├── TodayPage.swift          # Daily tracking screen
 │   │   │   └── TodayStatementSheet.swift
-│   │   │
 │   │   ├── History/
 │   │   │   └── HistoryPage.swift        # Historical analytics & charts
-│   │   │
 │   │   └── Profile/
 │   │       ├── ProfilePage.swift
 │   │       ├── ProfileNameSheet.swift
@@ -106,10 +96,8 @@ Tempo-main/
 │   │       ├── ProfileDailyStatementGuideSheet.swift
 │   │       ├── ProfileFeedbackSheet.swift
 │   │       └── ProfileTimeCategoriesSheet.swift
-│   │
 │   ├── TempoApp.swift                  
 │   └── Info.plist                       
-│
 ├── README.md
 ├── LICENSE
 └── .gitignore
