@@ -37,6 +37,11 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ---
 
+## Set Up
+- Hopefully will be on the App Store some day :)
+
+---
+
 ## Project Structure
 ```text
 Tempo-main/
