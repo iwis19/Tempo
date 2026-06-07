@@ -136,6 +136,11 @@ enum DemoData {
             ],
             date: date(daysAgo: 6),
             isClosed: true
+        ),
+        statement(
+            activities: [],
+            date: Date(),
+            isClosed: false
         )
     ]
 
@@ -160,7 +165,7 @@ enum DemoData {
         historyStatement(month: 5, day: 29, earned: [90, 70, 40], required: [55], spent: [40], title: "Friday finish"),
         historyStatement(month: 5, day: 30, earned: [55, 40], required: [35], spent: [35], title: "Saturday cleanup"),
         historyStatement(month: 5, day: 31, earned: [70, 50], required: [40], spent: [20], title: "Sunday review"),
-        historyStatement(month: 6, day: 6, earned: [80, 65], required: [40, 30], spent: [35, 30], title: "June admin"),
-        historyStatement(month: 6, day: 20, earned: [100, 90], required: [45], spent: [30, 25], title: "June client"),
+        historyStatement(month: 6, day: 4, earned: [80, 65], required: [40, 30], spent: [35, 30], title: "June admin"),
+        historyStatement(month: 6, day: 5, earned: [100, 90], required: [45], spent: [30, 25], title: "June client"),
     ]
 }
