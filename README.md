@@ -16,10 +16,11 @@ iOS application that helps users stay productive throughout the day by managing 
 1. **Daily Activity Logging**
    - Users add activities with a title, duration, category
    - Separates into categories: earned, required, spent
-   - Recalculates worth
-2. **Money/Value Calculation From Time**
    - Converts logged minutes into dollar values using the user's inputted hourly rate
    - Currently defaults to Ontario minimum wage as of June 7, 2026
+2. **User Login Auth**
+   - Allows users to log in using Google accounts using Google Identity
+   - Wired to Supabase Auth
 3. **Daily Statement System**
    - Creates daily statements displaying today's net, category totals, etc
    - Open and closes statements to finalize details of the day
@@ -33,6 +34,7 @@ iOS application that helps users stay productive throughout the day by managing 
 ## Tech Stack
 - **Native Swift** (SwiftUI, Foundations, Charts, UserDefaults)
 - **Supabase**
+- **Google OAuth**
 - **SQL Rules**
 
 ---
@@ -111,6 +113,7 @@ Tempo-main/
 - Considering user experiences such as simplifying app interactions and incentivizing use
 - Designing UI/UX
 - Refactoring chunks of code to unify logic and naming processes
+- How basic authentication works, following a tutorial
 
 ---
 
