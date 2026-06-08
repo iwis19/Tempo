@@ -10,11 +10,23 @@ import Combine
 import GoogleSignIn
 import UIKit
 import SwiftUI
-import CryptoKit
+
+enum SignInError: LocalizedError {
+    case missingRootViewController
+    case missingIDToken
+    
+    var errorDescription: String? {
+        switch self {
+        case .missingRootViewController:
+            return "Could not find a view controller to present Google Sign-In."
+        case .missingIDToken:
+            return "Google Sign-In did not return an ID token."
+        }
+    }
+}
 
 struct SignInGoogleResult {
     let idToken: String
-    let nonce: String
 }
 
 @MainActor
@@ -24,7 +36,7 @@ class SignInViewModel: ObservableObject {
     func signInWithGoogle() async throws -> AppUser {
         let signInGoogle = SignInGoogle()
         let googleResult = try await signInGoogle.startSignInWithGoogleFlow()
-        return try await AuthManager.shared.signInWithGoogle(idToken: googleResult.idToken, nonce: googleResult.nonce)
+        return try await AuthManager.shared.signInWithGoogle(idToken: googleResult.idToken)
     }
 }
 
@@ -34,76 +46,25 @@ class SignInViewModel: ObservableObject {
 class SignInGoogle {
     
     func startSignInWithGoogleFlow() async throws -> SignInGoogleResult {
-        try await withCheckedThrowingContinuation( { [weak self] continuation in
-            self?.signInWithGoogleFlow { result in
-                continuation.resume(with: result)
-            }
-        })
-    }
-    
-    func signInWithGoogleFlow(completion: @escaping(Result<SignInGoogleResult, Error>) -> Void){
-        
         guard let rootViewController = UIApplication.getTopViewController() else {
-            return
+            throw SignInError.missingRootViewController
         }
         
-        let nonce = randomNonceString()
+        let signInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
         
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { signInResult, error in
-            guard let user = signInResult?.user, let idToken = user.idToken else {
-                // Inspect error
-                completion(.failure(NSError()))
-                return
-            }
-            // If sign in succeeded, display the app's main content View.
-            completion(.success(.init(idToken: idToken.tokenString, nonce: nonce)))
+        guard let idToken = signInResult.user.idToken?.tokenString else {
+            throw SignInError.missingIDToken
         }
+        
+        return SignInGoogleResult(idToken: idToken)
     }
-    
-    // Source - https://stackoverflow.com/a/61624668
-    // Posted by Zorayr
-    // Retrieved 2026-06-08, License - CC BY-SA 4.0
-
-    // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
-    private func randomNonceString(length: Int = 32) -> String {
-      precondition(length > 0)
-      let charset: Array<Character> =
-          Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
-      var result = ""
-      var remainingLength = length
-
-      while remainingLength > 0 {
-        let randoms: [UInt8] = (0 ..< 16).map { _ in
-          var random: UInt8 = 0
-          let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
-          if errorCode != errSecSuccess {
-            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
-          }
-          return random
-        }
-
-        randoms.forEach { random in
-          if remainingLength == 0 {
-            return
-          }
-
-          if random < charset.count {
-            result.append(charset[Int(random)])
-            remainingLength -= 1
-          }
-        }
-      }
-
-      return result
-    }
-
 }
 
 // Source - https://stackoverflow.com/a/50656239
 // Posted by Hardik Thakkar, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-06-07, License - CC BY-SA 4.0
 
-// MARK: UIApplication extensions
+// MARK: UIApplication extensions, GET ROOT VIEW
 
 extension UIApplication {
 

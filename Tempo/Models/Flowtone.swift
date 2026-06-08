@@ -16,22 +16,22 @@ enum Flowtone {
     var tint: Color {
         switch self {
         case .positive:
-            return Color("tempoLeaf")
+            return .tempoLeaf
         case .negative:
-            return Color("tempoLossRed")
+            return .tempoLossRed
         case .neutral:
-            return Color("tempoInk")
+            return .tempoInk
         }
     }
 
     var background: Color {
         switch self {
         case .positive:
-            return Color("tempoSoftMint").opacity(0.38)
+            return .tempoSoftMint.opacity(0.38)
         case .negative:
-            return Color("tempoLossWash").opacity(0.5)
+            return .tempoLossWash.opacity(0.5)
         case .neutral:
-            return Color("tempoNeutralCard").opacity(0.50)
+            return .tempoNeutralCard.opacity(0.50)
         }
     }
 }

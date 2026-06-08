@@ -31,7 +31,7 @@ struct ProfileTimeCategoriesSheet: View {
                     TimeCategoryCard(
                         title: "Earned",
                         summary: "Time that helps you feel better, grow, or make progress.",
-                        tint: Color("tempoLeaf"),
+                        tint: .tempoLeaf,
                         examples: [
                             "Focused work",
                             "Exercise or rest",
@@ -43,7 +43,7 @@ struct ProfileTimeCategoriesSheet: View {
                     TimeCategoryCard(
                         title: "Required",
                         summary: "Time you need to spend to keep life and work moving.",
-                        tint: Color("tempoInk"),
+                        tint: .tempoInk,
                         examples: [
                             "Commutes",
                             "Chores or errands",
@@ -55,7 +55,7 @@ struct ProfileTimeCategoriesSheet: View {
                     TimeCategoryCard(
                         title: "Spent",
                         summary: "Time that uses energy or attention without giving much back.",
-                        tint: Color("tempoLossRed"),
+                        tint: .tempoLossRed,
                         examples: [
                             "Mindless scrolling",
                             "Procrastination",
@@ -72,7 +72,7 @@ struct ProfileTimeCategoriesSheet: View {
 
                         Text("Earned helps you. Required has to get done. Spent drains time or attention.")
                             .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(Color("tempoInk").opacity(0.70))
+                            .foregroundStyle(.tempoInk.opacity(0.70))
                     }
 
                     ActionButton(

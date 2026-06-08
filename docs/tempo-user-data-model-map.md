@@ -4,8 +4,8 @@
 
 - The app is currently a SwiftUI iOS app with local models and views. I do not see a backend/API layer in this repo yet.
 - `Activity.swift` already exists and stores `id`, `name`, `length`, `category`, and `createdAt`.
-- `DayStatement.swift` and `UserSettings.swift` exist but are still empty.
-- The real app currently has a launch screen and a partial dashboard.
+- `UserStore` stays focused on profile/settings, and the live pages no longer depend on seeded demo state.
+- `DashboardPage` is now a cash-account screen rather than a duplicate of today's statement.
 - The mock screens define the intended product shape much more clearly: daily checkup, hourly rate settings, statement history, past-day ledger, reminders, and profile settings.
 
 ## 1. Data you must collect from users
@@ -38,6 +38,9 @@ These values should be computed from existing data so you do not over-collect.
 | `netTotal` | `earnedTotal - requiredTotal - spentTotal` or signed sum | Dashboard, Checkup, History |
 | `activityAmount` | `durationMinutes * hourlyRate * categoryRule` | Checkup, Ledger, History |
 | `statementStatus` | Open/closed + uncategorized count | Dashboard, Checkup, History |
+| `spendableCash` | Sum of `available` cash buckets | Dashboard |
+| `protectedCash` | Sum of `vaulted`, `reserved`, and `planned` buckets | Dashboard |
+| `projectedSpendableCash` | `spendableCash + todayNetTotal` | Dashboard |
 | `weeklyRollup` | Aggregate daily statements by week | History |
 | `heroSupportText` | Statement status + uncategorized count | Checkup |
 
@@ -51,6 +54,7 @@ This is the cleanest first-pass file layout based on the screens already in the 
 | `UserSettings.swift` | User-configurable app/account settings | `userId`, `hourlyRate`, `currencyCode`, `reminderEnabled`, `reminderTime`, `earnedMultiplier`, `requiredMultiplier`, `spentMultiplier`, `updatedAt` |
 | `Activity.swift` | One logged block of time | `id`, `statementId`, `title`, `durationMinutes`, `category`, `occurredAt`, `createdAt`, `updatedAt`, `notes?` |
 | `DayStatement.swift` | One day-level ledger/closeout | `id`, `userId`, `date`, `status`, `hourlyRateSnapshot`, `earnedTotal`, `requiredTotal`, `spentTotal`, `netTotal`, `entryCount`, `closedAt?`, `templateSourceStatementId?` |
+| `CashDashboard.swift` | Cash-side dashboard models | `CashDashboardSnapshot`, `CashBucket`, `UpcomingCashMove`, `CashBucketKind` |
 | `WeeklyRollup.swift` | Optional cached archive summary | `id`, `weekStart`, `weekEnd`, `earnedTotal`, `requiredTotal`, `spentTotal`, `netTotal`, `dayCount` |
 
 ## 4. Screen-to-model map
@@ -58,7 +62,7 @@ This is the cleanest first-pass file layout based on the screens already in the 
 | Screen | Reads | Writes |
 | --- | --- | --- |
 | `LaunchPage` | None | None |
-| `DashboardPage` | `UserProfile`, today's `DayStatement`, recent `Activity` rows, `UserSettings.hourlyRate` | Usually read-only |
+| `DashboardPage` | `UserProfile`, `UserSettings.hourlyRate`, today's `DayStatement`, `CashDashboardSnapshot` | Usually read-only |
 | `CheckupPage` / mock checkup sheet | Open `DayStatement`, today's `Activity` entries, `UserSettings.hourlyRate`, category multipliers | Creates/updates `Activity`, closes `DayStatement` |
 | `HistoryPage` / mock history | Past `DayStatement` records and optional `WeeklyRollup` | Optional filters only |
 | `PastDayStatementSheet` | One closed `DayStatement` and its `Activity` children | Usually read-only |
@@ -71,8 +75,11 @@ This is the cleanest first-pass file layout based on the screens already in the 
 flowchart TD
     UserProfile --> UserSettings
     UserProfile --> DayStatement
+    UserProfile --> CashDashboardSnapshot
     DayStatement --> Activity
     DayStatement --> WeeklyRollup
+    CashDashboardSnapshot --> CashBucket
+    CashDashboardSnapshot --> UpcomingCashMove
 ```
 
 More accurate in words:
@@ -80,6 +87,7 @@ More accurate in words:
 - One user has one profile.
 - One user has one settings record.
 - One user has many day statements.
+- One user has one current cash dashboard snapshot.
 - One day statement has many activities.
 - One weekly rollup is derived from many day statements.
 

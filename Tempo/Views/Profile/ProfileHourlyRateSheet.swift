@@ -72,21 +72,21 @@ struct ProfileHourlyRateSheet : View {
                     SurfaceCard {
                         Text("Rate Input")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(Color("tempoInk").opacity(0.52))
+                            .foregroundStyle(.tempoInk.opacity(0.52))
 
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text("$")
                                 .font(.custom("Syne-Regular", size: 34))
-                                .foregroundStyle(Color("tempoDeepGreen"))
+                                .foregroundStyle(.tempoDeepGreen)
 
                             TextField("20", text: $hourlyRate)
                                 .keyboardType(.decimalPad)
                                 .font(.custom("Syne-Regular", size: 42))
-                                .foregroundStyle(Color("tempoInk"))
+                                .foregroundStyle(.tempoInk)
 
                             Text("/ hour")
                                 .font(.system(size: 15, weight: .medium))
-                                .foregroundStyle(Color("tempoInk").opacity(0.60))
+                                .foregroundStyle(.tempoInk.opacity(0.60))
                         }
                     }
 

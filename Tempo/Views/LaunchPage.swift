@@ -14,9 +14,11 @@ struct LaunchPage: View {
     private let subtitleFontSize: CGFloat = 20
     private let subtitleOpacity: Double = 0.92
     
-    @State private var fullSplash = false
+    @StateObject private var signInViewModel = SignInViewModel()
     
-    @State private var email: String = ""
+    @Binding var appUser: AppUser?
+    
+    @State private var fullSplash = false
     
     private let subtitleEnding = [
         "seconds.",
@@ -42,19 +44,23 @@ struct LaunchPage: View {
     
     
     var body: some View {
-        ZStack {
-            LaunchBackground(fullSplash: fullSplash)
+        PageContainer{
             
             // logo, title, subtitles
             VStack(spacing: 0) {
                 appLogo
+                    .offset(y: 20)
                 appTitle
                 appSubtitle
-                //appLogin
+                    .offset(y: -15)
+                if fullSplash {
+                    signInWithGoogle
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .padding(.top, 190)
             .padding(.horizontal, 20)
+            .offset(y: -20)
         }
         // rotating subtitle text
         .onReceive(subtitleTimer) { _ in
@@ -76,26 +82,26 @@ struct LaunchPage: View {
         ZStack{
             RoundedRectangle(cornerRadius: 28)
                 .frame(width:140, height:140)
-                .foregroundStyle(.white.opacity(0.17))
+                .foregroundStyle(.tempoNeutralCard.opacity(0.37))
                 .blur(radius:1.5)
             
             Image("Icon")
                 .resizable()
                 .scaledToFit()
                 .frame(width:140, height:140)
-                .offset(y:3)  //fix logo misalignment in transluscent box
+                .offset(y:3)
             
             RoundedRectangle(cornerRadius: 28)
-                .stroke(.white.opacity(0.4), lineWidth: 1.5)
+                .stroke(.tempoNeutralCard.opacity(fullSplash ? 0.4 : 0), lineWidth: 1.5)
                 .frame(width:141, height:141)
-                .shadow(radius: 5)
+                .shadow(radius: fullSplash ? 3 : 0)
         }
         .offset(y: fullSplash ? -35 : 120)
     }
     
     private var appTitle: some View {
         Text("Tempo")
-            .foregroundStyle(.white.opacity(fullSplash ? 1 : 0))
+            .foregroundStyle(.tempoInk.opacity(fullSplash ? 1 : 0))
             .font(.custom("Syne-Regular", size: mainFontSize))
             .padding(.top, 60)
             .padding(.bottom, 25)
@@ -106,12 +112,12 @@ struct LaunchPage: View {
         // rotating text
         HStack(spacing: 0) {
             Text("Earn your ")
-                .foregroundStyle(.white.opacity(fullSplash ? subtitleOpacity : 0))
+                .foregroundStyle(.tempoInk.opacity(fullSplash ? subtitleOpacity : 0))
                 .font(.system(size: subtitleFontSize, weight: .medium))
             
             Text(currentSubtitleEnding)
                 .id(currentSubtitleIndex)
-                .foregroundStyle(.white.opacity(fullSplash ? subtitleOpacity : 0))
+                .foregroundStyle(.tempoInk.opacity(fullSplash ? subtitleOpacity : 0))
                 .font(.system(size: subtitleFontSize, weight: .medium))
                 .transition(subtitleTransition)
         }
@@ -119,86 +125,46 @@ struct LaunchPage: View {
         .offset(y:-40)
     }
     
-    private var appLogin: some View {
+    private var signInWithGoogle: some View {
         
-        // login button
-        
-        SecureField("User Email", text: $email, prompt: Text("Email Address").foregroundStyle(.white))
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 16))
-            .foregroundStyle(Color("tempoShell").opacity(0.35))
-            .overlay{
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color("tempoInk").opacity(0.66), lineWidth: 1)
+        Button(
+            action: {
+                Task {
+                    do {
+                        let appUser = try await signInViewModel.signInWithGoogle()
+                        self.appUser = appUser
+                    } catch {
+                        print("Error, please contact the developer team. (sign in)")
+                    }
+                }
             }
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .padding(.top, 70)
-            .padding(.horizontal, 30)
-        
-//        Button(action: {
-//            Task {
-//                do {
-//                    let appuser = try await
-//                }
-//            }
-//        })
-    }
-}
-
-
-private struct LaunchBackground : View {
-    let fullSplash: Bool
-
-    var body : some View {
-        //background gradient color
-        LinearGradient(colors: [Color("tempoLeaf"), Color("tempoDeepGreen")], startPoint: .topLeading, endPoint: .bottomTrailing)
-            .ignoresSafeArea()
-
-        //miscellaneous shapes
-        ZStack {
-            RoundedRectangle(cornerRadius: 56)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red:1, green:1, blue:1).opacity(fullSplash ? 0.13 : 0),
-                            Color(red: 0.81, green: 0.95, blue: 0.82).opacity(fullSplash ? 0.42 : 0)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 230, height: 340)
-                .rotationEffect(.degrees(-24))
-                .offset(x: 155, y: -205)
-
-            Circle()
-                .fill(
-                    LinearGradient(colors: [Color(red:1,green:1,blue:1).opacity(fullSplash ? 0.05 : 0), Color(red:0.97, green:1, blue:0.95).opacity(fullSplash ? 0.13 : 0)], startPoint: .top, endPoint: .bottom)
-                )
-                .blur(radius: 4)
-                .frame(width: 170, height: 170)
-                .offset(x: 120, y: -30)
-
-            RoundedRectangle(cornerRadius: 48)
-                .fill(Color(red: 0.8, green: 0.8, blue: 0.8).opacity(fullSplash ? 0.08 : 0))
-                .frame(width: 175, height: 245)
-                .rotationEffect(.degrees(34))
-                .offset(x: -165, y: 120)
-
-            RoundedRectangle(cornerRadius: 64)
-                .fill(
-                    LinearGradient(colors: [Color(red: 0.97, green: 1.00, blue: 0.94).opacity(fullSplash ? 0.11 : 0), Color(red:1,green:1,blue:1).opacity(fullSplash ? 0.03 : 0)],startPoint: .top,endPoint: .bottom)
-                )
-                .frame(width: 280, height: 280)
-                .rotationEffect(.degrees(18))
-                .offset(x: 145, y: 335)
+        ){
+            HStack (spacing: 0){
+                Text("Sign in with Google")
+                    .font(.system(size: 16))
+                    .foregroundStyle(.white)
+                    .padding(.leading, 10)
+                
+                Image("GoogleIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 40, height: 40)
+            }
+            .padding(.vertical)
+            .padding(.horizontal, 15)
+            .frame(height: 40)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .foregroundStyle(.tempoInk)
+            )
         }
-        .ignoresSafeArea()
-        .allowsHitTesting(false)
+        
     }
 }
+
 
 #Preview{
-    LaunchPage()
+    LaunchPage(
+       appUser: .constant(AppUser(id: "1", email: "ronniegu2019@gmail.com"))
+    )
 }

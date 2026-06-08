@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import GoogleSignIn
 
 struct ContentView: View {
     @State private var selectedTab: Tab = .home
     
-    @State private var showLaunchPage = true
+    @State private var appUser: AppUser? = nil
+
 
     var body: some View {
         ZStack {
-            if showLaunchPage {
-                LaunchPage()
+            if appUser == nil {
+                LaunchPage(appUser: $appUser)
                     .transition(.opacity)
             }
             else {
@@ -23,12 +25,8 @@ struct ContentView: View {
                     .transition(.opacity)
             }
         }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-               withAnimation() {
-                   showLaunchPage = false
-               }
-           }
+        .onOpenURL { url in
+            GIDSignIn.sharedInstance.handle(url)
         }
         
     }
@@ -54,7 +52,7 @@ struct ContentView: View {
                     .toolbar(.hidden, for: .navigationBar)
                 case .profile:
                     NavigationStack{
-                        ProfilePage()
+                        ProfilePage(appUser: $appUser)
                     }
                     .toolbar(.hidden, for: .navigationBar)
                 }

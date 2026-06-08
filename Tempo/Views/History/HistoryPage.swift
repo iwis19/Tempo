@@ -70,12 +70,12 @@ struct HistoryPage: View {
                         .padding(.vertical, 10)
                         .frame(maxWidth: .infinity, minHeight: 40)
                         .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(selectedType == type ? Color.white : Color("tempoInk"))
-                        .background(selectedType == type ? Color("tempoDeepGreen") : Color.white.opacity(0.76))
+                        .foregroundStyle(selectedType == type ? Color.white : .tempoInk)
+                        .background(selectedType == type ? .tempoDeepGreen : Color.white.opacity(0.76))
                         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                         .overlay {
                             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .stroke(Color("tempoLeaf").opacity(selectedType == type ? 0 : 0.12), lineWidth: 1)
+                                .stroke(.tempoLeaf.opacity(selectedType == type ? 0 : 0.12), lineWidth: 1)
                         }
                 }
                 .buttonStyle(.plain)
@@ -95,11 +95,11 @@ struct HistoryPage: View {
             VStack (alignment: .center){
                 Text(selectedTypeTitle)
                     .font(.system(size: 22, weight: .semibold))
-                    .foregroundStyle(Color("tempoInk"))
+                    .foregroundStyle(.tempoInk)
                 
                 Text(selectedType.navigationSubtitle)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.58))
+                    .foregroundStyle(.tempoInk.opacity(0.58))
             }
             
             Spacer()
@@ -116,7 +116,7 @@ struct HistoryPage: View {
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(Color("tempoLeaf").opacity(0.10), lineWidth: 1)
+                .stroke(.tempoLeaf.opacity(0.10), lineWidth: 1)
         }
     }
     
@@ -203,13 +203,13 @@ struct HistoryPage: View {
             
             Text("Trends (\(selectedType.breakdownText))")
                 .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(Color("tempoInk").opacity(0.85))
+                .foregroundStyle(.tempoInk.opacity(0.85))
                 .padding(.bottom, 4)
             
             if !hasGraphData(for: periodInterval) {
                 Text("You have no trends in this period.")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.65))
+                        .foregroundStyle(.tempoInk.opacity(0.65))
                         .padding(.bottom, 8)
             }
             else {
@@ -229,7 +229,7 @@ struct HistoryPage: View {
                             let netDisplay = String(format: "%.2f", abs(data.net))
                             
                             Text(data.net >= 0 ? "+$\(netDisplay)" : "-$\(netDisplay)")
-                                .foregroundStyle(Color("tempoInk"))
+                                .foregroundStyle(.tempoInk)
                                 .font(.system(size: 17))
                                 .padding(6)
                                 .background(Color(.white))
@@ -258,7 +258,7 @@ struct HistoryPage: View {
             
             Text("Statistics")
                 .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(Color("tempoInk").opacity(0.85))
+                .foregroundStyle(.tempoInk.opacity(0.85))
                 .padding(.bottom, 4)
             
             PreviewRow(
@@ -483,7 +483,7 @@ struct HistoryPage: View {
             if statementList.isEmpty {
                 SurfaceCard {
                     Text("No statements logged in this period.")
-                        .foregroundStyle(Color("tempoInk"))
+                        .foregroundStyle(.tempoInk)
                 }
             }
             else {

@@ -65,20 +65,20 @@ struct ProfileDailyStatementGuideSheet: View {
                         PreviewRow(
                             title: "Earned",
                             value: "Value gained",
-                            tint: Color("tempoLeaf"),
-                            background: Color("tempoShell")
+                            tint: .tempoLeaf,
+                            background: .tempoShell
                         )
                         PreviewRow(
                             title: "Required",
                             value: "Necessary cost",
-                            tint: Color("tempoInk"),
-                            background: Color("tempoNeutralCard")
+                            tint: .tempoInk,
+                            background: .tempoNeutralCard
                         )
                         PreviewRow(
                             title: "Spent",
                             value: "Value lost",
-                            tint: Color("tempoLossRed"),
-                            background: Color("tempoLossWash")
+                            tint: .tempoLossRed,
+                            background: .tempoLossWash
                         )
                     }
 
@@ -90,7 +90,7 @@ struct ProfileDailyStatementGuideSheet: View {
 
                         Text("Aim for more Earned time, less Spent time, and a clear view of your Required time.")
                             .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(Color("tempoInk").opacity(0.70))
+                            .foregroundStyle(.tempoInk.opacity(0.70))
                     }
 
                     ActionButton(

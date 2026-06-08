@@ -51,7 +51,7 @@ struct ProfileFeedbackSheet: View {
                     SurfaceCard {
                         Text("Feedback Draft")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(Color("tempoInk").opacity(0.52))
+                            .foregroundStyle(.tempoInk.opacity(0.52))
 
                         // allows users to pick a value out of a list, and set it to a variable
                         Picker("Topic", selection: $feedbackTopic) {
@@ -67,7 +67,7 @@ struct ProfileFeedbackSheet: View {
                             if feedbackMessage.isEmpty {
                                 Text("Tell Tempo what felt confusing, slow, broken, or worth building next.")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundStyle(Color("tempoInk").opacity(0.35))
+                                    .foregroundStyle(.tempoInk.opacity(0.35))
                                     .padding(.horizontal, 18)
                                     .padding(.top, 18)
                             }
@@ -76,11 +76,11 @@ struct ProfileFeedbackSheet: View {
                             TextEditor(text: $feedbackMessage)
                                 .scrollContentBackground(.hidden)
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundStyle(Color("tempoInk"))
+                                .foregroundStyle(.tempoInk)
                                 .frame(minHeight: 150)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
-                                .background(Color("tempoShell").opacity(0.75))
+                                .background(.tempoShell.opacity(0.75))
                                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                         }
                     }
@@ -105,14 +105,14 @@ struct ProfileFeedbackSheet: View {
                     if let feedbackError {
                         Text(feedbackError)
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Color("tempoLossRed"))
+                            .foregroundStyle(.tempoLossRed)
                     }
                     
 //                    // TODO: COMMENT THIS OUT
 //                    if let debuggingError {
 //                        Text(debuggingError)
 //                            .font(.system(size: 13, weight: .medium))
-//                            .foregroundStyle(Color("tempoLossRed"))
+//                            .foregroundStyle(.tempoLossRed)
 //                    }
                     
                 }
@@ -123,7 +123,7 @@ struct ProfileFeedbackSheet: View {
             
             if sendingFeedback {
                 ProgressView()
-                    .tint(Color("tempoLeaf"))
+                    .tint(.tempoLeaf)
             }
         }
     }

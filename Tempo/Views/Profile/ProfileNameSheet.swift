@@ -58,38 +58,38 @@ struct ProfileNameSheet: View {
                     SurfaceCard {
                         Text("Name Input")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(Color("tempoInk").opacity(0.52))
+                            .foregroundStyle(.tempoInk.opacity(0.52))
                         
                         VStack(spacing: 12) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("First Name")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(Color("tempoInk"))
+                                    .foregroundStyle(.tempoInk)
 
                                 TextField("First Name", text: $firstName)
                                     .textInputAutocapitalization(.words)
                                     .autocorrectionDisabled()
                                     .font(.system(size: 18, weight: .medium))
-                                    .foregroundStyle(Color("tempoInk"))
+                                    .foregroundStyle(.tempoInk)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 12)
-                                    .background(Color("tempoShell").opacity(0.75))
+                                    .background(.tempoShell.opacity(0.75))
                                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             }
 
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Last Name")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(Color("tempoInk"))
+                                    .foregroundStyle(.tempoInk)
 
                                 TextField("Last Name", text: $lastName)
                                     .textInputAutocapitalization(.words)
                                     .autocorrectionDisabled()
                                     .font(.system(size: 18, weight: .medium))
-                                    .foregroundStyle(Color("tempoInk"))
+                                    .foregroundStyle(.tempoInk)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 12)
-                                    .background(Color("tempoShell").opacity(0.75))
+                                    .background(.tempoShell.opacity(0.75))
                                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             }
                         }

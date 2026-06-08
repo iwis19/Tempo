@@ -7,9 +7,6 @@
 
 import SwiftUI
 
-
-
-
 // PAGE CONTAINERS
 // <Content: View> indicates that it is generic over some content, but content must also follow View protocol, meaning that this container can hold any child UI inside it
 struct PageContainer <Content: View>: View {
@@ -84,7 +81,7 @@ struct MainCard <Content: View>: View{
             RoundedRectangle(cornerRadius: 30, style: .continuous)
                 .stroke(.white.opacity(0.12), lineWidth: 1)
         } // creates a subtle outline for this roundedrectangle
-        .shadow(color: Color("tempoShadow").opacity(0.18), radius: 22, y: 12) // adds a shadow around the shape
+        .shadow(color: .tempoShadow.opacity(0.18), radius: 22, y: 12) // adds a shadow around the shape
     }
 }
 
@@ -121,10 +118,10 @@ struct MainCardStatusBadge : View {
     var body: some View {
         Text(text)
             .font(.system(size: 12, weight: .bold))
-            .foregroundStyle(positive ? Color("tempoDeepGreen") : Color("tempoWineRed"))
+            .foregroundStyle(positive ? .tempoDeepGreen : .tempoWineRed)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(positive ? Color("tempoGlow") : Color("tempoLossWash"))
+            .background(positive ? .tempoGlow : .tempoLossWash)
             .clipShape(Capsule())
     }
 }
@@ -148,7 +145,7 @@ struct SurfaceCard <Content: View>: View {
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color("tempoLeaf").opacity(0.10), lineWidth: 1)
+                .stroke(.tempoLeaf.opacity(0.10), lineWidth: 1)
         }
         
     }
@@ -163,12 +160,12 @@ struct SectionTitle : View {
     var body : some View {
         Text(title)
             .font(.system(size: 18, weight: .semibold))
-            .foregroundStyle(Color("tempoInk"))
+            .foregroundStyle(.tempoInk)
         
         if let subtitle{
             Text(subtitle)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(Color("tempoInk").opacity(0.62))
+                .foregroundStyle(.tempoInk.opacity(0.62))
         }
     }
 }
@@ -184,30 +181,30 @@ struct SettingRow : View {
     var body : some View {
         HStack {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color("tempoSoftMint").opacity(0.30))
+                .fill(.tempoSoftMint.opacity(0.30))
                 .frame(width: 48, height: 48)
                 .overlay {
                     Image(systemName: icon)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(Color("tempoDeepGreen"))
+                        .foregroundStyle(.tempoDeepGreen)
                 }
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color("tempoInk"))
+                    .foregroundStyle(.tempoInk)
                     .offset(y:2)
 
                 Text(description)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.58))
+                    .foregroundStyle(.tempoInk.opacity(0.58))
             }
             
             Spacer()
             
             Text(details)
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Color("tempoDeepGreen"))
+                .foregroundStyle(.tempoDeepGreen)
         }
     }
 }
@@ -225,7 +222,7 @@ struct PreviewRow : View {
         HStack {
             Text(title)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(Color("tempoInk"))
+                .foregroundStyle(.tempoInk)
 
             Spacer()
 
@@ -265,7 +262,7 @@ struct TimeCategoryCard: View {
 
                 Text(summary)
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.68))
+                    .foregroundStyle(.tempoInk.opacity(0.68))
 
                 ForEach(examples, id: \.self) { example in
                     HStack(alignment: .top, spacing: 10) {
@@ -276,7 +273,7 @@ struct TimeCategoryCard: View {
 
                         Text(example)
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Color("tempoInk"))
+                            .foregroundStyle(.tempoInk)
                     }
                 }
             }
@@ -297,19 +294,19 @@ struct StatementFlowStepRow: View {
         HStack(alignment: .top, spacing: 12) {
             Text(number)
                 .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(Color("tempoDeepGreen"))
+                .foregroundStyle(.tempoDeepGreen)
                 .frame(width: 28, height: 28)
-                .background(Color("tempoSoftMint").opacity(0.50))
+                .background(.tempoSoftMint.opacity(0.50))
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color("tempoInk"))
+                    .foregroundStyle(.tempoInk)
 
                 Text(bodyText)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.65))
+                    .foregroundStyle(.tempoInk.opacity(0.65))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -321,26 +318,20 @@ struct PageBackground: View {
     var body: some View{
         
         ZStack {
-            LinearGradient(colors: [Color("tempoShell"), Color("tempoShell"), Color.white ,Color("tempoShell"), Color("tempoShell")], startPoint: .topTrailing, endPoint: .bottomLeading)
+            
+            LinearGradient(
+                    colors: [
+                        .tempoSoftMint.opacity(0.75),
+                        .tempoGlow.opacity(0.4),
+                        .white.opacity(0.28),
+                        .tempoGlow.opacity(0.20),
+                        .tempoSoftMint.opacity(0.75)
+                    ],
+                    startPoint: .topTrailing,
+                    endPoint: .bottomLeading
+                )
                 .ignoresSafeArea()
             
-//            Circle()
-//                .fill(Color("tempoSoftMint").opacity(0.74))
-//                .blur(radius: 70)
-//                .frame(width: 260, height: 260)
-//                .offset(x: 145, y: -250)
-//            
-//            RoundedRectangle(cornerRadius: 70, style: .continuous)
-//                .fill(Color.white.opacity(0.58))
-//                .frame(width: 260, height: 340)
-//                .rotationEffect(.degrees(24))
-//                .offset(x: 165, y: -140)
-//            
-//            RoundedRectangle(cornerRadius: 56, style: .continuous)
-//                .stroke(Color("tempoLeaf").opacity(0.16), lineWidth: 1)
-//                .frame(width: 210, height: 210)
-//                .rotationEffect(.degrees(-18))
-//                .offset(x: -165, y: 290)
         }
         .allowsHitTesting(false)
         .ignoresSafeArea()
@@ -357,12 +348,12 @@ struct PageHeader: View {
     var body: some View {
         VStack (alignment: .leading, spacing: 10){
             Text(eyebrow)
-                .foregroundStyle(Color("tempoInk").opacity(0.58))
+                .foregroundStyle(.tempoInk.opacity(0.58))
                 .font(.system(size: 14, weight: .semibold))
             
             if let title {
                 Text(title)
-                    .foregroundStyle(Color("tempoInk"))
+                    .foregroundStyle(.tempoInk)
                     .font(.custom("Syne-Regular", size:34))
                 // if userName is too long, it caps this entire line to max 2 lines, and uses ... to replace the exceeding characters
                     .lineLimit(2)
@@ -373,7 +364,7 @@ struct PageHeader: View {
             if let subtitle {
                 Text(subtitle)
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.68))
+                    .foregroundStyle(.tempoInk.opacity(0.68))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -385,7 +376,7 @@ struct PageHeader: View {
 struct DragIndicator: View {
     var body: some View {
         Capsule()
-            .fill(Color("tempoInk").opacity(0.12))
+            .fill(.tempoInk.opacity(0.12))
             .frame(width:52, height:5)
     }
 }
@@ -406,9 +397,9 @@ struct NavigationButton: View {
         Button (action: action) {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .bold))
-                .foregroundStyle(Color("tempoDeepGreen"))
+                .foregroundStyle(.tempoDeepGreen)
                 .frame(width: 50, height: 50)
-                .background(Color("tempoSoftMint").opacity(0.36))
+                .background(.tempoSoftMint.opacity(0.36))
                 .clipShape(Circle())
         }
         .buttonStyle(.plain)
@@ -440,10 +431,10 @@ struct ActionButton: View{
         Button(action: action) {
             Text(title)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(light ? Color("tempoInk") : Color.white.opacity(0.84))
+                .foregroundStyle(light ? .tempoInk : Color.white.opacity(0.84))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(light ? Color.white.opacity(0.84) : Color("tempoInk"))
+                .background(light ? Color.white.opacity(0.84) : .tempoInk)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 
         }
@@ -472,9 +463,9 @@ struct BetterNavigationBar: View {
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(Color("tempoLeaf").opacity(0.10), lineWidth: 1)
+                .stroke(.tempoLeaf.opacity(0.10), lineWidth: 1)
         }
-        .shadow(color: Color("tempoShadow").opacity(0.08), radius: 18, y: 10)
+        .shadow(color: .tempoShadow.opacity(0.08), radius: 18, y: 10)
     }
     
     // for is NOT a loop here, it's just a label to make function call look nice: tabButton(for: .dashboard)
@@ -491,7 +482,7 @@ struct BetterNavigationBar: View {
                 Text(tab.title)
                     .font(.system(size: 12, weight: .semibold))
             }
-            .foregroundStyle(isSelected ? Color("tempoDeepGreen") : Color("tempoInk").opacity(0.45))
+            .foregroundStyle(isSelected ? .tempoDeepGreen : .tempoInk.opacity(0.45))
         }
     }
 }
@@ -517,20 +508,20 @@ struct LedgerRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(activity.name)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color("tempoInk"))
+                    .foregroundStyle(.tempoInk)
                 
                 HStack(spacing: 6) {
                     Text(TimeFormatter.minuteCountString(minutes: activity.durationMinutes))
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                        .foregroundStyle(.tempoInk.opacity(0.58))
                     
                     Circle()
-                        .fill(Color("tempoInk").opacity(0.24))
+                        .fill(.tempoInk.opacity(0.24))
                         .frame(width: 4, height: 4)
                     
                     Text(activity.category.title)
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                        .foregroundStyle(.tempoInk.opacity(0.58))
                 }
             }
             
@@ -559,7 +550,7 @@ struct summaryCard: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.system(size:12, weight: .semibold))
-                .foregroundStyle(Color("tempoInk").opacity(0.58))
+                .foregroundStyle(.tempoInk.opacity(0.58))
             
             HStack (alignment: .firstTextBaseline, spacing: 1) {
                 Text(valueSign)
@@ -581,7 +572,7 @@ struct summaryCard: View {
             
             Text(subtitle)
                 .font(.system(size:13, weight: .medium))
-                .foregroundStyle(Color("tempoInk").opacity(0.64))
+                .foregroundStyle(.tempoInk.opacity(0.64))
                 .padding(.top, 8)
 
         }
@@ -591,7 +582,7 @@ struct summaryCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color("tempoInk").opacity(0.10), lineWidth: 1)
+                .stroke(.tempoInk.opacity(0.10), lineWidth: 1)
         }
     }
     
@@ -611,8 +602,8 @@ struct summaryCard: View {
 func positiveGradient(graph: Bool = false) -> LinearGradient {
     LinearGradient(
         colors: [
-            Color("tempoDeepGreen"),
-            Color("tempoLeaf")
+            .tempoDeepGreen,
+            .tempoLeaf
         ],
         startPoint: graph ? .bottom : .topLeading,
         endPoint: graph ? .top : .bottomTrailing)
@@ -621,8 +612,8 @@ func positiveGradient(graph: Bool = false) -> LinearGradient {
 func negativeGradient(graph: Bool = false) -> LinearGradient {
     LinearGradient(
         colors: [
-            Color("tempoWineRed"),
-            Color("tempoLossRed")
+            .tempoWineRed,
+            .tempoLossRed
         ],
         startPoint: graph ? .top : .topLeading,
         endPoint: graph ? .bottom : .bottomTrailing
@@ -661,9 +652,9 @@ struct ActivityRow: View {
                 Button(action: onDelete) {
                     Image(systemName: "trash")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color("tempoLossRed"))
+                        .foregroundStyle(.tempoLossRed)
                         .padding(10)
-                        .background(Color("tempoLossWash").opacity(0.5))
+                        .background(.tempoLossWash.opacity(0.5))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -700,11 +691,11 @@ struct CategoryMixBar: View {
                 VStack (alignment: .leading, spacing: 4) {
                     Text(activity.title)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Color("tempoInk"))
+                        .foregroundStyle(.tempoInk)
                     
                     Text(TimeFormatter.minuteCountString(minutes: totalTime))
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                        .foregroundStyle(.tempoInk.opacity(0.58))
                 }
                 
                 Spacer()
@@ -716,14 +707,14 @@ struct CategoryMixBar: View {
                     
                     Text("\(percentIn100)%")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                        .foregroundStyle(.tempoInk.opacity(0.58))
                 }
             }
             GeometryReader { area in
                 
                 ZStack (alignment: .leading){
                     Capsule()
-                        .fill(Color("tempoNeutralCard"))
+                        .fill(.tempoNeutralCard)
 
                     Capsule()
                         .fill(activity.tone.tint.opacity(activity == .required ? 0.44 : 0.78))
@@ -764,11 +755,11 @@ struct statementCompactRow: View {
                     VStack (alignment: .leading, spacing: 6){
                         Text(statement.date)
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color("tempoInk"))
+                            .foregroundStyle(.tempoInk)
                         
                         Text("\(statement.entries) entries")
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Color("tempoInk").opacity(0.58))
+                            .foregroundStyle(.tempoInk.opacity(0.58))
                     }
                     .padding(.leading, 3)
                     
@@ -808,7 +799,7 @@ struct statementCompactRowBox: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(activityType.title)
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(Color("tempoInk").opacity(0.58))
+                .foregroundStyle(.tempoInk.opacity(0.58))
                 .padding(.bottom, 3)
             
             Text(amount)

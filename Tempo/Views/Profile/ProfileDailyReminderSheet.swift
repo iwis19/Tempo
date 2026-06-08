@@ -49,25 +49,25 @@ struct ProfileDailyReminderSheet: View {
                     SurfaceCard {
                         Text("Reminder Settings")
                             .font(.system(size:12, weight: .bold))
-                            .foregroundStyle(Color("tempoInk").opacity(0.52))
+                            .foregroundStyle(.tempoInk.opacity(0.52))
                         
                         Toggle(isOn: $reminderEnabled){
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Daily Reminder")
                                     .font(.system(size:16, weight: .semibold))
-                                    .foregroundStyle(Color("tempoInk"))
+                                    .foregroundStyle(.tempoInk)
                             }
                         }
-                        .tint(Color("tempoLeaf"))
+                        .tint(.tempoLeaf)
                         
                         if reminderEnabled {
                             Divider()
-                                .overlay(Color("tempoLeaf").opacity(0.12))
+                                .overlay(.tempoLeaf.opacity(0.12))
                             
                             VStack (alignment:.leading, spacing: 10){
                                 Text("Reminder Time")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(Color("tempoInk"))
+                                    .foregroundStyle(.tempoInk)
                                 
                                 DatePicker(
                                     "Reminder Time",
@@ -75,7 +75,7 @@ struct ProfileDailyReminderSheet: View {
                                     displayedComponents: . hourAndMinute
                                 )
                                 .datePickerStyle(.wheel)
-                                .tint(Color("tempoLeaf"))
+                                .tint(.tempoLeaf)
                                 .frame(maxWidth: .infinity)
                                 .clipped()
                             }
@@ -92,15 +92,15 @@ struct ProfileDailyReminderSheet: View {
                             PreviewRow(
                                 title: "Reminder Status",
                                 value: reminderEnabled ? "On" : "Off",
-                                tint: reminderEnabled ? Color("tempoLeaf") : Color("tempoInk").opacity(0.58),
-                                background: reminderEnabled ? Color("tempoShell") : Color("tempoNeutralCard")
+                                tint: reminderEnabled ? .tempoLeaf : .tempoInk.opacity(0.58),
+                                background: reminderEnabled ? .tempoShell : .tempoNeutralCard
                             )
                             if reminderEnabled {
                                 PreviewRow(
                                     title: "Notification Time",
                                     value: reminderDisplay,
-                                    tint: Color("tempoDeepGreen"),
-                                    background: Color("tempoShell")
+                                    tint: .tempoDeepGreen,
+                                    background: .tempoShell
                                 )
                             }
                         }

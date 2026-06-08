@@ -111,13 +111,13 @@ struct HomePage: View {
                 
                 Text("Trends")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.85))
+                    .foregroundStyle(.tempoInk.opacity(0.85))
                     .padding(.bottom, 4)
                 
                 if !hasGraphData {
                     Text("Close your first statement to see your recent trend.")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(Color("tempoInk").opacity(0.65))
+                            .foregroundStyle(.tempoInk.opacity(0.65))
                             .padding(.bottom, 8)
                 }
                 else {
@@ -138,7 +138,7 @@ struct HomePage: View {
                                 let netDisplay = String(format: "%.2f", abs(data.net))
                                 
                                 Text(data.net >= 0 ? "+$\(netDisplay)" : "-$\(netDisplay)")
-                                    .foregroundStyle(Color("tempoInk"))
+                                    .foregroundStyle(.tempoInk)
                                     .font(.system(size: 17))
                                     .padding(6)
                                     .background(Color(.white))
@@ -169,7 +169,7 @@ struct HomePage: View {
                 
                 Text("Statistics")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Color("tempoInk").opacity(0.85))
+                    .foregroundStyle(.tempoInk.opacity(0.85))
                     .padding(.bottom, 7)
 
                 PreviewRow(

@@ -83,7 +83,7 @@ struct TodayStatementSheet: View {
                 SurfaceCard {
                     Text("No activities yet. Use Quick Add below to build today's statement.")
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.68))
+                        .foregroundStyle(.tempoInk.opacity(0.68))
                 }
             } else {
                 VStack(spacing: 12) {
@@ -125,9 +125,9 @@ struct TodayStatementSheet: View {
             VStack (alignment: .leading, spacing: 14){
                 TextField("Activity title", text: $draftActivityTitle)
                     .font(.system(size:16, weight: .medium))
-                    .foregroundStyle(Color("tempoInk"))
+                    .foregroundStyle(.tempoInk)
                     .padding(14)
-                    .background(Color("tempoShell").opacity(0.72))
+                    .background(.tempoShell.opacity(0.72))
                     .clipShape(RoundedRectangle(cornerRadius:18, style: .continuous))
                 
                 
@@ -135,14 +135,14 @@ struct TodayStatementSheet: View {
                     TextField("30", text: $draftActivityTime)
                         .keyboardType(.numberPad)
                         .font(.system(size:16, weight: .medium))
-                        .foregroundStyle(Color("tempoInk"))
+                        .foregroundStyle(.tempoInk)
                         .padding(14)
-                        .background(Color("tempoShell"))
+                        .background(.tempoShell)
                         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     
                     Text("minutes")
                         .font(.system(size:15, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.58))
+                        .foregroundStyle(.tempoInk.opacity(0.58))
                     
                 }
                 
@@ -172,7 +172,7 @@ struct TodayStatementSheet: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
-                            .background(Color("tempoDeepGreen"))
+                            .background(.tempoDeepGreen)
                             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     }
                     .buttonStyle(.plain)

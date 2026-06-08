@@ -11,6 +11,8 @@
 		B9D47F9B2FD2B22400DA7B18 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = B9D47F9A2FD2B22400DA7B18 /* Functions */; };
 		B9D47F9D2FD2B22400DA7B18 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = B9D47F9C2FD2B22400DA7B18 /* Storage */; };
 		B9D47FEA2FD2B7ED00DA7B18 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = B9D47FE92FD2B7ED00DA7B18 /* Supabase */; };
+		B9D4804C2FD616D900DA7B18 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B9D4804B2FD616D900DA7B18 /* GoogleSignIn */; };
+		B9D4804E2FD616D900DA7B18 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B9D4804D2FD616D900DA7B18 /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,8 +46,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9D4804C2FD616D900DA7B18 /* GoogleSignIn in Frameworks */,
 				B9D47FEA2FD2B7ED00DA7B18 /* Supabase in Frameworks */,
 				B9D47F9D2FD2B22400DA7B18 /* Storage in Frameworks */,
+				B9D4804E2FD616D900DA7B18 /* GoogleSignInSwift in Frameworks */,
 				B9D47F9B2FD2B22400DA7B18 /* Functions in Frameworks */,
 				B9D47F992FD2B22400DA7B18 /* Auth in Frameworks */,
 			);
@@ -102,6 +106,8 @@
 				B9D47F9A2FD2B22400DA7B18 /* Functions */,
 				B9D47F9C2FD2B22400DA7B18 /* Storage */,
 				B9D47FE92FD2B7ED00DA7B18 /* Supabase */,
+				B9D4804B2FD616D900DA7B18 /* GoogleSignIn */,
+				B9D4804D2FD616D900DA7B18 /* GoogleSignInSwift */,
 			);
 			productName = Tempo;
 			productReference = B96FFF2C2F6E491E00640D1E /* Tempo.app */;
@@ -133,6 +139,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B9D47F972FD2B22400DA7B18 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				B9D4804A2FD616D900DA7B18 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B96FFF2D2F6E491E00640D1E /* Products */;
@@ -384,6 +391,14 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		B9D4804A2FD616D900DA7B18 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -406,6 +421,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B9D47F972FD2B22400DA7B18 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		B9D4804B2FD616D900DA7B18 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9D4804A2FD616D900DA7B18 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		B9D4804D2FD616D900DA7B18 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B9D4804A2FD616D900DA7B18 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

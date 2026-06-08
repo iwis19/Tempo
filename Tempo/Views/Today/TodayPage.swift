@@ -116,7 +116,7 @@ struct TodayPage: View {
                 SurfaceCard {
                     Text("Log your first activity to start building today's statement.")
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(Color("tempoInk").opacity(0.68))
+                        .foregroundStyle(.tempoInk.opacity(0.68))
                 }
             }
             else {

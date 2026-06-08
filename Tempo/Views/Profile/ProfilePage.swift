@@ -26,6 +26,8 @@ struct ProfilePage: View {
     @State private var showTimeCategorySheet = false
     @State private var showStatementGuideSheet = false
     
+    @Binding var appUser: AppUser?
+    
     var body: some View {
         
         PageContainer{
@@ -78,6 +80,21 @@ struct ProfilePage: View {
                         description: reminderDisplay
                     )
                 }
+                
+                ActionButton(
+                    title: "Sign Out",
+                    light: false,
+                    action: {
+                        Task {
+                            do {
+                                try await AuthManager.shared.signOut()
+                                self.appUser = nil
+                            } catch {
+                                print("Error, please contact the developer team. (sign out)")
+                            }
+                        }
+                    }
+                )
             }
 
             SurfaceCard {
@@ -289,7 +306,9 @@ struct ProfilePage: View {
 }
 
 #Preview {
-    ProfilePage()
+    ProfilePage(
+        appUser: .constant(.init(id: "1", email: "ronniegu2019@gmail.com"))
+    )
         .environment(UserStore())
         .environment(NotificationHandler())
 }
