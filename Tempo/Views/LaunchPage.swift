@@ -19,6 +19,7 @@ struct LaunchPage: View {
     @Binding var appUser: AppUser?
     
     @State private var fullSplash = false
+    @State private var signInErrorMessage: String?
     
     private let subtitleEnding = [
         "seconds.",
@@ -55,6 +56,7 @@ struct LaunchPage: View {
                     .offset(y: -15)
                 if fullSplash {
                     signInWithGoogle
+                    signInError
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -132,9 +134,14 @@ struct LaunchPage: View {
                 Task {
                     do {
                         let appUser = try await signInViewModel.signInWithGoogle()
-                        self.appUser = appUser
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            self.appUser = appUser
+                        }
                     } catch {
-                        print("Error, please contact the developer team. (sign in)")
+                        let message = error.localizedDescription
+                        signInErrorMessage = message
+                        print("Google sign-in failed: \(message)")
+                        print(String(reflecting: error))
                     }
                 }
             }
@@ -159,6 +166,19 @@ struct LaunchPage: View {
             )
         }
         
+    }
+    
+    private var signInError: some View {
+        Group {
+            if let signInErrorMessage {
+                Text(signInErrorMessage)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.tempoLossRed)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 28)
+                    .padding(.top, 14)
+            }
+        }
     }
 }
 

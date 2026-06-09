@@ -12,11 +12,16 @@ struct ContentView: View {
     @State private var selectedTab: Tab = .home
     
     @State private var appUser: AppUser? = nil
-
+    
+    @State private var checkingSession: Bool = true
 
     var body: some View {
         ZStack {
-            if appUser == nil {
+            if checkingSession {
+                ProgressView()
+                    .tint(.tempoLeaf)
+            }
+            else if appUser == nil {
                 LaunchPage(appUser: $appUser)
                     .transition(.opacity)
             }
@@ -27,6 +32,10 @@ struct ContentView: View {
         }
         .onOpenURL { url in
             GIDSignIn.sharedInstance.handle(url)
+        }
+        .task {
+            appUser = await AuthManager.shared.checkCurrentSession()
+            checkingSession = false
         }
         
     }

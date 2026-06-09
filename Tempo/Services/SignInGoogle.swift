@@ -10,6 +10,8 @@ import Combine
 import GoogleSignIn
 import UIKit
 import SwiftUI
+import CryptoKit
+import Security
 
 enum SignInError: LocalizedError {
     case missingRootViewController
@@ -27,6 +29,7 @@ enum SignInError: LocalizedError {
 
 struct SignInGoogleResult {
     let idToken: String
+    let nonce: String
 }
 
 @MainActor
@@ -36,7 +39,10 @@ class SignInViewModel: ObservableObject {
     func signInWithGoogle() async throws -> AppUser {
         let signInGoogle = SignInGoogle()
         let googleResult = try await signInGoogle.startSignInWithGoogleFlow()
-        return try await AuthManager.shared.signInWithGoogle(idToken: googleResult.idToken)
+        return try await AuthManager.shared.signInWithGoogle(
+            idToken: googleResult.idToken,
+            nonce: googleResult.nonce
+        )
     }
 }
 
@@ -50,14 +56,24 @@ class SignInGoogle {
             throw SignInError.missingRootViewController
         }
         
-        let signInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+        let nonce = NonceGenerator.randomNonceString()
+        let hashedNonce = NonceGenerator.sha256(nonce)
+        
+        let signInResult = try await GIDSignIn.sharedInstance.signIn(
+            withPresenting: rootViewController,
+            hint: nil,
+            additionalScopes: nil,
+            nonce: hashedNonce
+        )
         
         guard let idToken = signInResult.user.idToken?.tokenString else {
             throw SignInError.missingIDToken
         }
         
-        return SignInGoogleResult(idToken: idToken)
+        return SignInGoogleResult(idToken: idToken, nonce: nonce)
     }
+    
+    
 }
 
 // Source - https://stackoverflow.com/a/50656239
