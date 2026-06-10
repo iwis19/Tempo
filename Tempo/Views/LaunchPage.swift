@@ -14,7 +14,7 @@ struct LaunchPage: View {
     private let subtitleFontSize: CGFloat = 20
     private let subtitleOpacity: Double = 0.92
     
-    @StateObject private var signInViewModel = SignInViewModel()
+    @State private var signInViewModel = SignInViewModel()
     
     @Binding var appUser: AppUser?
     
@@ -55,8 +55,12 @@ struct LaunchPage: View {
                 appSubtitle
                     .offset(y: -15)
                 if fullSplash {
-                    signInWithGoogle
-                    signInError
+                    VStack (spacing: 7){
+                        signInWithGoogle
+                        signInWithApple
+                        signInError
+                    }
+                    
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -166,6 +170,46 @@ struct LaunchPage: View {
             )
         }
         
+    }
+    
+    private var signInWithApple: some View {
+        Button(
+            action: {
+                Task {
+                    do {
+                        let appUser = try await signInViewModel.signInWithApple()
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            self.appUser = appUser
+                        }
+                    } catch{
+                        let message = error.localizedDescription
+                        signInErrorMessage = message
+                        print("Apple sign-in failed: \(message)")
+                        print(String(reflecting: error))
+                    }
+                }
+            }
+        ){
+            HStack (spacing: 7){
+                Text("Sign in with Apple")
+                    .font(.system(size: 16))
+                    .foregroundStyle(.white)
+                    .padding(.leading, 10)
+                
+                Image("AppleIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .offset(y: -1.5)
+            }
+            .padding(.vertical)
+            .padding(.horizontal, 15)
+            .frame(width: 220, height: 40)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .foregroundStyle(.tempoInk)
+            )
+        }
     }
     
     private var signInError: some View {

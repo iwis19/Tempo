@@ -13,37 +13,9 @@ import SwiftUI
 import CryptoKit
 import Security
 
-enum SignInError: LocalizedError {
-    case missingRootViewController
-    case missingIDToken
-    
-    var errorDescription: String? {
-        switch self {
-        case .missingRootViewController:
-            return "Could not find a view controller to present Google Sign-In."
-        case .missingIDToken:
-            return "Google Sign-In did not return an ID token."
-        }
-    }
-}
-
 struct SignInGoogleResult {
     let idToken: String
     let nonce: String
-}
-
-@MainActor
-class SignInViewModel: ObservableObject {
-    
-    
-    func signInWithGoogle() async throws -> AppUser {
-        let signInGoogle = SignInGoogle()
-        let googleResult = try await signInGoogle.startSignInWithGoogleFlow()
-        return try await AuthManager.shared.signInWithGoogle(
-            idToken: googleResult.idToken,
-            nonce: googleResult.nonce
-        )
-    }
 }
 
 
@@ -74,32 +46,4 @@ class SignInGoogle {
     }
     
     
-}
-
-// Source - https://stackoverflow.com/a/50656239
-// Posted by Hardik Thakkar, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-06-07, License - CC BY-SA 4.0
-
-// MARK: UIApplication extensions, GET ROOT VIEW
-
-extension UIApplication {
-
-    class func getTopViewController(base: UIViewController? = UIApplication.shared.connectedScenes
-        .compactMap { $0 as? UIWindowScene }
-        .flatMap { $0.windows }
-        .first { $0.isKeyWindow }?
-        .rootViewController
-    ) -> UIViewController? {
-
-        if let nav = base as? UINavigationController {
-            return getTopViewController(base: nav.visibleViewController)
-
-        } else if let tab = base as? UITabBarController, let selected = tab.selectedViewController {
-            return getTopViewController(base: selected)
-
-        } else if let presented = base?.presentedViewController {
-            return getTopViewController(base: presented)
-        }
-        return base
-    }
 }

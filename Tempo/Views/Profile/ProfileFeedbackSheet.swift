@@ -134,12 +134,13 @@ struct ProfileFeedbackSheet: View {
         }
         
         sendingFeedback = true
+        defer { sendingFeedback = false }
         
         let feedback = Feedback(
             id: nil,
             date: Date(),
             topic: feedbackTopic,
-            information: feedbackMessage
+            information: normalizedMessage
         )
         
         do{
@@ -151,10 +152,10 @@ struct ProfileFeedbackSheet: View {
             dismiss()
         } catch {
             debuggingError = error.localizedDescription
+            print("Feedback insert failed: \(error.localizedDescription)")
+            print(String(reflecting: error))
             feedbackError = "Please try again in a bit."
         }
-        
-        sendingFeedback = false
     }
 }
 
