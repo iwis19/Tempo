@@ -6,7 +6,7 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ## Repository Note
 
-1. I am planning on implementing the Supabase authentication process (to learn) in this application, however, the current data storage functions locally using UserDefaults offered by Apple. That means I will have to refactor the code. HOWEVER HOWEVER, I want to keep the implementation of UserDefaults since it was good learning, so I will just be using a mix of both even though it defeats the purpose of authentication.
+1. Working on putting on Apple app store, will stay public here until then :)
 
 ---
 
