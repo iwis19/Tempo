@@ -6,25 +6,35 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ## Repository Note
 
-1. Working on putting on Apple app store, will stay public here until then :)
+1. An app for myself
+2. Working on putting on Apple app store, will stay public here until then :)
 
 ---
 
-## Demos & Pages
+## Design for Important Pages
 
-| Dashboard | Today |
-|-----------|-------|
-| ![](demo-assets/dashboard-demo.gif) | ![](demo-assets/today-demo.gif) |
-
-| History | Sign In |
-|---------|---------|
-| ![](demo-assets/history-demo.gif) | ![](demo-assets/sign-in-out-demo.gif) |
-
-| Profile |
-|---------|
-| ![](demo-assets/profile-demo.gif) |
-
-
+<table>
+  <tr>
+    <th>Dashboard</th>
+    <th>Today</th>
+    <th>History</th>
+  </tr>
+  <tr>
+    <td><img src="demo-assets/dashboard-demo.gif" width="100%"></td>
+    <td><img src="demo-assets/today-demo.gif" width="100%"></td>
+    <td><img src="demo-assets/history-demo.gif" width="100%"></td>
+  </tr>
+  <tr>
+    <th>Sign In / Out</th>
+    <th>Profile</th>
+    <th></th>
+  </tr>
+  <tr>
+    <td><img src="demo-assets/sign-in-out-demo.gif" width="100%"></td>
+    <td><img src="demo-assets/profile-demo.gif" width="100%"></td>
+    <td></td>
+  </tr>
+</table>
 
 ---
 
