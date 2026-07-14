@@ -10,6 +10,14 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ---
 
+## Demos & Pages
+
+https://github.com/user-attachments/assets/da43c45b-a43b-4440-8f2a-b3ad0682dc74
+
+
+
+---
+
 ## Key Features
 
 1. **Daily Activity Logging**
