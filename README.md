@@ -12,15 +12,32 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ## Demos & Pages
 
-<video src="demo-assets/dashboard-demo.mp4" width="240" height="180" controls></video>
-
-<video src="demo-assets/today-demo.mp4" width="240" height="180" controls></video>
-
-<video src="demo-assets/history-demo.mp4" width="240" height="180" controls></video>
-
-<video src="demo-assets/sign-in-out-demo.mp4" width="240" height="180" controls></video>
-
-<video src="demo-assets/profile-demo.mp4" width="240" height="180" controls></video>
+<table>
+  <tr>
+    <td>
+      <strong>Dashboard</strong><br>
+      <video src="demo-assets/dashboard-demo.mp4" width="240" height="180" controls></video>
+    </td>
+    <td>
+      <strong>Today</strong><br>
+      <video src="demo-assets/today-demo.mp4" width="240" height="180" controls></video>
+    </td>
+    <td>
+      <strong>History</strong><br>
+      <video src="demo-assets/history-demo.mp4" width="240" height="180" controls></video>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Sign In/Out</strong><br>
+      <video src="demo-assets/sign-in-out-demo.mp4" width="240" height="180" controls></video>
+    </td>
+    <td>
+      <strong>Profile</strong><br>
+      <video src="demo-assets/profile-demo.mp4" width="240" height="180" controls></video>
+    </td>
+    <td></td> </tr>
+</table>
 
 ---
 
