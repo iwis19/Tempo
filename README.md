@@ -12,7 +12,11 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ## Demos & Pages
 
-<video src="demo-assets/dashboard-demo.mp4" width="240" height="180" controls></video>
+![](./demo-assets/dashboard-demo.mp4) ![](./demo-assets/today-demo.mp4)
+
+![](./demo-assets/history-demo.mp4) ![](./demo-assets/sign-in-out-demo.mp4)
+
+![](./demo-assets/profile-demo.mp4)
 
 
 
