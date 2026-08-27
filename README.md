@@ -6,7 +6,7 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ## Repository Note
 
-1. Working on putting on Apple app store, will stay public here until then :)
+1. Working on putting on Apple app store, will stay public here until then
 
 ---
 
@@ -67,9 +67,9 @@ iOS application that helps users stay productive throughout the day by managing 
 ---
 
 ## Set Up
-- Hopefully will be on the App Store some day :)
+- Hopefully will be on the App Store some day
 
-### Account Data
+## Account Data
 
 Tempo stores an immediate, account-scoped cache in `UserDefaults` so the app remains usable when the network is unavailable. After Supabase Auth identifies the user, Tempo synchronizes that cache with the user's protected `tempo_user_data` row.
 
