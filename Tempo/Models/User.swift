@@ -5,6 +5,8 @@
 //  Created by Ronnie Gu on 2026-04-27.
 //
 
+import Foundation
+
 struct UserProfile: Codable {
     var firstName: String
     var lastName: String
