@@ -9,6 +9,8 @@ import SwiftUI
 import Combine
 
 struct LaunchPage: View {
+    @Environment(UserStore.self) private var userStore
+    @Environment(NotificationHandler.self) private var notificationHandler
     
     private let mainFontSize: CGFloat = 44
     private let subtitleFontSize: CGFloat = 20
@@ -138,9 +140,7 @@ struct LaunchPage: View {
                 Task {
                     do {
                         let appUser = try await signInViewModel.signInWithGoogle()
-                        withAnimation(.easeInOut(duration: 0.25)) {
-                            self.appUser = appUser
-                        }
+                        await completeSignIn(appUser)
                     } catch {
                         let message = error.localizedDescription
                         signInErrorMessage = message
@@ -178,9 +178,7 @@ struct LaunchPage: View {
                 Task {
                     do {
                         let appUser = try await signInViewModel.signInWithApple()
-                        withAnimation(.easeInOut(duration: 0.25)) {
-                            self.appUser = appUser
-                        }
+                        await completeSignIn(appUser)
                     } catch{
                         let message = error.localizedDescription
                         signInErrorMessage = message
@@ -224,6 +222,15 @@ struct LaunchPage: View {
             }
         }
     }
+
+    private func completeSignIn(_ user: AppUser) async {
+        await userStore.activate(for: user.id)
+        notificationHandler.apply(settings: userStore.setting)
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            appUser = user
+        }
+    }
 }
 
 
@@ -231,4 +238,6 @@ struct LaunchPage: View {
     LaunchPage(
        appUser: .constant(AppUser(id: "1", email: "ronniegu2019@gmail.com"))
     )
+    .environment(UserStore())
+    .environment(NotificationHandler())
 }

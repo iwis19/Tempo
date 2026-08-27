@@ -12,6 +12,19 @@ import Observation
 // followed tutortial, will come back and learn more about UserNotifications library
 @Observable
 class NotificationHandler {
+    func apply(settings: UserSettings) {
+        if settings.reminderEnabled {
+            sendNotification(
+                hour: settings.reminderHour,
+                minute: settings.reminderMinute,
+                title: "Close your statement",
+                body: "Take a minute to log today's time!"
+            )
+        } else {
+            cancelNotification()
+        }
+    }
+
     func askPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
             if success {

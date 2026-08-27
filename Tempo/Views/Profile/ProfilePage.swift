@@ -87,7 +87,10 @@ struct ProfilePage: View {
                     action: {
                         Task {
                             do {
+                                await userStore.flush()
                                 try await AuthManager.shared.signOut()
+                                notificationHandler.cancelNotification()
+                                userStore.deactivate()
                                 self.appUser = nil
                             } catch {
                                 print("Error, please contact the developer team. (sign out)")

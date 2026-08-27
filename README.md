@@ -47,6 +47,7 @@ iOS application that helps users stay productive throughout the day by managing 
 2. **User Login Auth**
    - Allows users to log in using Google accounts using Google Identity
    - Wired to Supabase Auth
+   - Keeps a separate local cache for each authenticated account and synchronizes the latest account snapshot with Supabase
 3. **Daily Statement System**
    - Creates daily statements displaying today's net, category totals, etc
    - Open and closes statements to finalize details of the day
@@ -67,6 +68,10 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ## Set Up
 - Hopefully will be on the App Store some day :)
+
+### Account Data
+
+Tempo stores an immediate, account-scoped cache in `UserDefaults` so the app remains usable when the network is unavailable. After Supabase Auth identifies the user, Tempo synchronizes that cache with the user's protected `tempo_user_data` row.
 
 ---
 
@@ -95,10 +100,13 @@ Tempo-main/
 │   │   ├── Flowtone.swift
 │   │   ├── GraphData.swift
 │   │   ├── Statement.swift
-│   │   └── Tab.swift
-│   ├── Services/                        # External services & user management
-│   │   ├── Supabase.swift
+│   │   ├── Tab.swift
 │   │   └── User.swift
+│   ├── Services/                        # External services & user management
+│   │   ├── AuthManager.swift
+│   │   ├── SignInApple.swift
+│   │   ├── SignInGoogle.swift
+│   │   └── Supabase.swift
 │   ├── Utilities/                       # Shared helpers, templates, notifications
 │   │   ├── DemoData.swift
 │   │   ├── Functions.swift

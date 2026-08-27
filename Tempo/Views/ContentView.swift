@@ -9,6 +9,9 @@ import SwiftUI
 import GoogleSignIn
 
 struct ContentView: View {
+    @Environment(UserStore.self) private var userStore
+    @Environment(NotificationHandler.self) private var notificationHandler
+
     @State private var selectedTab: Tab = .home
     
     @State private var appUser: AppUser? = nil
@@ -34,7 +37,14 @@ struct ContentView: View {
             GIDSignIn.sharedInstance.handle(url)
         }
         .task {
-            appUser = await AuthManager.shared.checkCurrentSession()
+            let currentUser = await AuthManager.shared.checkCurrentSession()
+
+            if let currentUser {
+                await userStore.activate(for: currentUser.id)
+                notificationHandler.apply(settings: userStore.setting)
+            }
+
+            appUser = currentUser
             checkingSession = false
         }
         
