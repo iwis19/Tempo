@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Supabase
 
 // persists each Supabase account under a separate local key.
 struct LocalUserDataSource {
