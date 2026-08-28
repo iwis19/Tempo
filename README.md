@@ -71,7 +71,7 @@ iOS application that helps users stay productive throughout the day by managing 
 
 ## Account Data
 
-Tempo stores an immediate, account-scoped cache in `UserDefaults` so the app remains usable when the network is unavailable. After Supabase Auth identifies the user, Tempo synchronizes that cache with the user's protected `tempo_user_data` row.
+Tempo stores an immediate, account-scoped cache in `UserDefaults` so the app remains usable when the network is unavailable. After Supabase Auth identifies the user, Tempo synchronizes that cache with the user's protected `TempoUserData` row.
 
 ---
 

@@ -22,7 +22,7 @@ struct SupabaseUserDataSource {
     }
 
     private let client: SupabaseClient
-    private let tableName = "tempo_user_data"
+    private let tableName = "TempoUserData"
 
     init(client: SupabaseClient) {
         self.client = client
